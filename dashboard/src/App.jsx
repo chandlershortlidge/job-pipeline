@@ -18,7 +18,7 @@ function App() {
         <div>
           <h1>JD Skills Aggregator — coming soon</h1>
           <p>
-            Deploy loop verified · auto-deploy-ok-7f3a · {new Date().getFullYear()}
+            Deploy loop verified · {new Date().getFullYear()}
           </p>
         </div>
         <button
