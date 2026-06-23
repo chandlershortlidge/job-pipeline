@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Local JD screenshots (de-risk corpus) — keep them off GitHub, but track the folder
+scratch/screenshots/*
+!scratch/screenshots/.gitkeep
