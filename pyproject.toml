@@ -1,0 +1,10 @@
+[project]
+name = "job-pipeline"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "anthropic>=0.111.0",
+    "openai>=2.43.0",
+    "pydantic>=2.13.4",
+    "python-dotenv>=1.2.2",
+]
