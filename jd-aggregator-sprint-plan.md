@@ -108,6 +108,7 @@ job:
   source     -- 'screenshot'
 skills:       -- a SET of canonical skills, distinct per job
   raw_text + canonical
+  requirement -- enum: required | nice_to_have  (the default chart shows required only)
 ```
 
 **Rules that the sample forced:**
@@ -119,6 +120,7 @@ skills:       -- a SET of canonical skills, distinct per job
   - Scope guard: get the ladder sane on the 6 sample JDs, ship it, log disagreements as a known limitation. Do NOT hand-tune against all 20 chasing perfect labels.
 - **Company may need vision, not OCR** (logo-only names). Confirm the model reads logos; if not, expect null company on some — fine, part 2's emails backfill via the join.
 - **Aggregate by document frequency, not raw mentions.** Count *jobs that mention a skill* ("5 of 6 jobs want Python"), not total mentions. More meaningful for "what's the market prioritizing," and it neutralizes duplicated text (one sample had its role paragraph repeated verbatim).
+- **Capture required vs nice-to-have per skill.** The default chart shows required skills only, so the extractor must label each skill `required` or `nice_to_have`. JDs usually split these into "must have" / "nice to have" (or "bonus"/"a plus") sections — key off that. When a skill's section is ambiguous, default to `required` and move on. Nice-to-haves are still extracted and stored; they're just hidden from the default chart view.
 - **Discard UI chrome.** Vision will otherwise pick up apply buttons, German UI words (Vollzeit), model-name corner labels (gpt4), verified checkmarks, bookmark/share icons.
 
 **Canonical map, seeded from the sample (extend on the day):**
@@ -131,7 +133,7 @@ skills:       -- a SET of canonical skills, distinct per job
 - CI/CD ← CI/CD, CI/CD automation
 - Cloud ← keep GCP / AWS / Azure separate for market signal; bucket smaller ones
 - Clean/low-risk as-is: LangChain, LlamaIndex, Python, SQL, Docker
-- Long-tail single-job skills (MITRE ATT&CK, RDKit/cheminformatics, etc.): keep but expect count-of-1. Decide top-N vs full long tail for the chart.
+- **Long tail is real — extract it all, threshold the *chart* (decided, from running the probe).** The probe confirmed a long tail of one-off skills (MITRE ATT&CK, RDKit/cheminformatics, etc.) that would clutter a bar chart into noise. Policy: extract and store **everything**; the chart defaults to **document-frequency ≥ 2 _and_ required-only**. Singletons and nice-to-haves stay in `jobs.json` and remain reachable via click-through (click a job → all its skills, including the count-of-1 ones). The ≥2 threshold and the required-only default are *view* filters — never a data filter. Nothing is dropped from extraction; the dashboard can expose a "show all" toggle to lift both filters.
 
 ## Sprint Phases (Day Of)
 
@@ -146,7 +148,7 @@ Collapse variants to canonical skills. Eyeball the top of the list — does it l
 
 **Phase 3 — Dashboard panels (build in order; each one deploys)**
 Wire the React app to read `jobs.json`, then add panels in this order so every step is demoable:
-- 3a — ranked skills bar chart (document frequency). **Deploy. You now have a complete demo.**
+- 3a — ranked skills bar chart (document frequency; **default view: freq ≥ 2 and required-only**, with the full long tail + nice-to-haves still in the data and on click-through). **Deploy. You now have a complete demo.**
 - 3b — stats bar (N jobs, N skills, N companies). Cheap, makes it feel like a tool.
 - 3c — job list/table (company, title, seniority, summary).
 - 3d — click-to-filter: job → its skills, skill → its jobs.
