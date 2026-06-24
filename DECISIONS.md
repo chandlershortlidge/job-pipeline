@@ -15,6 +15,22 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 11:55 — Daytona round-trip verified (de-risk Part 1 passed)
+
+**What worked:** The Daytona hello-world round-trip runs green with a real key
+(`scratch/daytona_hello.mjs`). Confirmed SDK shape for the build: package `@daytona/sdk`,
+`new Daytona({ apiKey })`, `daytona.create({ language: 'python' })`,
+`sandbox.process.codeRun('<code>')` → `response.result` (stdout) / `response.exitCode`,
+`sandbox.delete()`. Create → run Python → read output → delete all work as drafted.
+
+**So:** the riskiest piece of the sponsor showcase (Daytona wiring) is de-risked. Remaining
+de-risk steps are Vercel-function plumbing (Parts 2–4), not Daytona itself.
+
+**Still open (for Part 2+):** how the real extraction code + its Python deps get into the
+sandbox, and how the model API key reaches code running inside the sandbox.
+
+---
+
 ## 2026-06-24 10:35 — Committed to the Daytona live drop-in as the gated sponsor stretch
 
 **Decision:** Pursue the live "drop in a screenshot → parse it in a Daytona sandbox" feature as
