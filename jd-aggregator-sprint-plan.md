@@ -168,9 +168,12 @@ normalization beneath it. A deployed chart + sane counts is a real demo; half-bu
 are not. Same "degrade gracefully" logic as the panel order, now on a clock.
 
 **Why the hard stop is 30 min out (16:30):** deployment is the thing that bites solo
-builders at the buzzer. Reserving 30 minutes to redeploy clean and test the live URL as a
-stranger — not on your laptop, where it "works on my machine" — is the cheapest insurance
-against a dead demo. Move the line *earlier* (16:15) if you're feeling shaky; never later.
+builders at the buzzer. 30 minutes is the right size here *because each panel deploys as
+you build it* — by 16:30 you'll have run push→deploy several times that afternoon, so the
+final freeze is a re-verify of a well-worn path, not a risky first deploy. The 30 minutes
+buys a clean redeploy plus testing the live URL as a stranger (a fresh incognito window,
+not your laptop where it "works on my machine"). Move the line *earlier* (16:15) only if
+something feels shaky; never later.
 
 ## Sprint Phases (Day Of)
 *(The "when" for each phase is in the Timeline above; the "what" is here.)*
