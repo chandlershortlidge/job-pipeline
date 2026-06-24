@@ -39,6 +39,56 @@ Normalization is the whole ballgame. If "React," "ReactJS," and "React.js" land 
 
 So: the LLM extracts `raw_text`; deterministic code maps `raw_text -> canonical` (and splits slash-lists into separate raw skills first). Treat the model's own `canonical` as a hint, not the source of truth.
 
+## Normalization — contingency plan
+Normalization is the make-or-break block (13:00–14:15 on the clock). It will **not** be
+perfect; the bar is "sane enough that the top of the chart tells a true story." Below are
+the problems we'll likely hit and the move for each — pick the move, don't agonize.
+
+**Likely problems → the move:**
+- **Same skill, different spelling/case** ("Vector databases" vs "Vector Databases", "CI/CD"
+  vs "CICD"). → First pass is mechanical: lowercase + strip punctuation/extra spaces, then
+  compare. Catches most of these for free. Do this before anything clever.
+- **Slash / "or" lists** ("n8n/Make/Zapier", "GCP/AWS/Azure"). → Split on `/`, `,`, " or ",
+  "&" into separate skills *before* mapping. Then decide per group: keep separate when the
+  distinction is signal (GCP vs AWS vs Azure), bucket when it isn't.
+- **Real synonyms that don't look alike** ("large language models" → "LLMs",
+  "retrieval-augmented generation" → "RAG"). → Only the hand-written alias map catches these
+  (seed list is in the Extraction Spec). Extend it from what you actually see in the corpus.
+  This is the part that takes the time — budget it.
+- **Wrongly merging two different skills** ("Java" ≠ "JavaScript"; "Generative AI" shouldn't
+  swallow everything "AI"). → Keep the alias map **explicit and conservative**: only merge
+  pairs you've eyeballed. When unsure, leave them separate. Under-merging is safe (two honest
+  bars); over-merging is a visible error a judge will catch.
+- **One-skill-or-two judgment calls** ("embeddings" vs "vector databases"; pandas/NumPy/
+  scikit-learn as three or one "Python data stack"). → Make a fast call, log it, move on.
+  Default: keep recognizable standalone tools separate; only bucket clearly-interchangeable ones.
+- **Still a messy long tail after mapping.** → Expected, and already handled: the chart
+  defaults to frequency ≥2 + required-only, so singletons fall off the default view. If still
+  noisy, raise the threshold to ≥3 or show only the top-N.
+
+**If at 14:15 the top of the chart still looks like noise — escalation ladder (in order):**
+1. **Switch from "normalize everything" to a curated allowlist.** You've seen the corpus —
+   hand-pick ~15–25 canonical skills you care about and chart only skills that map into that
+   set. Everything else stays in the data and on click-through, just off the chart. This turns
+   an open-ended reconciliation problem into a closed-set lookup: fast and demo-safe. **This is
+   the strongest fallback — reach for it early, not last.**
+2. **Hand-fix the top 20.** With ~15–20 jobs the skill list is small and finite. Manually clean
+   the alias map (or the output) for the top ~20 skills by document frequency; ignore the tail.
+   Brute force, but bounded and reliable.
+3. **Raise the threshold.** Show only ≥3-job skills — fewer bars, far less chance of a dirty one.
+4. **Last resort: ship raw + threshold.** If normalization is actively breaking and the clock is
+   at hour 4, show raw skills with the ≥2 threshold and get the URL live. A deployed honest-but-
+   rough chart beats a perfect normalizer that never ships. (The plan already blesses this.)
+
+**Two guardrails:**
+- **Don't reach for a live LLM normalization pass.** Per-job prompting is already proven
+  inconsistent (see `DECISIONS.md`). If you use an LLM at all, use it *once* over the list of
+  unique skill strings to *propose* a map you then eyeball and freeze into code — never as a
+  live step in the pipeline.
+- **The time box is hard: stop at 14:15.** If it's only "sane enough," freeze it and go build
+  the chart — the 15:00 deployed-chart milestone is sacred. A curated top-15 that's live beats a
+  perfect map that isn't.
+
 ## Tech Stack & Architecture
 **One program, one deploy, one host.** The key decision: extraction does NOT run live. The corpus is fixed (~20 screenshots known ahead of time), so extraction runs once as a script on the laptop and writes a static `jobs.json`. The React app reads that file. No backend = no second service, no CORS, no two-host sync, nothing to debug in the gap between services at 16:45.
 

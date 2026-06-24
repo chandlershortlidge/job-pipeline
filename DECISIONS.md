@@ -15,6 +15,23 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 10:04 — Normalization contingency plan + primary fallback
+
+**Decision:** Added a "Normalization — contingency plan" section to the sprint plan: the
+likely failure modes (case dups, slash-lists, non-obvious synonyms, over-merging, one-vs-two
+calls) and the move for each, plus an escalation ladder if the chart still looks like noise.
+
+**Key calls:**
+- **Primary fallback = a curated allowlist** of ~15–25 hand-picked canonical skills; chart
+  only those, everything else stays in data/click-through. Reach for it early, not last —
+  it turns open-ended reconciliation into a closed-set lookup.
+- **No live LLM normalization** in the pipeline (reinforces the 09:26 entry). At most, use an
+  LLM once to *propose* a map, then freeze it into code.
+- **Hard time box at 14:15:** freeze whatever's "sane enough" and go build the chart; the
+  15:00 deployed-chart milestone wins over a perfect map.
+
+---
+
 ## 2026-06-24 10:00 — Keep DECISIONS.md; log silently and proactively
 
 **Decision:** Reversed an earlier sprint call. `AGENTS.md` originally listed DECISIONS.md
