@@ -15,6 +15,22 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 10:00 — Keep DECISIONS.md; log silently and proactively
+
+**Decision:** Reversed an earlier sprint call. `AGENTS.md` originally listed DECISIONS.md
+as deliberately dropped for this sprint; we now keep a lightweight version. Added a
+"Decision log" section to `AGENTS.md` defining when to add entries.
+
+**The rule:** over-share rather than under-share (when in doubt, log it), but do it
+**silently** — write the entry, fold it into the same commit as the change, and do **not**
+narrate "I added to DECISIONS, here's why" in chat. Reading that mid-event wastes time;
+the log is read when the person chooses, not in the reply.
+
+**Why:** During the timed event there's no room to discuss record-keeping. Making it an
+automatic, invisible habit means the context gets captured without costing live minutes.
+
+---
+
 ## 2026-06-24 09:52 — Sprint day runs on a clock, planned backwards from the 5pm demo
 
 **Decision:** Added a timed schedule to the sprint plan (see "Timeline (Day Of)"). Fixed

@@ -2,7 +2,7 @@
 
 This is the scaled-down harness for a time-boxed solo build. It covers only *how to work* — verify, test, commit, when to check in. **Scope, build order, architecture, and the data contract live in the planning doc (`jd-aggregator-sprint-plan.md`), not here.** If you need to know what to build or in what order, read that. This file is how to build it.
 
-What's deliberately dropped for this sprint (do not reintroduce): the full written-plan ritual, DECISIONS.md entries and handoff ceremony, module-promotion with docstrings/layout rules, and comprehensive test coverage. Keep only what's below.
+What's deliberately dropped for this sprint (do not reintroduce): the full written-plan ritual, the handoff ceremony, module-promotion with docstrings/layout rules, and comprehensive test coverage. Keep only what's below. (One exception, added mid-project: a lightweight `DECISIONS.md` log **is** kept — see "Decision log" below.)
 
 ## Who you're working with
 I think clearly about systems and specify precisely, but I do **not** verify code by reading it line by line. I verify by *behavior*: by running things, checking outputs on real inputs, and reading your plain-English account of what the code does against what I asked for. So, always:
@@ -23,6 +23,22 @@ No test suite this sprint; verification is by eyeballing output on real inputs, 
 
 ## Commits
 Commit at each working checkpoint, so there's always a working state to roll back to — you have standing permission to do this, don't wait to be asked. Keep each commit to one logical thing, and say in a line what it contains. Don't bundle unrelated cleanup into a commit because you noticed it while working — mention it instead.
+
+## Decision log (DECISIONS.md)
+Keep `DECISIONS.md` (repo root) current as you work. This is the one record-keeping habit kept for this sprint — do it **silently and proactively**, never as a thing we stop to discuss on the day.
+
+**Do not narrate it.** Don't write "I added to DECISIONS.md, here's why" in your reply — that burns my time mid-event. Just write the entry and fold it into the same commit as the change it documents. I'll read the log when *I* choose to, not in your chat output; the commit line is enough of a signal.
+
+**When to add an entry — over-share, don't under-share. When in doubt, log it.** Add one whenever you:
+- chose between approaches, or made a trade-off;
+- tried something that didn't work (so it isn't retried later);
+- changed the data model, schema, extraction, normalization, or deploy setup;
+- picked a default, threshold, or number someone might later wonder about;
+- hit a gotcha worth not rediscovering.
+
+Skip it only for pure mechanical edits with no judgment (typos, formatting) or things already obvious from the diff.
+
+**How:** newest entry first; stamp it with the real time (`date`, or the git commit time — don't guess); a few plain-English lines I can read; include what you tried and what failed when it's relevant.
 
 ## Honesty (applies every turn)
 - Before claiming a function, import, or symbol exists, verify it by reading the file or grepping. Never fabricate symbols.
