@@ -15,6 +15,26 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 09:52 — Sprint day runs on a clock, planned backwards from the 5pm demo
+
+**Decision:** Added a timed schedule to the sprint plan (see "Timeline (Day Of)"). Fixed
+points are hack-start 11:00, lunch 12:00–13:00, demo 17:00 — so 5 hours of build time.
+The schedule is built **backwards from the demo**, not forwards from the start.
+
+**Key calls:**
+- **Hard stop at 16:30** (30 min before demo): stop building entirely, redeploy from a
+  clean `main`, and test the live URL in a fresh incognito window as a stranger would.
+  Reasoning: a dead demo from a last-minute deploy is the worst-case outcome for a solo
+  builder, and 30 minutes is cheap insurance against it.
+- **Protect the 15:00 milestone:** a deployed ranked chart + sane skill counts. If behind
+  at any point, cut panels upward from the bottom (3d → 3c → 3b), never the chart or the
+  normalization under it.
+
+**Trade-off:** The clock is deliberately conservative (a real 30-min freeze, a real lunch).
+Better to ship fewer panels calmly than to be mid-edit when judging starts.
+
+---
+
 ## 2026-06-24 09:26 — Skill normalization must be done in code after extraction, not by the prompt
 
 **Decision:** Collapsing different spellings of the same skill into one name (e.g.

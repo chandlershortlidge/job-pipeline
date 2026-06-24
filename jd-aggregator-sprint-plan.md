@@ -141,7 +141,40 @@ skills:       -- a SET of canonical skills, distinct per job
 - Clean/low-risk as-is: LangChain, LlamaIndex, Python, SQL, Docker
 - **Long tail is real — extract it all, threshold the *chart* (decided, from running the probe).** The probe confirmed a long tail of one-off skills (MITRE ATT&CK, RDKit/cheminformatics, etc.) that would clutter a bar chart into noise. Policy: extract and store **everything**; the chart defaults to **document-frequency ≥ 2 _and_ required-only**. Singletons and nice-to-haves stay in `jobs.json` and remain reachable via click-through (click a job → all its skills, including the count-of-1 ones). The ≥2 threshold and the required-only default are *view* filters — never a data filter. Nothing is dropped from extraction; the dashboard can expose a "show all" toggle to lift both filters.
 
+## Timeline (Day Of) — work backwards from the 5pm demo
+
+Fixed points: **hack starts 11:00**, **lunch 12:00–13:00**, **demo + judging 17:00**.
+That leaves **5 hours of actual build time**. This schedule is planned backwards from the
+demo, not forwards from the start — the deadline is the anchor, everything else fits inside it.
+
+| Time | Block | Done-when / checkpoint |
+|---|---|---|
+| 11:00–11:15 | **Phase 0 — confirm deploy** | Push a trivial change, watch the live URL update. Don't dwell — it's already solved during prep. |
+| 11:15–12:00 | **Phase 1 — extraction** | Raw skills out of all ~15–20 screenshots. Kick off the full batch; it can keep running over lunch. |
+| 12:00–13:00 | **Lunch** | Real break. (Let the extraction batch run while you eat.) |
+| 13:00–14:15 | **Phase 2 — normalization** ⟵ make-or-break | The deterministic code step: alias map + case-fold + split slash-lists (see "Load-Bearing Risk"). Top of the skill list reads like signal, not noise. |
+| 14:15–15:00 | **Phase 3a — ranked chart** ⟵ the milestone | Chart reads `jobs.json`, deployed. **You now have a complete, demoable product.** Protect this above everything below it. |
+| 15:00–15:30 | **Phase 3b — stats bar** | N jobs / N skills / N companies. Deploy. |
+| 15:30–16:15 | **Phase 3c — job list** | Company, title, seniority, summary. Deploy. |
+| 16:15–16:30 | **Phase 3d — click-to-filter** | Job → its skills, skill → its jobs. Deploy. (First thing to cut if behind.) |
+| **16:30** | **🛑 HARD STOP — stop building** | No new code or features past this line, no matter what. |
+| 16:30–16:45 | **Freeze + stranger test** | Redeploy from a clean `main`. Open the live URL in a **fresh incognito window** and click through it **as a stranger would** — nothing cached, nothing assumed. Fix only show-stoppers. |
+| 16:45–17:00 | **Demo prep + buffer** | Rehearse the 2-minute story, URL open in a tab. Buffer for Wi-Fi / nerves. |
+| **17:00** | **Demo + judging** | |
+
+**The rule that overrides the table:** if you're behind at any checkpoint, cut **upward
+from the bottom** — drop 3d, then 3c, then 3b — but never touch the 3a chart or the
+normalization beneath it. A deployed chart + sane counts is a real demo; half-built panels
+are not. Same "degrade gracefully" logic as the panel order, now on a clock.
+
+**Why the hard stop is 30 min out (16:30):** deployment is the thing that bites solo
+builders at the buzzer. Reserving 30 minutes to redeploy clean and test the live URL as a
+stranger — not on your laptop, where it "works on my machine" — is the cheapest insurance
+against a dead demo. Move the line *earlier* (16:15) if you're feeling shaky; never later.
+
 ## Sprint Phases (Day Of)
+*(The "when" for each phase is in the Timeline above; the "what" is here.)*
+
 
 **Phase 0 — Setup (target: ~0 min into build)**
 Deploy path already solved. Confirm the live URL still deploys. Don't burn time here.
