@@ -15,6 +15,26 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 13:47 — Front-end layout locked: single-column stacked
+
+**Decision:** The dashboard is one centered column — stats bar, skills bar chart (the hero),
+job list — stacked vertically. Chosen over a two-column (chart | jobs) and a chart-hero/
+click-to-reveal variant, because single-column needs the least layout fiddling, reads well on a
+projector, and degrades gracefully (drop the list, the chart still stands).
+
+**Interactions:** click a skill bar → job list filters to jobs wanting it; click a job row →
+inline expand of its skills (required solid, nice-to-have outlined) + summary + seniority with
+its signal on hover. Default chart view = required-only + freq ≥ 2; "show all" lifts both.
+
+**Data contract call:** `jobs.json` is just the array of jobs (matching the extraction schema);
+the frontend derives document-frequency, stats, and the skill→jobs index in memory (only ~20
+jobs, so no second source of truth to keep in sync).
+
+**Why:** Full spec in `frontend-spec.md`. Locking layout + data shape + visual style now means the
+day is wiring, not designing — the place a solo builder most easily burns time.
+
+---
+
 ## 2026-06-24 13:21 — Daytona backend round-trip is LIVE (de-risk Parts 2–3 passed)
 
 **What worked:** The Vercel serverless function (`dashboard/api/extract.js`) is deployed and

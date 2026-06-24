@@ -246,7 +246,9 @@ Get raw skills out of the full corpus. Don't normalize yet. Confirm you have *so
 Collapse variants to canonical skills. Eyeball the top of the list — does it look like a real market signal or like noise? This is the make-or-break checkpoint.
 
 **Phase 3 — Dashboard panels (build in order; each one deploys)**
-Wire the React app to read `jobs.json`, then add panels in this order so every step is demoable:
+Wire the React app to read `jobs.json`, then add panels in this order so every step is demoable.
+**Layout, the `jobs.json` data contract, component breakdown, interactions, and visual style are
+locked in `frontend-spec.md` — build against that, don't redesign on the clock.**
 - 3a — ranked skills bar chart (document frequency; **default view: freq ≥ 2 and required-only**, with the full long tail + nice-to-haves still in the data and on click-through). **Deploy. You now have a complete demo.**
 - 3b — stats bar (N jobs, N skills, N companies). Cheap, makes it feel like a tool.
 - 3c — job list/table (company, title, seniority, summary).
