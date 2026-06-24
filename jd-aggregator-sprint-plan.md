@@ -33,6 +33,12 @@ Panels are built in order and each one deploys, so the dashboard degrades gracef
 ## The Load-Bearing Risk
 Normalization is the whole ballgame. If "React," "ReactJS," and "React.js" land as three separate bars, the aggregate is noise. This is the reconciliation problem in a new domain — your home turf, but non-negotiable. Budget real time here, not at the end.
 
+**Where normalization must live (proven by the probe):** make it a **deterministic post-extraction step over the aggregate** — a canonical alias map + case-fold + slash-list split, run once in code — **not** a prompt instruction. Each screenshot is extracted independently, so the model never sees the other jobs and *cannot* be globally consistent; a prompt-level "normalize case" rule was added and the rerun proved it does nothing. Two failure modes the probe surfaced that only code can fix:
+- **Case/spacing duplicates:** "Vector databases" and "Vector Databases" landed as two separate bars in the same run.
+- **Slash-list collapse:** a JD's "n8n/Make/Zapier" became just `n8n`, and "GCP/AWS/Azure" became just `GCP` — the model keeps the first alternative and silently drops the rest, inconsistently between runs (so it defeats the "keep GCP/AWS/Azure separate" rule too).
+
+So: the LLM extracts `raw_text`; deterministic code maps `raw_text -> canonical` (and splits slash-lists into separate raw skills first). Treat the model's own `canonical` as a hint, not the source of truth.
+
 ## Tech Stack & Architecture
 **One program, one deploy, one host.** The key decision: extraction does NOT run live. The corpus is fixed (~20 screenshots known ahead of time), so extraction runs once as a script on the laptop and writes a static `jobs.json`. The React app reads that file. No backend = no second service, no CORS, no two-host sync, nothing to debug in the gap between services at 16:45.
 
