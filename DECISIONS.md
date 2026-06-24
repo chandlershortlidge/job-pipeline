@@ -15,6 +15,25 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 13:21 — Daytona backend round-trip is LIVE (de-risk Parts 2–3 passed)
+
+**What worked:** The Vercel serverless function (`dashboard/api/extract.js`) is deployed and
+live at `/api/extract`, returning `{"output":"hi from daytona\n","exitCode":0}`. This confirms,
+on the real platform:
+- Vercel **auto-detects `dashboard/api/`** for the Vite project — no `vercel.json` needed.
+- `DAYTONA_API_KEY` is wired via **Vercel env vars** (Settings → Environment Variables).
+- The function creates a Daytona sandbox, runs Python, and returns JSON.
+
+**So:** the whole backend round-trip for the live drop-in is proven (browser → Vercel function →
+Daytona sandbox → output). The sponsor showcase is no longer a risky unknown.
+
+**Day-of work for the showcase** is now just: swap the trivial script for the real extraction
+(vision call + schema) running in the sandbox, and accept an uploaded image in the request. The
+two still-open questions (how the extraction deps get into the sandbox, how the model key reaches
+code inside it) get answered when wiring that real extraction.
+
+---
+
 ## 2026-06-24 11:55 — Daytona round-trip verified (de-risk Part 1 passed)
 
 **What worked:** The Daytona hello-world round-trip runs green with a real key
