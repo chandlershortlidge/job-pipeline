@@ -15,6 +15,23 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 10:22 — Enrollment requirements pinned; MIT license added
+
+**Context:** The event is open-format (no rules on when code is written, so all our prep is
+fine). The only hard gates: a live URL at end of day, the repo open source, and the project
+built at the event (can't bring a pre-built one).
+
+**Decisions:**
+- Added an **MIT license** so the public repo is formally open source (a named enrollment
+  requirement). MIT chosen as the permissive hackathon default.
+- Pinned the gates as a "Submission Requirements" checklist in the plan. The live-URL gate —
+  the only thing required for *any* prize — is already solved cold via the deploy prep.
+- **Sponsor is Daytona.** Using the sponsor stack is a *winning* edge, not a qualifying gate.
+  How (and whether) to integrate it is evaluated separately — it trades against the
+  no-backend architecture, so it's a real call, not a freebie.
+
+---
+
 ## 2026-06-24 10:04 — Normalization contingency plan + primary fallback
 
 **Decision:** Added a "Normalization — contingency plan" section to the sprint plan: the

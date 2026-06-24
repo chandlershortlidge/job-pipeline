@@ -14,6 +14,13 @@ A deployed, public URL where skills are extracted from the corpus, normalized to
 
 Panels are built in order and each one deploys, so the dashboard degrades gracefully: if the clock runs out, whatever panels exist still demo. The ranked chart + stats alone already tell a real story; the job list and filtering deepen it.
 
+## Submission Requirements (gates to enroll / win) — from the event FAQ
+These are hard gates from the event description, not nice-to-haves. Check them off the day of.
+- [ ] **Live online URL at end of day** — the *minimum* for any prize. Already solved cold during prep (`job-pipeline-opal.vercel.app`). This is the single requirement, and it's done before the day starts.
+- [x] **Open source** — repo is public on GitHub *and* carries an OSI license (MIT added). Both needed to enroll; both done.
+- [ ] **Built at the event** — the product (extraction + dashboard) is created on the day. Prep was deploy setup + planning + a throwaway de-risk notebook only; "bringing a pre-built project" can't enroll, so the actual build happens 11:00–17:00.
+- [ ] **Sponsor stack = Daytona** — *not* required to qualify, but using the sponsor's stack is the edge for **winning** (separate sponsor prize). See "Sponsor angle — Daytona" below.
+
 ## Does Add / Does Not Add
 
 **Does add (this is v0 — the four-panel dashboard):**
