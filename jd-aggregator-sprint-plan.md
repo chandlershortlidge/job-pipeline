@@ -254,7 +254,49 @@ Wire the React app to read `jobs.json`, then add panels in this order so every s
 Drop from the bottom (3d first) if time runs short, never from the top.
 
 **Phase 4 — Stretch (only if Phase 3 deployed with time to spare)**
-Live drop-in of a new screenshot, then — distant third — the chatbot.
+Live drop-in of a new screenshot — and this *is* the **Daytona sponsor showcase**: the upload
+is parsed on-demand inside a Daytona sandbox (see "Sponsor angle — Daytona" below). Only attempt
+it if the round-trip was de-risked during the week. Then — distant third — the chatbot.
+
+## Sponsor angle — Daytona (live drop-in showcase)
+**Why:** Daytona is the event sponsor; using its sandbox runtime in a *visible* way is the edge
+for the **sponsor prize** (not required to qualify — the live URL covers that). Daytona is secure
+infrastructure for running code in fast, isolated **sandboxes** via an SDK. Our app has no organic
+need to run code, so we place Daytona deliberately in the one feature that genuinely fits:
+**on-demand extraction of a freshly uploaded screenshot.**
+
+**The feature (Phase 4 stretch):** on the live site, a judge uploads a JD screenshot → it's parsed
+on-demand → the dashboard updates. The parse runs the Python extraction **inside a Daytona
+sandbox**, so Daytona is doing real work, not decoration.
+
+**Architecture — still "one repo, one deploy" (no separate host):**
+```
+Browser (live site)
+  → POST screenshot to /api/extract     (Vercel serverless function — same repo, holds secrets)
+     → Daytona SDK: create sandbox, run the Python extraction in it, read JSON back
+  ← returns the parsed job
+React appends the job to the on-screen list (in memory — NO database)
+```
+- A **Vercel serverless function** (`dashboard/api/extract.*`) deploys with the same `git push` —
+  it's not a second backend, just a function file.
+- **Stateless:** the new job lives in React state for the demo; it need not survive a refresh, so no DB.
+- The thin function (JS) orchestrates; the **Python extraction runs in the Daytona sandbox** — which
+  also avoids Python-on-Vercel friction and is the genuine sponsor use.
+- Secrets (Daytona key, model key) live in **Vercel env vars**, never in the repo.
+
+**Hard condition — de-risk this week or don't attempt it.** This stacks three first-time things
+(Vercel function, Daytona SDK, Python-in-sandbox); cold on the day it can eat 2+ hours and yield
+nothing. Prove a hello-world round-trip during the week (see `daytona-prep-checklist.md`); then the
+day-of task is just swapping the trivial script for the real extraction. If the round-trip isn't
+working by the end of that prep, drop the showcase.
+
+**Guardrails:**
+- **Gated stretch only.** Build it after Phase 3 is deployed — the static dashboard + live URL (your
+  prize floor) must already be live and safe.
+- **Cut line ~16:00.** If it's not working by then, drop it; it's additive, so removing it touches
+  nothing else.
+- **Lighter fallback** if you want *some* Daytona without the live UI: run the offline batch
+  extraction through a Daytona sandbox. Weaker story, but genuine sponsor usage that never risks the URL.
 
 ## Sprint AGENTS.md Posture (lightweight variant)
 Keep: tight scope, explicit definition of done, English-explanation sanity checks before moving on.

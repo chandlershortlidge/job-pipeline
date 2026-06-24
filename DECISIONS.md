@@ -15,6 +15,27 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-24 10:35 — Committed to the Daytona live drop-in as the gated sponsor stretch
+
+**Decision:** Pursue the live "drop in a screenshot → parse it in a Daytona sandbox" feature as
+the Phase 4 stretch and the sponsor-prize play. Architecture: a **Vercel serverless function**
+(`dashboard/api/extract.*`, same repo, no separate host) calls the Daytona SDK to run the Python
+extraction in a sandbox; React updates statelessly (no database).
+
+**Trade-off:** This deviates from the "no backend" rule — but only for this one feature, and it's
+**gated behind the deployed static dashboard**, so the prize floor (live URL) is never at risk.
+
+**Hard condition:** de-risk the round-trip during the week (`daytona-prep-checklist.md`) — prove a
+hello-world Browser → Vercel function → Daytona sandbox → output round-trip. If that isn't working
+by the end of prep, drop the showcase. Lighter fallback: run the offline batch extraction through a
+sandbox for a weaker-but-genuine sponsor story.
+
+**Why feasible solo:** the "backend" is just a Vercel function in the same repo (not a second host),
+it's stateless (no DB), and the scary part (Daytona wiring) gets proven *before* the day, leaving
+only a script-swap for the day itself.
+
+---
+
 ## 2026-06-24 10:22 — Enrollment requirements pinned; MIT license added
 
 **Context:** The event is open-format (no rules on when code is written, so all our prep is
