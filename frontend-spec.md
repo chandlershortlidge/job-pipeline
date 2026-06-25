@@ -27,7 +27,7 @@ One centered column, ~720px max width, vertical scroll. Reads on a projector; de
 gracefully (drop the list or the drop-in and the chart still stands).
 
 ## Build order (each deploys — same as Phase 3)
-1. **3a — SkillsChart** (the hero). Ship first → you have a complete demo.
+1. **3a — SkillsChart** (the hero). Ship first → you have a complete demo. Then add the hover "merged from" tooltip (the normalization reveal) — cheap, and it's what makes the technical work visible to judges.
 2. **3b — StatsBar** (N jobs / N skills / N companies).
 3. **3c — JobList** (company, title, seniority, summary).
 4. **3d — click-to-filter** (skill → jobs; job → its skills).
@@ -62,17 +62,19 @@ second thing to keep in sync).
 - **Stats:** `jobs.length`; count of distinct `canonical` across all skills; count of distinct non-null `company`.
 - **Chart (document frequency):** for each `canonical`, count the number of *jobs* that contain it (distinct per job). Default view keeps only skills with **count ≥ 2 AND at least one `required` mention**. "Show all" lifts both filters.
 - **Skill → jobs index:** map each `canonical` to the jobs that list it (powers click-to-filter).
+- **Canonical → raw variants:** for each `canonical`, the set of distinct `raw_text` values that mapped to it across all jobs. Powers the "merged from" reveal (see Interactions).
 
 ## Components (one per panel)
 - `App` — fetches `jobs.json` once; holds `jobs`, `selectedSkill`, `showAll`; derives the rest.
 - `StatsBar` — three numbers from derived stats.
-- `SkillsChart` — horizontal ranked bars; respects `showAll`; a bar is clickable → sets `selectedSkill`.
+- `SkillsChart` — horizontal ranked bars; respects `showAll`; a bar is clickable → sets `selectedSkill`; hovering a bar shows a tooltip with the count + "merged from: <raw variants>" (the normalization reveal).
 - `JobList` — rows of jobs; if `selectedSkill` set, filtered to jobs with that skill; row click expands detail.
 - `JobDetail` (inline expand) — the job's skills as chips (required = solid, nice-to-have = outlined), the summary, and seniority with its signal on hover.
 
 ## Interactions (precise)
 - **Filter toggle:** default = required-only + freq ≥ 2. "Show all" lifts both. Document frequency is always the bar metric.
 - **Click a skill bar →** Jobs list filters to jobs wanting that skill; the bar shows selected; a "clear" chip appears. Click again / clear → unfilter.
+- **Hover a skill bar → show the normalization (the "show-the-seams" moment).** A tooltip shows the canonical name, its job count, and **"merged from: \<raw variants\>"** — e.g. *RAG · 9 jobs · merged from: retrieval-augmented generation, RAG, RAG pipelines.* This surfaces the extraction/normalization — the load-bearing technical work — instead of hiding it behind a clean bar, so judges can see the clever part. Omit the "merged from" line when a skill has only one raw form. (Click still = filter.)
 - **Click a job row →** expands inline to its skills (chips) + summary; the seniority label shows, and if `seniority_basis` is `inferred` it's marked (a trailing `~` or an "inferred" tag) with `seniority_signal` on hover. (The plan's "show the reasoning, don't just assert.")
 - **Nulls:** missing company/title render as a muted "—", never blank or guessed.
 

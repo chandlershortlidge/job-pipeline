@@ -15,6 +15,19 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-25 07:58 — Make normalization visible ("merged from" reveal)
+
+**Decision:** Added a hover tooltip on each skill bar showing **"merged from: \<raw variants\>"**
+(the distinct `raw_text` values that mapped to that canonical skill), in `frontend-spec.md`.
+
+**Why:** The front end showed the clean *output* but hid the *hard part* — extraction +
+normalization. A judge seeing tidy bars might think "they just counted words." Surfacing the
+raw→canonical merge turns the load-bearing technical work into something visible and rewardable.
+Cheap to build (`raw_text` is already in the data); it's the front-end's "show the seams" moment,
+the chart-level twin of the seniority-signal-on-hover. Hover = reveal; click stays = filter jobs.
+
+---
+
 ## 2026-06-24 13:47 — Front-end layout locked: single-column stacked
 
 **Decision:** The dashboard is one centered column — stats bar, skills bar chart (the hero),
