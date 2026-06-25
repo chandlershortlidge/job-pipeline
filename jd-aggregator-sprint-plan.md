@@ -216,7 +216,7 @@ demo, not forwards from the start — the deadline is the anchor, everything els
 | 16:15–16:30 | **Phase 3d — click-to-filter** | Job → its skills, skill → its jobs. Deploy. (First thing to cut if behind.) |
 | **16:30** | **🛑 HARD STOP — stop building** | No new code or features past this line, no matter what. |
 | 16:30–16:45 | **Freeze + stranger test** | Redeploy from a clean `main`. Open the live URL in a **fresh incognito window** and click through it **as a stranger would** — nothing cached, nothing assumed. Fix only show-stoppers. |
-| 16:45–17:00 | **Demo prep + buffer** | Rehearse the 2-minute story, URL open in a tab. Buffer for Wi-Fi / nerves. |
+| 16:45–17:00 | **Demo prep + buffer** | Rehearse the 2-minute story (script: `demo-script.md`), URL open in a tab. Buffer for Wi-Fi / nerves. |
 | **17:00** | **Demo + judging** | |
 
 **The rule that overrides the table:** if you're behind at any checkpoint, cut **upward

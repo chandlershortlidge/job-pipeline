@@ -15,6 +15,24 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-25 08:02 — Demo script drafted (2-min pitch, degrades with the build)
+
+**Artifact:** `demo-script.md` — a ~2-min live pitch with three beats (problem→question; chart +
+"merged from" normalization reveal; live Daytona drop-in), plus a 20-sec elevator version, a
+degraded-demo fallback, and delivery/safety tips.
+
+**Key calls:**
+- Lead the "proud moment" on the **normalization reveal** — show the tech, not polish.
+- **Name-drop Daytona explicitly** in the climax (the live drop-in) for the sponsor prize.
+- Structure the pitch to **degrade exactly as the build does** — drop the drop-in, then the
+  click-through, then everything but chart + stats — so there's always a coherent demo.
+- **End on the part-2 vision** (the shared-job-model join), not on a feature.
+
+**Safety:** record a 90-sec backup screen capture at ~16:30 (after the freeze); have a fresh,
+non-corpus screenshot ready for the live drop-in; URL open in a tab before presenting.
+
+---
+
 ## 2026-06-25 07:58 — Make normalization visible ("merged from" reveal)
 
 **Decision:** Added a hover tooltip on each skill bar showing **"merged from: \<raw variants\>"**
