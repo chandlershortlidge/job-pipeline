@@ -31,9 +31,26 @@ SPLITS = {
 ALIASES = {
     "llm apis": "LLMs",
     "llm orchestration": "LLMs",
+    "generative ai": "LLMs",            # gen AI in these JDs = LLM-based (domain call)
     "apache airflow": "Airflow",
     "version control": "Git",
     "github": "Git",
+    # Evaluation — the model scattered it across many canonicals; consolidate.
+    "ai evaluation": "Evaluation",
+    "ai evaluation & benchmarking": "Evaluation",
+    "ai evaluation & observability": "Evaluation",
+    "ai output evaluation": "Evaluation",
+    "model evaluation": "Evaluation",
+    "evaluation frameworks": "Evaluation",
+    "llm evaluation": "Evaluation",
+    # Monitoring / observability — same scattering.
+    "ai observability": "Observability",
+    "ai observability & monitoring": "Observability",
+    "model monitoring": "Observability",
+    "monitoring": "Observability",
+    "monitoring & observability": "Observability",
+    # Fine-tuning (clearly the same skill)
+    "llm fine-tuning": "Fine-tuning",
 }
 
 
