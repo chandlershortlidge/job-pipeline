@@ -54,11 +54,14 @@ ranking (score = matched/required, top 6) + matched/missing chips + "extra skill
 appended below the existing dashboard (touches nothing above). Match logic verified on real
 data: top match "AI Application Engineer" 75%, ranking degrades sensibly, all 20 jobs ranked.
 
-**KNOWN LIMITATION (deferred, revisit):** the canonical "LLMs" shows as *missing* on almost
-every job — the résumé extraction emits specific LLM tools (OpenAI API, LangChain, RAG) but no
-umbrella "LLMs" skill, while most JDs *require* "LLMs". Match math is correct; this is a
-résumé-side normalization gap. Accepted for now (under-matching is the safe direction); options
-to revisit: nudge the résumé prompt to emit umbrella terms, or a conservative alias.
+**"LLMs" inference — RESOLVED (deterministic code rule).** Problem: "LLMs" rarely appears
+literally on a résumé even when the candidate clearly does LLM work, so it showed as *missing*
+on ~19/20 jobs. Chose the **code rule over a prompt nudge** — the project's normalize-in-code
+principle (09:26) distrusts prompt-based inference because it's nondeterministic; the same
+"infer from other skills" goal done in code is consistent every run. `addInferredLLMs()` in
+`resume.js`: if the résumé carries a strong LLM-signal skill (RAG, LangChain, LangGraph,
+LangSmith, LlamaIndex, Prompt engineering, Fine-tuning, Tool calling, Agents, OpenAI API), add
+"LLMs". Verified on the real CV: top match 75%→88%, "AI Engineer (LLM)" +25, all lifts sensible.
 
 ---
 
