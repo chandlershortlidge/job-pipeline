@@ -15,6 +15,28 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 12:37 — Daytona live drop-in backend built & proven
+
+`dashboard/api/extract.js` now runs the **real extraction inside a Daytona sandbox** and is proven
+end-to-end locally on a real screenshot (Netconomy → parsed job in ~15s).
+
+**Key resolved open question:** the sandbox runs Python **stdlib `urllib`** to call the Anthropic API
+directly — **no pip install**, so the sandbox needs nothing pre-baked and boots fast. (Confirmed the
+sandbox has outbound internet.) Image base64 (~320 KB) embeds fine in the code string via
+double-JSON-encoding.
+
+**Live-job normalization:** the function applies the same map (`canonicalMap.js`, emitted by
+`normalize.py`) + a parenthetical-strip + a few synonym aliases (RAG / Agents / Gen AI variants), so an
+upload increments the *right* bars. Novel long-tail skills stay count-1 (hidden below the ≥2 threshold) —
+acceptable; perfect normalization of an unseen job is the same unbounded problem.
+
+**Contract:** `POST {image, media_type}` → `{job}` (jobs.json shape). Front-end builds the upload UI to this.
+
+**REMAINING:** add **`ANTHROPIC_API_KEY` to Vercel env vars** for the *deployed* endpoint (DAYTONA_API_KEY
+already set). Proven locally; deployed path untested until that key is added.
+
+---
+
 ## 2026-06-26 12:20 — Seniority reworked: a chart "compare by level" view, not a job-list filter
 
 **Decision:** Moved the seniority buttons from below the chart to **above it**, and changed what
