@@ -15,6 +15,45 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 12:20 — Seniority reworked: a chart "compare by level" view, not a job-list filter
+
+**Decision:** Moved the seniority buttons from below the chart to **above it**, and changed what
+they do. They're now a color-coded view selector — All (blue/global), Junior (green), Mid (amber),
+Senior (red) — that **re-scopes the skills chart** to the selected level's jobs (recomputing
+document frequency over just that subset) and recolors the bars to match. The job list below still
+filters to the selected level too (that behavior was kept).
+
+**Why:** The first version (a filter that only changed the job list) wasn't intuitive — the useful
+question is "how do skill priorities differ by seniority," which is a *chart* comparison, not a
+list filter. This makes the contrast visible: Junior → fundamentals (LLMs, Python, Vector DBs);
+Senior → cloud/infra (AWS, GCP) climbs into the top.
+
+**Threshold call:** Kept the existing required-only + freq≥2 chart filter for every level rather
+than special-casing small subsets. Checked it against the real data first: at ≥2 the levels give
+3 (Junior) / 16 (Mid) / 12 (Senior) bars — all non-empty and readable, so no special case needed.
+Added an empty-state message as a guard for future data.
+
+**Scope kept narrow:** stats bar stays global (corpus summary); only the chart + job list re-scope.
+
+---
+
+## 2026-06-26 11:56 — Seniority filter added to the job list
+
+**Decision:** Added a Junior / Mid / Senior filter to the dashboard job list. Each button is a
+toggle (click the active one, or "all", to clear). It reads `seniority` straight from the data —
+no recompute — and the per-level counts shown on the buttons reflect the current skill filter.
+
+**Scope note:** `frontend-spec.md` lists "faceted filtering by role/seniority" as *out of scope
+for v0*. This was an explicit, post-v0 request, so it's a deliberate override of that cut, not
+scope drift. Kept minimal and built on the existing toggle/clear/selection idiom — no redesign.
+
+**How it composes:** skill filter narrows first, seniority narrows within that (both apply to the
+shown jobs). Seniority filter only touches the job list; the skills chart is unchanged. Jobs with
+a null `seniority` (allowed by the contract) simply don't match any level and drop out when a
+level is selected.
+
+---
+
 ## 2026-06-26 11:56 — Alias map extended to consolidate scattered skills
 
 After eyeballing the real chart, extended the deterministic alias map (`normalize.py`):

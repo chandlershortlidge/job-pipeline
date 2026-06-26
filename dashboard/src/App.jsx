@@ -1,9 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
+// Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
+// "All" (no level) keeps the default global indigo.
+const GLOBAL_COLOR = '#4f46e5'
+const SENIORITY_LEVELS = [
+  { level: 'Junior', color: '#16a34a' },
+  { level: 'Mid', color: '#d97706' },
+  { level: 'Senior', color: '#dc2626' },
+]
+
 export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
+  const [selectedSeniority, setSelectedSeniority] = useState(null)
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
@@ -25,9 +35,16 @@ export default function App() {
       for (const s of j.skills) skillSet.add(s.canonical)
     }
 
-    // document frequency: distinct jobs per canonical skill
+    // jobs per level, for the view-selector buttons (seniority read from data, not recomputed)
+    const senCounts = { Junior: 0, Mid: 0, Senior: 0 }
+    for (const j of jobs) {
+      if (Object.hasOwn(senCounts, j.seniority)) senCounts[j.seniority] += 1
+    }
+
+    // document frequency: distinct jobs per canonical skill, scoped to the selected seniority view
     const counts = {}
     for (const j of jobs) {
+      if (selectedSeniority && j.seniority !== selectedSeniority) continue
       const seen = new Set()
       for (const s of j.skills) {
         if (!showAll && s.requirement !== 'required') continue
@@ -44,11 +61,12 @@ export default function App() {
     return {
       jobs,
       variants,
+      senCounts,
       stats: { jobs: jobs.length, skills: skillSet.size, companies: companySet.size },
       chart,
       max,
     }
-  }, [data, showAll])
+  }, [data, showAll, selectedSeniority])
 
   if (!derived) {
     return (
@@ -58,10 +76,16 @@ export default function App() {
     )
   }
 
-  const { jobs, variants, stats, chart, max } = derived
-  const shownJobs = selectedSkill
-    ? jobs.filter((j) => j.skills.some((s) => s.canonical === selectedSkill))
-    : jobs
+  const { jobs, variants, senCounts, stats, chart, max } = derived
+  const activeColor = selectedSeniority
+    ? SENIORITY_LEVELS.find((s) => s.level === selectedSeniority).color
+    : GLOBAL_COLOR
+  // The job list composes both filters: the clicked skill AND the selected seniority.
+  const shownJobs = jobs.filter(
+    (j) =>
+      (!selectedSkill || j.skills.some((s) => s.canonical === selectedSkill)) &&
+      (!selectedSeniority || j.seniority === selectedSeniority),
+  )
 
   return (
     <div className="app">
@@ -89,8 +113,38 @@ export default function App() {
       </section>
 
       <section className="chart">
+        <div className="sen-view">
+          <span className="sen-view-label">Compare by level:</span>
+          <button
+            className={'sen-chip' + (selectedSeniority === null ? ' active' : '')}
+            style={{ '--chip-color': GLOBAL_COLOR }}
+            aria-pressed={selectedSeniority === null}
+            onClick={() => setSelectedSeniority(null)}
+          >
+            All <span className="sen-chip-n">{stats.jobs}</span>
+          </button>
+          {SENIORITY_LEVELS.map(({ level, color }) => (
+            <button
+              key={level}
+              className={'sen-chip' + (selectedSeniority === level ? ' active' : '')}
+              style={{ '--chip-color': color }}
+              aria-pressed={selectedSeniority === level}
+              onClick={() => setSelectedSeniority(level)}
+            >
+              {level} <span className="sen-chip-n">{senCounts[level]}</span>
+            </button>
+          ))}
+        </div>
         <div className="chart-head">
-          <h2>Most-wanted skills</h2>
+          <h2>
+            Most-wanted skills
+            {selectedSeniority && (
+              <span className="chart-scope" style={{ color: activeColor }}>
+                {' · '}
+                {selectedSeniority}
+              </span>
+            )}
+          </h2>
           <label className="toggle">
             <input
               type="checkbox"
@@ -101,31 +155,36 @@ export default function App() {
           </label>
         </div>
         <p className="hint">
-          {showAll
-            ? 'All skills (required + nice-to-have).'
-            : 'Required skills wanted by 2+ jobs.'}{' '}
-          Hover a bar to see what merged into it; click to filter the jobs below.
+          {showAll ? 'All skills (required + nice-to-have)' : 'Required skills wanted by 2+ jobs'}
+          {selectedSeniority ? ` at ${selectedSeniority} level` : ''}. Hover a bar to see what
+          merged into it; click to filter the jobs below.
         </p>
-        <ul className="bars">
-          {chart.map((d) => (
-            <li
-              key={d.skill}
-              className={'bar-row' + (selectedSkill === d.skill ? ' selected' : '')}
-              onClick={() => setSelectedSkill(selectedSkill === d.skill ? null : d.skill)}
-            >
-              <span className="bar-label">{d.skill}</span>
-              <span className="bar-track">
-                <span className="bar-fill" style={{ width: `${(d.count / max) * 100}%` }} />
-              </span>
-              <span className="bar-count">{d.count}</span>
-              {variants[d.skill] && (
-                <span className="tooltip">
-                  <strong>{d.skill}</strong> merged from: {variants[d.skill].join(', ')}
+        {chart.length === 0 ? (
+          <p className="empty">
+            No required skills appear in 2+ {selectedSeniority} jobs — try “show all”.
+          </p>
+        ) : (
+          <ul className="bars" style={{ '--bar-color': activeColor }}>
+            {chart.map((d) => (
+              <li
+                key={d.skill}
+                className={'bar-row' + (selectedSkill === d.skill ? ' selected' : '')}
+                onClick={() => setSelectedSkill(selectedSkill === d.skill ? null : d.skill)}
+              >
+                <span className="bar-label">{d.skill}</span>
+                <span className="bar-track">
+                  <span className="bar-fill" style={{ width: `${(d.count / max) * 100}%` }} />
                 </span>
-              )}
-            </li>
-          ))}
-        </ul>
+                <span className="bar-count">{d.count}</span>
+                {variants[d.skill] && (
+                  <span className="tooltip">
+                    <strong>{d.skill}</strong> merged from: {variants[d.skill].join(', ')}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="jobs">
