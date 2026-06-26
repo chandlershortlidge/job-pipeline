@@ -126,10 +126,9 @@ export default function App() {
   return (
     <div className="app">
       <header>
-        <h1>JD Skills Aggregator</h1>
+        <h1>AI Engineer Skills in Demand</h1>
         <p className="sub">
-          What is the AI job market prioritizing? — extracted from {stats.jobs} real
-          job-description screenshots.
+          What is the AI job market prioritizing? Click any skill to see the roles that want it.
         </p>
       </header>
 
