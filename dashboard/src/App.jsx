@@ -180,7 +180,7 @@ export default function App() {
   return (
     <div className="app">
       <header>
-        <h1>AI Engineer Skills in Demand</h1>
+        <h1>See what AI employers want</h1>
         <p className="sub">
           What is the AI job market prioritizing? Click any skill to see the roles that want it.
         </p>
