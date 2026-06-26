@@ -220,3 +220,10 @@ __marimo__/
 # Local JD screenshots (de-risk corpus) — keep them off GitHub, but track the folder
 scratch/screenshots/*
 !scratch/screenshots/.gitkeep
+
+# Local resumes (personal CVs — never commit to the public repo)
+scratch/resumes/
+
+# Node deps (Daytona de-risk script, etc.) — never commit
+node_modules/
+.

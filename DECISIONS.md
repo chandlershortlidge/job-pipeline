@@ -15,6 +15,38 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 14:06 — Resume-match stretch: backend built & proven (Steps 1–2)
+
+New additive stretch: upload your own resume (PDF) → see which jobs you match, ranked, with
+matched/missing skills. Plan in `resume-match-plan.md`. Gated like the JD drop-in — the
+deployed product never depends on it.
+
+**Input = PDF (verified the right call).** The Messages API reads PDFs **natively** via a
+`document` content block (no PDF-parsing code, no beta header; 32MB/600-page limits, our
+sonnet-4-6 is 1M-context). Earlier I'd rated PDF "high risk" assuming a parsing step — that
+assumption was wrong; PDF is nearly identical effort to the proven image path.
+
+**De-risked on a real CV (Step 1, `scratch/resume_probe.mjs`):** PDF base64 (~109KB) embeds
+into the Daytona sandbox code string fine; the `document` block works through the sandbox's
+stdlib-urllib call; resume prompt returns sane technical skills, no soft-skill noise.
+
+**Backend built & proven (Step 2, `dashboard/api/resume.js`):** SEPARATE file from
+`extract.js` so the working drop-in can't regress. Reuses `canonicalMap.js` + the same
+normalize logic. Run locally through the real handler on the CV → HTTP 200 + normalized
+profile whose canonicals (RAG, AWS, Evaluation, APIs, Vector Databases) match the job
+vocabulary. Simulated match: 13 of ~25 resume skills hit a REQUIRED job skill.
+
+**Contract:** `POST /api/match-resume {pdf, media_type}` → `{profile:{title,
+years_experience, skills:[{canonical, raw_text}]}}`. Match runs client-side against jobs.json.
+
+**Decisions:** score = % of a job's REQUIRED skills the candidate has (extra skills never
+hurt the score); resume skills matching no job shown as an honest "extra skills" line.
+
+**REMAINING:** Step 3 deploy + curl the live endpoint; Step 4 front-end (upload + match +
+results). Deployed path untested for this endpoint until pushed.
+
+---
+
 ## 2026-06-26 13:04 — Live Daytona drop-in COMPLETE (UI + backend, verified in browser)
 
 The full sponsor showcase works on the deployed URL: upload a screenshot → "Parsing in a Daytona
