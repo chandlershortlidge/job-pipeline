@@ -31,9 +31,45 @@ SPLITS = {
 ALIASES = {
     "llm apis": "LLMs",
     "llm orchestration": "LLMs",
+    "generative ai": "LLMs",            # gen AI in these JDs = LLM-based (domain call)
     "apache airflow": "Airflow",
     "version control": "Git",
     "github": "Git",
+    # Evaluation — the model scattered it across many canonicals; consolidate.
+    "ai evaluation": "Evaluation",
+    "ai evaluation & benchmarking": "Evaluation",
+    "ai evaluation & observability": "Evaluation",
+    "ai output evaluation": "Evaluation",
+    "model evaluation": "Evaluation",
+    "evaluation frameworks": "Evaluation",
+    "llm evaluation": "Evaluation",
+    # Monitoring / observability — same scattering.
+    "ai observability": "Observability",
+    "ai observability & monitoring": "Observability",
+    "model monitoring": "Observability",
+    "monitoring": "Observability",
+    "monitoring & observability": "Observability",
+    # Fine-tuning (clearly the same skill)
+    "llm fine-tuning": "Fine-tuning",
+    # APIs (generic) — keep FastAPI and LLM APIs separate
+    "api design": "APIs",
+    "api development": "APIs",
+    "api integration": "APIs",
+    "api integrations": "APIs",
+    "apis": "APIs",
+    "rest apis": "APIs",
+    "restful apis": "APIs",
+    # Testing (QA) — keep A/B Testing separate
+    "test automation": "Testing",
+    "automated testing": "Testing",
+    "integration testing": "Testing",
+    "debugging & testing": "Testing",
+    # Cloud (generic) — GCP / AWS / Azure stay separate
+    "cloud infrastructure": "Cloud",
+    "cloud platforms": "Cloud",
+    # Data pipelines (generic) — keep Airflow / Prefect / dbt as their own bars
+    "etl pipelines": "Data pipelines",
+    "data pipelines": "Data pipelines",
 }
 
 

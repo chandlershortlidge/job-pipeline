@@ -54,6 +54,26 @@ level is selected.
 
 ---
 
+## 2026-06-26 11:56 — Alias map extended to consolidate scattered skills
+
+After eyeballing the real chart, extended the deterministic alias map (`normalize.py`):
+- **Generative AI → LLMs** (domain call: gen AI in these AI-Engineer JDs = LLM-based).
+- **Evaluation** — the model scattered it across `AI Evaluation`, `Model Evaluation`,
+  `AI output evaluation`, `evaluation frameworks`, etc. → consolidated to "Evaluation"
+  (now a real bar at 5 jobs, was invisible before).
+- **Observability** — same scatter (`Monitoring`, `Model monitoring`, `AI observability`...)
+  → "Observability" (4).
+- **Fine-tuning** — `LLM fine-tuning` → "Fine-tuning".
+
+Then, per review, also bucketed generic **APIs / Testing / Cloud / Data pipelines** (keeping
+specific tools — FastAPI, A/B Testing, GCP/AWS/Azure, Airflow/Prefect/dbt — as their own bars).
+APIs jumped to a top-7 bar (7). Principle held throughout: under-merge is safe, over-merge is the
+error a judge catches — so only generic terms were bucketed, never distinct tools.
+
+Note: extraction was re-run (new `data/extracted.json`, 09:11), so unrelated counts also shifted.
+
+---
+
 ## 2026-06-25 08:02 — Demo script drafted (2-min pitch, degrades with the build)
 
 **Artifact:** `demo-script.md` — a ~2-min live pitch with three beats (problem→question; chart +

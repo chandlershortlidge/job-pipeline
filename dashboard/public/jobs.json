@@ -47,7 +47,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API development",
+          "canonical": "APIs",
           "raw_text": "Strong understanding of modern application architecture and API development",
           "requirement": "required"
         },
@@ -104,7 +104,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API architecture",
           "requirement": "required"
         },
@@ -156,7 +156,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "evaluation frameworks",
+          "canonical": "Evaluation",
           "raw_text": "evaluation frameworks",
           "requirement": "required"
         },
@@ -176,7 +176,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "debugging & testing",
+          "canonical": "Testing",
           "raw_text": "debugging and testing practices",
           "requirement": "required"
         },
@@ -208,7 +208,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "AI output evaluation",
+          "canonical": "Evaluation",
           "raw_text": "Strong understanding of how to design, test, validate, and improve AI outputs",
           "requirement": "required"
         },
@@ -285,7 +285,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API design and testing",
           "requirement": "required"
         },
@@ -315,12 +315,12 @@
           "requirement": "required"
         },
         {
-          "canonical": "Model Evaluation",
+          "canonical": "Evaluation",
           "raw_text": "model evaluation",
           "requirement": "required"
         },
         {
-          "canonical": "Monitoring",
+          "canonical": "Observability",
           "raw_text": "monitoring",
           "requirement": "required"
         }
@@ -362,7 +362,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Model monitoring",
+          "canonical": "Observability",
           "raw_text": "infrastructure for evaluation, monitoring and continuous model improvement",
           "requirement": "required"
         },
@@ -394,7 +394,7 @@
       "source": "screenshot",
       "skills": [
         {
-          "canonical": "Generative AI",
+          "canonical": "LLMs",
           "raw_text": "Generative AI solutions",
           "requirement": "required"
         },
@@ -454,12 +454,12 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "AI Evaluation",
+          "canonical": "Evaluation",
           "raw_text": "AI evaluation frameworks",
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "Integration Testing",
+          "canonical": "Testing",
           "raw_text": "writing integration tests",
           "requirement": "nice_to_have"
         },
@@ -501,7 +501,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "REST APIs",
+          "canonical": "APIs",
           "raw_text": "Experience building and integrating REST APIs (e.g., FastAPI/Flask) for AI services",
           "requirement": "required"
         },
@@ -643,7 +643,7 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "Cloud infrastructure",
+          "canonical": "Cloud",
           "raw_text": "Familiarity with cloud infrastructure (we provision VMs and networks dynamically per exercise)",
           "requirement": "nice_to_have"
         },
@@ -864,12 +864,12 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "AI evaluation & benchmarking",
+          "canonical": "Evaluation",
           "raw_text": "measuring, evaluating, and optimizing AI system performance with clear metrics and benchmarking",
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "AI observability & monitoring",
+          "canonical": "Observability",
           "raw_text": "observability and monitoring solutions for AI systems",
           "requirement": "nice_to_have"
         },
@@ -951,17 +951,17 @@
           "requirement": "required"
         },
         {
-          "canonical": "Test automation",
+          "canonical": "Testing",
           "raw_text": "test automation",
           "requirement": "required"
         },
         {
-          "canonical": "API integration",
+          "canonical": "APIs",
           "raw_text": "APIs, tools, and enterprise systems integration",
           "requirement": "required"
         },
         {
-          "canonical": "AI evaluation & observability",
+          "canonical": "Evaluation",
           "raw_text": "evaluations for output quality, observability for runtime behaviour, cost tracking",
           "requirement": "required"
         },
@@ -1028,11 +1028,6 @@
           "requirement": "required"
         },
         {
-          "canonical": "Generative AI",
-          "raw_text": "Generative AI applications",
-          "requirement": "required"
-        },
-        {
           "canonical": "Data Visualization",
           "raw_text": "data visualization",
           "requirement": "required"
@@ -1077,11 +1072,6 @@
         {
           "canonical": "Machine Learning",
           "raw_text": "machine learning",
-          "requirement": "required"
-        },
-        {
-          "canonical": "Generative AI",
-          "raw_text": "generative AI",
           "requirement": "required"
         },
         {
@@ -1197,7 +1187,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "LLM fine-tuning",
+          "canonical": "Fine-tuning",
           "raw_text": "fine-tuning and evaluation of LLM pipelines",
           "requirement": "required"
         },
@@ -1222,7 +1212,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Cloud Platforms",
+          "canonical": "Cloud",
           "raw_text": "cloud platforms (AWS, Azure or GCP)",
           "requirement": "required"
         },
@@ -1242,7 +1232,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "AI Observability",
+          "canonical": "Observability",
           "raw_text": "AI observability tools",
           "requirement": "required"
         },
@@ -1304,7 +1294,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "ETL pipelines",
+          "canonical": "Data pipelines",
           "raw_text": "ETL/ELT pipeline design",
           "requirement": "nice_to_have"
         },
@@ -1319,7 +1309,7 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "API integrations",
+          "canonical": "APIs",
           "raw_text": "API integrations",
           "requirement": "nice_to_have"
         },
@@ -1386,7 +1376,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API design",
           "requirement": "required"
         },
@@ -1411,12 +1401,12 @@
           "requirement": "required"
         },
         {
-          "canonical": "AI Evaluation",
+          "canonical": "Evaluation",
           "raw_text": "AI systems thinking: Experience designing evaluation methodologies",
           "requirement": "required"
         },
         {
-          "canonical": "Automated Testing",
+          "canonical": "Testing",
           "raw_text": "automated testing frameworks",
           "requirement": "required"
         },
@@ -1436,7 +1426,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Monitoring & Observability",
+          "canonical": "Observability",
           "raw_text": "monitoring, error handling, and quality assurance",
           "requirement": "required"
         }
@@ -1615,7 +1605,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Data Pipelines",
+          "canonical": "Data pipelines",
           "raw_text": "Data pipelines and validation",
           "requirement": "required"
         },
@@ -1664,9 +1654,9 @@
       "AI / LLM-based applications",
       "Anthropic APIs",
       "GenAI",
-      "Hands-on LLM experience",
-      "LLM APIs",
-      "LLM APIs (OpenAI, Anthropic, etc.)"
+      "Generative AI applications",
+      "Generative AI solutions",
+      "Hands-on LLM experience"
     ],
     "LangChain": [
       "LangChain/LlamaIndex"
@@ -1681,6 +1671,12 @@
     ],
     "FastAPI": [
       "FastAPI/Flask"
+    ],
+    "APIs": [
+      "API architecture",
+      "API design",
+      "API design and testing",
+      "API integrations"
     ],
     "Agents": [
       "AI agents",
@@ -1713,15 +1709,19 @@
     "n8n": [
       "n8n/Make/Zapier"
     ],
-    "API Design": [
-      "API architecture",
-      "API design and testing"
+    "Evaluation": [
+      "AI evaluation frameworks",
+      "evaluation frameworks",
+      "model evaluation"
     ],
     "automation/integrations": [
       "building automations or integrations"
     ],
-    "debugging & testing": [
-      "debugging and testing practices"
+    "Testing": [
+      "automated testing frameworks",
+      "debugging and testing practices",
+      "test automation",
+      "writing integration tests"
     ],
     "German language": [
       "German language skills"
@@ -1733,6 +1733,10 @@
       "Tool Use",
       "tool/function calling"
     ],
+    "Observability": [
+      "AI observability tools",
+      "monitoring"
+    ],
     "AI/ML ecosystem": [
       "familiarity with the AI/ML ecosystem"
     ],
@@ -1740,10 +1744,6 @@
       "basic software engineering workflows",
       "software development workflows",
       "strong software engineering fundamentals"
-    ],
-    "Generative AI": [
-      "Generative AI applications",
-      "Generative AI solutions"
     ],
     "LangGraph": [
       "LangGraph or similar frameworks"
@@ -1759,12 +1759,6 @@
     ],
     "Model Development": [
       "custom model development"
-    ],
-    "AI Evaluation": [
-      "AI evaluation frameworks"
-    ],
-    "Integration Testing": [
-      "writing integration tests"
     ],
     "Docker": [
       "Experience working with Docker"
@@ -1795,6 +1789,9 @@
     "Databricks": [
       "Experience working with Databricks"
     ],
+    "Cloud": [
+      "cloud platforms (AWS, Azure or GCP)"
+    ],
     "TensorFlow": [
       "TensorFlow or PyTorch"
     ],
@@ -1817,20 +1814,12 @@
     "German": [
       "German (Nice-to-have)"
     ],
-    "Cloud Platforms": [
-      "cloud platforms (AWS, Azure or GCP)"
-    ],
-    "AI Observability": [
-      "AI observability tools"
-    ],
-    "ETL pipelines": [
+    "Data pipelines": [
+      "Data pipelines and validation",
       "ETL/ELT pipeline design"
     ],
     "BigQuery": [
       "BigQuery/Snowflake"
-    ],
-    "Automated Testing": [
-      "automated testing frameworks"
     ],
     "Performance Optimization": [
       "performance optimization at scale"
@@ -1840,9 +1829,6 @@
     ],
     "PySpark": [
       "Spark/PySpark"
-    ],
-    "Data Pipelines": [
-      "Data pipelines and validation"
     ],
     "AI Architecture": [
       "AI solution architecture"
