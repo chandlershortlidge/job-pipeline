@@ -30,10 +30,21 @@ JD screenshots ──(Python + vision model, structured JSON)──▶ normalize
                                                                               │
                                                        deployed on Vercel (one URL)
 ```
-- **Extraction** runs offline as a Python script using a model SDK in structured-output mode (Pydantic schema). No live backend for the core product — it writes a static `jobs.json`.
-- **Normalization** is a deterministic post-processing step (canonical alias map + case-fold + slash-list split) — *not* a prompt instruction, because per-job extraction can't be globally consistent (see `DECISIONS.md`).
-- **Dashboard** is Vite + React reading the static JSON; charts via Recharts.
-- **Live drop-in** adds one Vercel serverless function that runs the extraction in a Daytona sandbox — same repo, no separate host.
+
+**The pipeline, step by step:**
+1. **Extract (per screenshot).** A Python script loops the ~20 screenshots; for each it calls a vision model and gets back structured data — company, title, seniority (+ the evidence), summary, and a list of skills, each as `raw_text` (as written) + a `canonical` guess + required/nice-to-have.
+2. **Pool** the raw skills from every job into one list.
+3. **Normalize — deterministically, once.** Plain Python over the whole pool: split slash-lists ("GCP/AWS/Azure" → 3 skills) → case-fold ("Vector Databases" = "vector databases") → apply a hand-written canonical alias map ("large language models" → "LLMs"). Same input, same output, every run.
+4. **Aggregate.** Count how many jobs mention each canonical skill (document frequency) and build the skill↔job indexes.
+5. **Write `jobs.json`** to `dashboard/public/`.
+6. **Render.** The React app reads `/jobs.json` and draws the dashboard.
+
+**Where's the AI vs. the plain code?** The AI reads the messy images; deterministic Python makes the results consistent and counts them. The model is the "smart but inconsistent" step; the code is the "consistent bookkeeping" step. Why the split: each screenshot is extracted on its own, so the model can't be consistent across the set (and isn't even repeatable run to run) — see `DECISIONS.md`.
+
+**Notes:**
+- No live backend for the core product — extraction runs offline and writes a static `jobs.json`.
+- The **live drop-in** (stretch) adds one Vercel serverless function that runs the extraction in a **Daytona** sandbox — same repo, no separate host.
+- Frontend: Vite + React, charts via Recharts.
 
 ## Tech stack
 - **Extraction:** Python, `openai` / `anthropic` SDK (provider-agnostic), Pydantic, uv
