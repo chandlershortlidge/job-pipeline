@@ -279,3 +279,49 @@ footer {
   font-size: 0.75rem;
   text-align: center;
 }
+
+/* live drop-in upload control */
+.upload {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+.upload-btn {
+  display: inline-block;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.upload-btn:hover {
+  background: #4338ca;
+}
+.upload-btn.busy {
+  background: #8b86d6;
+  cursor: progress;
+}
+.upload-hint {
+  color: #999;
+  font-size: 0.8rem;
+}
+.upload-err {
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+.live-badge {
+  margin-left: 7px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #16a34a;
+  background: #dcfce7;
+  border-radius: 4px;
+  padding: 1px 5px;
+  vertical-align: middle;
+}

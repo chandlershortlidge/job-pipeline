@@ -10,11 +10,23 @@ const SENIORITY_LEVELS = [
   { level: 'Senior', color: '#dc2626' },
 ]
 
+// Read a File into a base64 string (no data: prefix) for POSTing to /api/extract.
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result).split(',')[1])
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
   const [selectedSeniority, setSelectedSeniority] = useState(null)
   const [showAll, setShowAll] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState(null)
 
   useEffect(() => {
     fetch('/jobs.json')
@@ -22,6 +34,30 @@ export default function App() {
       .then(setData)
       .catch((e) => console.error('failed to load jobs.json', e))
   }, [])
+
+  // Live drop-in: parse an uploaded screenshot in a Daytona sandbox, prepend the job.
+  async function handleUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadError(null)
+    setUploading(true)
+    try {
+      const image = await fileToBase64(file)
+      const res = await fetch('/api/extract', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ image, media_type: file.type || 'image/png' }),
+      })
+      const payload = await res.json()
+      if (!res.ok || !payload.job) throw new Error(payload.error || 'extraction failed')
+      setData((prev) => ({ ...prev, jobs: [payload.job, ...prev.jobs] }))
+    } catch (err) {
+      setUploadError(String(err.message || err))
+    } finally {
+      setUploading(false)
+      e.target.value = '' // allow re-uploading the same file
+    }
+  }
 
   const derived = useMemo(() => {
     if (!data) return null
@@ -110,6 +146,15 @@ export default function App() {
           <strong>{stats.companies}</strong>
           <span>companies</span>
         </div>
+      </section>
+
+      <section className="upload">
+        <label className={'upload-btn' + (uploading ? ' busy' : '')}>
+          {uploading ? 'Parsing in a Daytona sandbox…' : '+ add a screenshot'}
+          <input type="file" accept="image/*" onChange={handleUpload} disabled={uploading} hidden />
+        </label>
+        <span className="upload-hint">parsed live in a Daytona sandbox</span>
+        {uploadError && <span className="upload-err">⚠ {uploadError}</span>}
       </section>
 
       <section className="chart">
@@ -216,7 +261,10 @@ function JobRow({ job }) {
   return (
     <li className="job">
       <button className="job-head" onClick={() => setOpen((o) => !o)}>
-        <span className="job-co">{job.company || '—'}</span>
+        <span className="job-co">
+          {job.company || '—'}
+          {job.id?.startsWith('live-') && <span className="live-badge">live</span>}
+        </span>
         <span className="job-title">{job.title || '—'}</span>
         <span className="job-sen">
           {job.seniority || '—'}
