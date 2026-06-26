@@ -156,7 +156,10 @@ export default async function handler(req, res) {
   let sandbox
   try {
     const daytona = new Daytona({ apiKey: daytonaKey })
-    sandbox = await daytona.create({ language: 'python' })
+    // ephemeral + short auto-stop = the sandbox self-deletes even if this function
+    // never reaches the explicit delete() below (timeout/error/overlap). Prevents the
+    // disk-limit leak from sandboxes piling up.
+    sandbox = await daytona.create({ language: 'python', ephemeral: true, autoStopInterval: 2 })
     const r = await sandbox.process.codeRun(sandboxCode(pyParams))
     if (r.exitCode !== 0) {
       return res.status(500).json({ error: 'sandbox error', detail: String(r.result).slice(0, 500) })

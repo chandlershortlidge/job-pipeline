@@ -15,6 +15,27 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 15:27 — Daytona disk-limit leak fixed (sandboxes now ephemeral)
+
+**Symptom:** live uploads started failing with "Total disk limit exceeded. Maximum allowed: 30GiB."
+mid-event.
+
+**Cleared the backlog:** 10 leaked sandboxes deleted via `daytona.list()` + `daytona.delete()`.
+(Gotcha: `list()` is an **async iterable** — must use `for await (const s of daytona.list())`, not
+a plain for-of; it looks like an empty object otherwise.)
+
+**Root cause:** Daytona's `autoDeleteInterval` **defaults to disabled**, and `autoStopInterval`
+defaults to 15 min. Our functions delete the sandbox in a `finally`, but any invocation that didn't
+reach it (Vercel timeout, error, or overlapping requests during the demo) left a stopped-but-not-
+deleted sandbox holding disk → they piled up to the 30 GiB cap.
+
+**Fix:** create sandboxes with `{ ephemeral: true, autoStopInterval: 2 }` in both `extract.js` and
+`resume.js` — a leaked sandbox auto-stops after 2 min idle and then auto-deletes itself. Explicit
+`delete()` kept for the fast happy path. Lesson: with on-demand sandboxes, never rely on explicit
+cleanup alone — set an auto-delete TTL as the safety net.
+
+---
+
 ## 2026-06-26 14:06 — Resume-match stretch: backend built & proven (Steps 1–2)
 
 New additive stretch: upload your own resume (PDF) → see which jobs you match, ranked, with
