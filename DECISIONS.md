@@ -15,6 +15,23 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 11:56 — Seniority filter added to the job list
+
+**Decision:** Added a Junior / Mid / Senior filter to the dashboard job list. Each button is a
+toggle (click the active one, or "all", to clear). It reads `seniority` straight from the data —
+no recompute — and the per-level counts shown on the buttons reflect the current skill filter.
+
+**Scope note:** `frontend-spec.md` lists "faceted filtering by role/seniority" as *out of scope
+for v0*. This was an explicit, post-v0 request, so it's a deliberate override of that cut, not
+scope drift. Kept minimal and built on the existing toggle/clear/selection idiom — no redesign.
+
+**How it composes:** skill filter narrows first, seniority narrows within that (both apply to the
+shown jobs). Seniority filter only touches the job list; the skills chart is unchanged. Jobs with
+a null `seniority` (allowed by the contract) simply don't match any level and drop out when a
+level is selected.
+
+---
+
 ## 2026-06-25 08:02 — Demo script drafted (2-min pitch, degrades with the build)
 
 **Artifact:** `demo-script.md` — a ~2-min live pitch with three beats (problem→question; chart +

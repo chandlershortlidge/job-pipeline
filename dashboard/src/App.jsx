@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
 
+const SENIORITY_LEVELS = ['Junior', 'Mid', 'Senior']
+
 export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
+  const [selectedSeniority, setSelectedSeniority] = useState(null)
   const [showAll, setShowAll] = useState(false)
 
   useEffect(() => {
@@ -59,9 +62,18 @@ export default function App() {
   }
 
   const { jobs, variants, stats, chart, max } = derived
-  const shownJobs = selectedSkill
+  // Filters compose: skill narrows first, then seniority narrows within that.
+  const skillJobs = selectedSkill
     ? jobs.filter((j) => j.skills.some((s) => s.canonical === selectedSkill))
     : jobs
+  // Per-level counts reflect the current skill filter (seniority read from data, not recomputed).
+  const senCounts = { Junior: 0, Mid: 0, Senior: 0 }
+  for (const j of skillJobs) {
+    if (Object.hasOwn(senCounts, j.seniority)) senCounts[j.seniority] += 1
+  }
+  const shownJobs = selectedSeniority
+    ? skillJobs.filter((j) => j.seniority === selectedSeniority)
+    : skillJobs
 
   return (
     <div className="app">
@@ -137,6 +149,26 @@ export default function App() {
           {selectedSkill && (
             <button className="clear" onClick={() => setSelectedSkill(null)}>
               clear ✕
+            </button>
+          )}
+        </div>
+        <div className="sen-filter">
+          <span className="sen-filter-label">Seniority</span>
+          {SENIORITY_LEVELS.map((level) => (
+            <button
+              key={level}
+              className={'sen-btn' + (selectedSeniority === level ? ' active' : '')}
+              aria-pressed={selectedSeniority === level}
+              onClick={() =>
+                setSelectedSeniority(selectedSeniority === level ? null : level)
+              }
+            >
+              {level} <span className="sen-btn-n">{senCounts[level]}</span>
+            </button>
+          ))}
+          {selectedSeniority && (
+            <button className="sen-clear" onClick={() => setSelectedSeniority(null)}>
+              all
             </button>
           )}
         </div>
