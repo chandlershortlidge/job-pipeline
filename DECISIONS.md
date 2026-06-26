@@ -15,6 +15,21 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 13:04 — Live Daytona drop-in COMPLETE (UI + backend, verified in browser)
+
+The full sponsor showcase works on the deployed URL: upload a screenshot → "Parsing in a Daytona
+sandbox…" → the parsed job prepends to the list (green "live" badge) and the chart updates. Built
+the upload control on top of the seniority-view `App.jsx` (base64 → `POST /api/extract` → prepend to
+state → reactive re-derive). Verified end-to-end in the browser by the user.
+
+**Project is feature-complete** by ~13:00 (well ahead of the 16:00 stretch window): corpus dashboard
++ seniority compare-by-level + live drop-in, all on one Vercel URL. Remaining time → rehearsal,
+the 90-sec backup recording, and polish.
+
+Also switched to **single-agent** ownership mid-afternoon after multi-agent collisions on `main`.
+
+---
+
 ## 2026-06-26 12:37 — Daytona live drop-in backend built & proven
 
 `dashboard/api/extract.js` now runs the **real extraction inside a Daytona sandbox** and is proven
