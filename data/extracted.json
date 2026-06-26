@@ -1,0 +1,1805 @@
+{
+  "generated_at": "2026-06-26T09:03:05.203830+00:00",
+  "jobs": [
+    {
+      "id": "job-1",
+      "source_file": "AI Application Engineer - XpertDirect.png",
+      "source": "screenshot",
+      "company": null,
+      "title": "AI Application Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "3+ years of software engineering",
+      "seniority_basis": "inferred",
+      "summary": "A rapidly growing AI SaaS company in Berlin is seeking an AI Application Engineer to build next-generation AI-powered business applications using large language models, intelligent agents, and workflow automation. The role involves designing, developing, and deploying production-ready AI solutions that automate complex workflows and deliver business value.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "OpenAI APIs",
+          "canonical": "LLM APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG (Retrieval-Augmented Generation)",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Vector databases",
+          "canonical": "Vector databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "FastAPI",
+          "canonical": "FastAPI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience building and deploying production AI applications",
+          "canonical": "AI application development",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Hands-on experience integrating and optimising LLM-based solutions",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Strong understanding of modern application architecture and API development",
+          "canonical": "API development",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Agentic AI frameworks",
+          "canonical": "Agents",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Prompt engineering and evaluation workflows",
+          "canonical": "Prompt engineering",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "AWS",
+          "canonical": "AWS",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Azure",
+          "canonical": "Azure",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "GCP",
+          "canonical": "GCP",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "MLOps or AI deployment experience",
+          "canonical": "MLOps",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-2",
+      "source_file": "AI Automation Engineer - Cosuno.png",
+      "source": "screenshot",
+      "company": "Cosuno",
+      "title": "AI Automation Engineer",
+      "seniority": "Senior",
+      "seniority_signal": "driving force behind scaling efficiency, expert for Cosuno's automation stack, experience driving organizational change, ownership of modular automation platform",
+      "seniority_basis": "inferred",
+      "summary": "Cosuno is looking for an AI Automation Engineer to design, build, and scale AI-driven workflow automations across the company by leveraging state-of-the-art LLMs, RAG, and orchestration tools (e.g. n8n, Vector DBs) rather than training custom models. The role involves close collaboration with the CEO & CTO to deliver a modular, reliable automation platform with measurable business impact.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "n8n",
+          "canonical": "n8n",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "API architecture",
+          "canonical": "API design",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "connecting LLMs to proprietary data sources",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Vector Databases",
+          "canonical": "Vector Databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Reasoning Chains",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "orchestration stack",
+          "canonical": "LLM orchestration",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "end-to-end AI workflows",
+          "canonical": "Agents",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-3",
+      "source_file": "AI Automation Engineer - Sparetech.png",
+      "source": "screenshot",
+      "company": "Sparetech",
+      "title": "AI Automation Engineer (F/M/X)",
+      "seniority": "Mid",
+      "seniority_signal": "production-oriented LLM workflows, Show ownership and initiative, production-ready automations",
+      "seniority_basis": "inferred",
+      "summary": "Sparetech is hiring its first AI Automation Engineer to design, build, and scale AI-powered workflows and agents across the company. The role requires hands-on experience with LLM workflows, RAG architectures, prompt engineering, and workflow automation to turn operational problems into reliable, production-ready automations.",
+      "skills": [
+        {
+          "raw_text": "building automations or integrations",
+          "canonical": "Automation/Integrations",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "debugging and testing practices",
+          "canonical": "Debugging & Testing",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "production-oriented LLM workflows",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG architectures",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompt and context engineering",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "evaluation frameworks",
+          "canonical": "LLM Evaluation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "security guardrails",
+          "canonical": "AI Security/Guardrails",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "workflow automation",
+          "canonical": "Workflow Automation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agents",
+          "canonical": "Agents",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-4",
+      "source_file": "AI Engineer (LLM) - dexter health.png",
+      "source": "screenshot",
+      "company": "dexter health",
+      "title": "AI Engineer (LLM) - Remote",
+      "seniority": "Mid",
+      "seniority_signal": "ownership mindset; experience integrating AI workflows into production systems",
+      "seniority_basis": "inferred",
+      "summary": "Dexter Health is looking for an AI Engineer to build LLM-based workflows and AI-powered product features, integrating them into production systems. The role requires strong software engineering skills (especially Python), experience with AI output validation, and comfort operating in a fast-moving startup environment.",
+      "skills": [
+        {
+          "raw_text": "Strong software engineering skills, especially in Python or a comparable backend language",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience building AI-powered product features or LLM-based workflows",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Strong understanding of how to design, test, validate, and improve AI outputs",
+          "canonical": "AI output validation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience integrating AI workflows into production systems",
+          "canonical": "AI workflows",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience with evaluation, testing, validation, or quality checks for AI-generated outputs",
+          "canonical": "AI output validation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Serious experience using AI development tools such as Claude Code, Codex, Cursor, Copilot, or similar as part of your daily workflow",
+          "canonical": "AI developer tools",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience with frontend or fullstack product development",
+          "canonical": "Full-stack development",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience with self-hosted LLMs, model serving, inference optimization, or similar systems",
+          "canonical": "LLMs",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience with open-source LLMs and related deployment workflows",
+          "canonical": "LLMs",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience improving latency, cost, quality, or reliability of AI systems",
+          "canonical": "AI systems optimization",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience with healthcare software, healthcare data, or regulated environments",
+          "canonical": "Healthcare software",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience working with structured data extraction, documentation automation, voice workflows, or workflow automation",
+          "canonical": "Workflow automation",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "German language skills",
+          "canonical": "German language",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Knowledge of nursing homes or elderly care workflows",
+          "canonical": "Healthcare domain knowledge",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-5",
+      "source_file": "AI Engineer IU International University of Applied Sciences.png",
+      "source": "screenshot",
+      "company": "IU International University of Applied Sciences",
+      "title": "AI Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "3+ years of professional backend software engineering experience",
+      "seniority_basis": "inferred",
+      "summary": "IU is looking for an AI Engineer to help design and build LLM- and agent-powered backend services for Syntea, their AI-powered learning assistant. The role involves developing agentic pipelines, RAG, orchestration, and tool use at scale in production.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "backend software engineering",
+          "canonical": "Backend Engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "FastAPI",
+          "canonical": "FastAPI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LlamaIndex",
+          "canonical": "LlamaIndex",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "API design and testing",
+          "canonical": "API Design",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM and agentic ecosystems",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompting",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "retrieval-augmented generation (RAG)",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agent frameworks",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "tool use",
+          "canonical": "Tool calling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agentic pipelines — prompting, retrieval (RAG), orchestration",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "backend services and APIs",
+          "canonical": "APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "model evaluation",
+          "canonical": "Model Evaluation",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-6",
+      "source_file": "AI Engineer Lufinity AI.png",
+      "source": "screenshot",
+      "company": "Lufinity AI",
+      "title": "AI Engineer | AI SaaS Platform",
+      "seniority": "Mid",
+      "seniority_signal": "hands-on experience building software products with LLM integration, high ownership mentality, proven production mindset (\"not just prototypes\")",
+      "seniority_basis": "inferred",
+      "summary": "Lufinity AI's client is hiring a hands-on AI Engineer to own AI features end-to-end — from idea to production — on a SaaS platform where AI is the core. The role centers on building RAG pipelines, agentic workflows, and model evaluation infrastructure in close collaboration with product and engineering.",
+      "skills": [
+        {
+          "raw_text": "LLM integration",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG systems including document parsing, chunking and retrieval",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agentic systems / agentic workflows",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Solid Python skills",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI/ML ecosystem",
+          "canonical": "Machine Learning",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "coding agents",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "infrastructure for evaluation, monitoring and continuous model improvement",
+          "canonical": "Model Evaluation & Monitoring",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "strong software engineering fundamentals",
+          "canonical": "Software Engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "C#",
+          "canonical": "C#",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "React",
+          "canonical": "React",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-7",
+      "source_file": "AI Engineer Netconomy.png",
+      "source": "screenshot",
+      "company": "Netconomy",
+      "title": "AI Engineer (f/m/x)",
+      "seniority": "Mid",
+      "seniority_signal": "3+ years of experience in Applied AI or Machine Learning in the industry",
+      "seniority_basis": "inferred",
+      "summary": "Netconomy is hiring an AI Engineer to drive innovation and implement cutting-edge Generative AI solutions and intelligent agentic systems. The role involves designing end-to-end GenAI and RAG pipelines, developing agentic applications, and working with cloud AI offerings across hyperscalers.",
+      "skills": [
+        {
+          "raw_text": "Generative AI solutions",
+          "canonical": "Generative AI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "intelligent agentic systems",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG (Retrieval-Augmented Generation) pipelines",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agentic frameworks",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "vector databases",
+          "canonical": "Vector Databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agent development (e.g. LangGraph, Google Agent Development Kit (ADK), Agno)",
+          "canonical": "LangGraph",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Google Agent Development Kit (ADK)",
+          "canonical": "Google ADK",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Applied AI or Machine Learning",
+          "canonical": "Machine Learning",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Cloud AI offerings on one of the Hyperscalers (GCP, AWS or Azure)",
+          "canonical": "GCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AWS",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Azure",
+          "canonical": "Azure",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AutoML approaches",
+          "canonical": "AutoML",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Google Cloud AI/ML stack (e.g., Vertex AI, Gemini Models, Vector Search)",
+          "canonical": "GCP",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Vertex AI",
+          "canonical": "Vertex AI",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "AI evaluation frameworks (e.g., RAGAs, LangSmith)",
+          "canonical": "LangSmith",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "writing integration tests",
+          "canonical": "Integration Testing",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Docker",
+          "canonical": "Docker",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Kubernetes",
+          "canonical": "Kubernetes",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "CI/CD processes for MLOps/AIOps",
+          "canonical": "CI/CD",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "A/B testing expertise for AI models and applications",
+          "canonical": "A/B Testing",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-8",
+      "source_file": "AI Engineer Quantori.png",
+      "source": "screenshot",
+      "company": "Quantori",
+      "title": "AI Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "production-quality code, proven practical/hands-on experience building production LLM applications",
+      "seniority_basis": "inferred",
+      "summary": "Quantori is seeking a skilled AI/ML Engineer to design and implement evaluation strategies for AI agents within Databricks, contribute to MLOps workflows, and build/deploy production LLM applications. The role involves hands-on work with LLM agents, agentic workflows, RAG, and tool calling, alongside client demo delivery and AI solution refinement.",
+      "skills": [
+        {
+          "raw_text": "Strong Python engineering skills, including writing production-quality code and tests",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience building and integrating REST APIs (e.g., FastAPI/Flask) for AI services",
+          "canonical": "REST APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "FastAPI/Flask",
+          "canonical": "FastAPI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Practical experience with LLM agents / agentic workflows, including state management, tool/function calling, iterative execution, and output validation/guardrails",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "tool/function calling",
+          "canonical": "Tool calling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "NumPy",
+          "canonical": "NumPy",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "scikit-learn",
+          "canonical": "scikit-learn",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "PyTorch",
+          "canonical": "PyTorch",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "SQL databases such as PostgreSQL/MySQL",
+          "canonical": "SQL",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "object storage such as S3",
+          "canonical": "AWS S3",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "NoSQL",
+          "canonical": "NoSQL",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MLOps / LLMOps: experiment tracking, versioning, CI/CD for AI workflows, and deployment/monitoring basics",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MLOps / LLMOps",
+          "canonical": "MLOps",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience designing evaluation and QA frameworks for LLM/agent outputs",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Hands-on experience building production LLM applications and agents (RAG, multi-step reasoning, tool/function calling, MCP)",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience working with Databricks",
+          "canonical": "Databricks",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience working with Docker",
+          "canonical": "Docker",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience with cheminformatics (e.g., molecular fingerprints, chemical descriptors, RDKit, molecular similarity search)",
+          "canonical": "Cheminformatics",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience working on healthcare or life sciences projects",
+          "canonical": "Healthcare/Life Sciences",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-9",
+      "source_file": "AI Engineer TryHackMe.png",
+      "source": "screenshot",
+      "company": "TryHackMe",
+      "title": "AI Engineer",
+      "seniority": "Senior",
+      "seniority_signal": "production-quality agentic systems, hands-on experience building LLM-powered agents, autonomous technical decisions with limited hand-holding",
+      "seniority_basis": "inferred",
+      "summary": "TryHackMe is looking for an AI Engineer (EMEA, Remote) to design and build autonomous LLM-powered attacker and defender agents for a cybersecurity simulation platform, including prompt engineering, agent architecture, and adversary emulation integration.",
+      "skills": [
+        {
+          "raw_text": "LLM-powered agents — planning loops, tool use, memory, state management",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "tool use",
+          "canonical": "Tool calling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Strong Python engineering; able to ship production-quality agentic systems",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Prompt engineering for both red and blue team agent components",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Ability to design prompts and agent architectures",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLMs to analyse an attack chain",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Working familiarity with cybersecurity concepts — attack techniques, MITRE ATT&CK, network fundamentals",
+          "canonical": "Cybersecurity / MITRE ATT&CK",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience with adversary emulation frameworks (MITRE CALDERA or similar)",
+          "canonical": "MITRE CALDERA",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience building event-driven systems that monitor and react to real-time state changes",
+          "canonical": "Event-driven systems",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Familiarity with cloud infrastructure (we provision VMs and networks dynamically per exercise)",
+          "canonical": "Cloud infrastructure",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Prior work in the cyber range, red team tooling, or security simulation space",
+          "canonical": "Red team tooling",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Experience with multi-agent architectures where agents observe and react to each other",
+          "canonical": "Agents",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-10",
+      "source_file": "AI Engineer micro1.png",
+      "source": "screenshot",
+      "company": "micro1",
+      "title": "AI Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "Proven expertise in machine learning algorithms, model development, and deployment",
+      "seniority_basis": "inferred",
+      "summary": "micro1 is seeking a contractor AI Engineer (EMEA, Remote) to develop and deploy advanced machine learning systems tackling real-world data challenges. The role sits at the intersection of software engineering, data science, and applied research, requiring hands-on expertise with ML pipelines, AWS, and Kubernetes.",
+      "skills": [
+        {
+          "raw_text": "machine learning algorithms, model development, and deployment",
+          "canonical": "Machine Learning",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Python or Java",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CI/CD workflows and automation tools",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AWS cloud services for ML applications and data pipelines",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Kubernetes for orchestrating containerized ML workloads",
+          "canonical": "Kubernetes",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "end-to-end ML pipelines",
+          "canonical": "ML Pipelines",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "TensorFlow or PyTorch",
+          "canonical": "TensorFlow",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "deep learning frameworks such as TensorFlow or PyTorch",
+          "canonical": "PyTorch",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "contributions to open-source AI projects",
+          "canonical": "Open-Source AI",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-11",
+      "source_file": "AI Enginerring Workingstudent - Cognee.png",
+      "source": "screenshot",
+      "company": "Cognee",
+      "title": "AI Engineering - Workingstudent",
+      "seniority": "Junior",
+      "seniority_signal": "Currently studying or recently completed a degree in computer science, AI, data science, engineering, mathematics, or a related technical field",
+      "seniority_basis": "inferred",
+      "summary": "A working-student AI Engineer role at Cognee in Berlin, building small proof-of-concept applications using Cognee's open-source Python memory engine, exploring AI trends and agentic use cases, and translating technical experiments into developer-facing content and demos.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "APIs, SDKs, notebooks, and developer tools",
+          "canonical": "REST APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLMs",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI agents",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "vector databases",
+          "canonical": "Vector Databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "knowledge graphs",
+          "canonical": "Knowledge Graphs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "GitHub and basic software engineering workflows",
+          "canonical": "GitHub",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "LlamaIndex",
+          "canonical": "LlamaIndex",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "MCP",
+          "canonical": "MCP",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "OpenAI APIs",
+          "canonical": "LLM APIs",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Anthropic APIs",
+          "canonical": "LLM APIs",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Hugging Face",
+          "canonical": "Hugging Face",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Next.js",
+          "canonical": "Next.js",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "technical writing",
+          "canonical": "Technical Writing",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "open-source contributions",
+          "canonical": "Open Source",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-12",
+      "source_file": "Agentic AI Engineer - Mercanis.png",
+      "source": "screenshot",
+      "company": "Mercanis",
+      "title": "Agentic AI Engineer",
+      "seniority": "Senior",
+      "seniority_signal": "experienced... proven experience building AI-driven or agentic systems",
+      "seniority_basis": "inferred",
+      "summary": "Mercanis is looking for an experienced Agentic AI Engineer to design, build, and optimize agentic AI systems that automate complex procurement workflows. The role involves working with Python, LangGraph, AWS, and LLM providers such as OpenAI, Anthropic, and AWS Bedrock.",
+      "skills": [
+        {
+          "raw_text": "Python software development",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "building AI-driven or agentic systems, preferably with LangGraph or similar frameworks",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangGraph",
+          "canonical": "LangGraph",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Large Language Models (LLMs) and their integration with external APIs or structured data",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM providers such as OpenAI, Anthropic, or AWS Bedrock",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "OpenAI",
+          "canonical": "OpenAI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Anthropic",
+          "canonical": "Anthropic",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AWS Bedrock",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "cloud-based deployment and scaling, ideally using AWS services",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM orchestration tools",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LiteLLM",
+          "canonical": "LiteLLM",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Docling",
+          "canonical": "Docling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Phoenix",
+          "canonical": "Phoenix",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AWS (Lambda, S3, ECS, and more)",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "semantic search technologies (vector databases, embeddings, RAG systems)",
+          "canonical": "RAG",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "measuring, evaluating, and optimizing AI system performance with clear metrics and benchmarking",
+          "canonical": "AI evaluation & benchmarking",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "observability and monitoring solutions for AI systems",
+          "canonical": "AI observability",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "MCP (Model Context Protocol) servers for extending AI capabilities",
+          "canonical": "MCP",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "agent-to-agent (A2A) communication patterns and multi-agent system architectures",
+          "canonical": "Agents",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-13",
+      "source_file": "Digital Charging Solutions GmbH AI Engineer .png",
+      "source": "screenshot",
+      "company": "Digital Charging Solutions GmbH",
+      "title": "AI Engineer (f/d/m)",
+      "seniority": "Mid",
+      "seniority_signal": "proven/production-grade applications, ownership of agentic workflows; practical experience with AI/LLM-based applications",
+      "seniority_basis": "inferred",
+      "summary": "Digital Charging Solutions GmbH is seeking an AI Engineer to design, build, deploy, and operate AI-powered automations and agentic workflows for their Roaming Excellence team, using Claude Enterprise, Claude Code, and MCP integrations on top of Azure. The role requires strong hands-on software engineering with practical LLM/AI application experience, API integration, and the ability to translate business pain into measurable AI use cases.",
+      "skills": [
+        {
+          "raw_text": "AI-powered automations and agentic workflows",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM-based applications",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "retrieval-based solutions",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Claude Enterprise",
+          "canonical": "Claude",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Claude Code",
+          "canonical": "Claude",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MCP integrations",
+          "canonical": "MCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Azure platform (AKS, event-driven architecture, API-first)",
+          "canonical": "Azure",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompt libraries",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "eval frameworks",
+          "canonical": "LLM evaluation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience integrating APIs, tools, and enterprise systems into cohesive workflows",
+          "canonical": "API integration",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Git",
+          "canonical": "Git",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CI/CD",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "issue tracking",
+          "canonical": "Issue tracking",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "code review",
+          "canonical": "Code review",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "test automation",
+          "canonical": "Test automation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "software development workflows",
+          "canonical": "Software engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "security, data handling, access control",
+          "canonical": "Enterprise security",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "responsible AI usage",
+          "canonical": "Responsible AI",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-14",
+      "source_file": "Junior AI Engineer ZDF Sparks.png",
+      "source": "screenshot",
+      "company": "ZDF Sparks GmbH",
+      "title": "(Junior) AI Engineer (m/f/d)",
+      "seniority": "Junior",
+      "seniority_signal": "(Junior)",
+      "seniority_basis": "stated",
+      "summary": "ZDF Sparks GmbH is looking for a Junior AI Engineer to design, implement, and modernize end-to-end AI solutions, working with data systems, ML models, and Generative AI applications. The role involves rapid prototyping with frameworks like LangChain and Streamlit, and requires a \"builder\" mindset with eagerness to learn.",
+      "skills": [
+        {
+          "raw_text": "Python (pandas, NumPy)",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "SQL",
+          "canonical": "SQL",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Jupyter Notebooks",
+          "canonical": "Jupyter Notebooks",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "scikit-learn",
+          "canonical": "scikit-learn",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM orchestration",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "vector databases",
+          "canonical": "Vector Databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CI/CD automation",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Streamlit",
+          "canonical": "Streamlit",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Generative AI applications",
+          "canonical": "Generative AI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "data visualization",
+          "canonical": "Data Visualization",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "English (Must-have)",
+          "canonical": "English",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "German (Nice-to-have)",
+          "canonical": "German",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-15",
+      "source_file": "Smartbroker AG - AI Engineer.png",
+      "source": "screenshot",
+      "company": "Smartbroker AG",
+      "title": "AI Engineer (m/f/d)",
+      "seniority": "Senior",
+      "seniority_signal": "Expert knowledge on state-of-the-art AI use cases, agentic applications and best practices; Expert knowledge in machine learning, generative AI, LLMs & RAG",
+      "seniority_basis": "inferred",
+      "summary": "Smartbroker AG is looking for AI Engineers to focus on GenAI use case development for client-facing product features and internal process efficiency. The role involves designing and deploying AI/ML solutions in the cloud using LLMs, RAG, and agentic technologies at the intersection of business, data, and technology.",
+      "skills": [
+        {
+          "raw_text": "LLMs & RAG",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "agentic applications",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI agents",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "generative AI",
+          "canonical": "Generative AI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "machine learning",
+          "canonical": "Machine Learning",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "SQL",
+          "canonical": "SQL",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Java",
+          "canonical": "Java",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "GCP/AWS",
+          "canonical": "GCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "GCP/AWS",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Langfuse",
+          "canonical": "Langfuse",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "OpenAI",
+          "canonical": "OpenAI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CI/CD",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "data & AI security, data regulations, data privacy requirements",
+          "canonical": "Data Privacy & Security",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "version control",
+          "canonical": "Version Control",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "software engineering best practices",
+          "canonical": "Software Engineering Best Practices",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-16",
+      "source_file": "Unity AG AI Engineer [all levels].png",
+      "source": "screenshot",
+      "company": "UNITY AG",
+      "title": "AI Engineer (all levels)",
+      "seniority": "Mid",
+      "seniority_signal": "Several years of practical experience in the design and operation of productive AI systems",
+      "seniority_basis": "inferred",
+      "summary": "UNITY AG is seeking an AI Engineer (all levels) in Berlin to design and develop innovative AI use cases, build agentic AI systems using LLMs and multi-agent frameworks, and take responsibility for full-stack AI application development. The role involves advising clients on AI potential and contributing to internal knowledge building on AI best practices.",
+      "skills": [
+        {
+          "raw_text": "Large Language Models (LLMs)",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Prompt Engineering",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Agentic Coding Patterns (e.g., ReAct, Tool Use, Chain-of-Thought)",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Tool Use",
+          "canonical": "Tool calling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangGraph",
+          "canonical": "LangGraph",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AutoGen",
+          "canonical": "AutoGen",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CrewAI",
+          "canonical": "CrewAI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "multi-agent frameworks",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG architectures",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "fine-tuning and evaluation of LLM pipelines",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Node.js",
+          "canonical": "Node.js",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "React",
+          "canonical": "React",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Vue",
+          "canonical": "Vue",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "full-stack competence",
+          "canonical": "Full-stack development",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "cloud platforms (AWS, Azure or GCP)",
+          "canonical": "Cloud platforms",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "containers, APIs, serverless",
+          "canonical": "Cloud deployment",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MCP (Model Context Protocol)",
+          "canonical": "MCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "vector databases (e.g. Elasticsearch, pgvector, etc.)",
+          "canonical": "Vector databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI observability tools",
+          "canonical": "AI observability",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MLOps",
+          "canonical": "MLOps",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "data science",
+          "canonical": "Data science",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-17",
+      "source_file": "ai automation engineer WaveSix.webp",
+      "source": "screenshot",
+      "company": "WaveSix",
+      "title": "AI & Automation Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "design and ship AI systems and automation workflows that solve real business problems. You know when to reach for an LLM and when a simple rule or lookup table does the job better — and you build accordingly.",
+      "seniority_basis": "inferred",
+      "summary": "WaveSix is looking for an AI & Automation Engineer to design and ship AI systems and automation workflows that solve real business problems, building AI pipelines with LLMs, embeddings, RAG systems, and agents grounded in real company data.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM APIs (OpenAI, Anthropic, etc.)",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompt engineering and evaluation",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG pipelines, embeddings, vector databases",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Workflow automation and orchestration — agents, triggers, conditional logic",
+          "canonical": "Agents",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "ETL/ELT pipeline design",
+          "canonical": "ETL/ELT pipelines",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "SQL",
+          "canonical": "SQL",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "data modeling",
+          "canonical": "Data modeling",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "API integrations",
+          "canonical": "API integrations",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Airflow",
+          "canonical": "Airflow",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Prefect",
+          "canonical": "Prefect",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "dbt",
+          "canonical": "dbt",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "BigQuery/Snowflake",
+          "canonical": "BigQuery/Snowflake",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "cloud (GCP/AWS/Azure)",
+          "canonical": "GCP/AWS/Azure",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "LangChain/LlamaIndex",
+          "canonical": "LangChain",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "n8n/Make/Zapier",
+          "canonical": "n8n/Make/Zapier",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Docker",
+          "canonical": "Docker",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-18",
+      "source_file": "ai engineer ellamind.webp",
+      "source": "screenshot",
+      "company": "ellamind",
+      "title": "AI Engineer (all genders)",
+      "seniority": "Mid",
+      "seniority_signal": "proven/production/ownership — \"Experience building production AI systems\", \"Practical work with OpenAI, Anthropic, or similar APIs - you've built features that call LLMs\"",
+      "seniority_basis": "inferred",
+      "summary": "ellamind is looking for an AI Engineer to design and implement AI evaluation systems, integrate LLM technologies, build automated testing frameworks, and optimize prompt infrastructure on a Python-based platform — delivering robust, production-grade AI validation workflows for customers.",
+      "skills": [
+        {
+          "raw_text": "Strong Python engineering skills",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Hands-on LLM experience",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "OpenAI, Anthropic, or similar APIs",
+          "canonical": "LLM APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "API design",
+          "canonical": "API Design",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "data modeling",
+          "canonical": "Data Modeling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "async processing",
+          "canonical": "Async Processing",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "error handling",
+          "canonical": "Error Handling",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "distributed systems that scale",
+          "canonical": "Distributed Systems",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "batch testing, comparing model configurations, and tracking performance",
+          "canonical": "Automated Testing",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompt optimization infrastructure",
+          "canonical": "Prompt Engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "A/B testing frameworks",
+          "canonical": "A/B Testing",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI systems thinking: Experience designing evaluation methodologies",
+          "canonical": "AI Evaluation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "monitoring, error handling, and quality assurance",
+          "canonical": "Monitoring & Observability",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-19",
+      "source_file": "ai engineer reedsy.png",
+      "source": "screenshot",
+      "company": "Reedsy",
+      "title": "AI Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "Proven experience integrating AI/ML into real-world products, with ownership of the full lifecycle",
+      "seniority_basis": "inferred",
+      "summary": "Reedsy is looking for an AI Engineer to build intelligent features that empower authors and streamline publishing workflows. The role involves designing AI-powered tools, integrating LLMs into products, and owning the full AI development lifecycle from modeling to deployment.",
+      "skills": [
+        {
+          "raw_text": "integrating AI/ML into real-world products",
+          "canonical": "AI/ML",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "large language models",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "prompt engineering",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "fine-tuning",
+          "canonical": "Fine-tuning",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "retrieval-augmented generation",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LlamaIndex",
+          "canonical": "LlamaIndex",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "hallucination detection and mitigation strategies",
+          "canonical": "Hallucination mitigation",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Google Cloud Platform",
+          "canonical": "GCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "scalable AI deployment",
+          "canonical": "AI deployment",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "embeddings",
+          "canonical": "Embeddings",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "vector databases",
+          "canonical": "Vector databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Elasticsearch",
+          "canonical": "Elasticsearch",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI developer tooling (e.g., Cursor, intelligent CI/CD, AI-powered QA)",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "job-20",
+      "source_file": "techstaff-in.png",
+      "source": "screenshot",
+      "company": "techstaff-in",
+      "title": "Artificial Intelligence Engineer (Freelance Lead AI Engineer / AI Architect)",
+      "seniority": "Senior",
+      "seniority_signal": "Lead/principal/architect — \"Lead AI Engineer / AI Architect\", \"experienced Lead AI Engineer/Architect\"",
+      "seniority_basis": "inferred",
+      "summary": "A freelance Lead AI Engineer / AI Architect role (12-month contract, Berlin hybrid) supporting an AI transformation consultancy that helps mid-market companies build production-ready AI systems. The role spans AI solution architecture, LLM/embedding workflows, data pipelines, cloud-native deployment, and MLOps, with technical guidance responsibilities across client teams.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "FastAPI",
+          "canonical": "FastAPI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "SQL/NoSQL",
+          "canonical": "SQL",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLM APIs",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "embeddings",
+          "canonical": "Embeddings",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AWS",
+          "canonical": "AWS",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Azure",
+          "canonical": "Azure",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "GCP",
+          "canonical": "GCP",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Docker",
+          "canonical": "Docker",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Kubernetes",
+          "canonical": "Kubernetes",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Airflow",
+          "canonical": "Apache Airflow",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Spark/PySpark",
+          "canonical": "Apache Spark",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Git",
+          "canonical": "Git",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "CI/CD",
+          "canonical": "CI/CD",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LLMs, embeddings and automation workflows",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "MLOps, monitoring and engineering standards",
+          "canonical": "MLOps",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI solution architecture",
+          "canonical": "AI Architecture",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Data pipelines and validation",
+          "canonical": "Data Pipelines",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Cloud-native deployment",
+          "canonical": "Cloud-native deployment",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "AI consulting",
+          "canonical": "AI Consulting",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "recommender systems",
+          "canonical": "Recommender Systems",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "GenAI",
+          "canonical": "Generative AI",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "data platforms",
+          "canonical": "Data Platforms",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "production ML",
+          "canonical": "Production ML",
+          "requirement": "nice_to_have"
+        }
+      ]
+    }
+  ]
+}
