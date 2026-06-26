@@ -15,6 +15,28 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-06-26 12:20 — Seniority reworked: a chart "compare by level" view, not a job-list filter
+
+**Decision:** Moved the seniority buttons from below the chart to **above it**, and changed what
+they do. They're now a color-coded view selector — All (blue/global), Junior (green), Mid (amber),
+Senior (red) — that **re-scopes the skills chart** to the selected level's jobs (recomputing
+document frequency over just that subset) and recolors the bars to match. The job list below still
+filters to the selected level too (that behavior was kept).
+
+**Why:** The first version (a filter that only changed the job list) wasn't intuitive — the useful
+question is "how do skill priorities differ by seniority," which is a *chart* comparison, not a
+list filter. This makes the contrast visible: Junior → fundamentals (LLMs, Python, Vector DBs);
+Senior → cloud/infra (AWS, GCP) climbs into the top.
+
+**Threshold call:** Kept the existing required-only + freq≥2 chart filter for every level rather
+than special-casing small subsets. Checked it against the real data first: at ≥2 the levels give
+3 (Junior) / 16 (Mid) / 12 (Senior) bars — all non-empty and readable, so no special case needed.
+Added an empty-state message as a guard for future data.
+
+**Scope kept narrow:** stats bar stays global (corpus summary); only the chart + job list re-scope.
+
+---
+
 ## 2026-06-26 11:56 — Seniority filter added to the job list
 
 **Decision:** Added a Junior / Mid / Senior filter to the dashboard job list. Each button is a

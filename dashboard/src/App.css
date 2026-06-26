@@ -107,7 +107,7 @@ h2 {
 .bar-fill {
   display: block;
   height: 100%;
-  background: #4f46e5;
+  background: var(--bar-color, #4f46e5);
   border-radius: 4px;
 }
 .bar-count {
@@ -156,51 +156,52 @@ h2 {
   font-size: 0.8rem;
   color: #555;
 }
-/* seniority filter */
-.sen-filter {
+/* seniority view selector — re-scopes + recolors the chart */
+.sen-view {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 7px;
-  margin-top: 10px;
+  margin-bottom: 14px;
 }
-.sen-filter-label {
+.sen-view-label {
   color: #777;
   font-size: 0.8rem;
   margin-right: 2px;
 }
-.sen-btn {
+.sen-chip {
   background: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #e0e0e8;
   border-radius: 999px;
-  padding: 3px 11px;
+  padding: 3px 12px;
   cursor: pointer;
-  font-size: 0.8rem;
-  color: #555;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--chip-color, #555);
 }
-.sen-btn:hover {
-  border-color: #c9c2ff;
-  background: #fafaff;
+.sen-chip:hover {
+  border-color: var(--chip-color, #bbb);
 }
-.sen-btn.active {
-  background: #4f46e5;
-  border-color: #4f46e5;
+.sen-chip.active {
+  background: var(--chip-color, #4f46e5);
+  border-color: var(--chip-color, #4f46e5);
   color: #fff;
 }
-.sen-btn-n {
+.sen-chip-n {
   opacity: 0.6;
+  font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
-.sen-btn.active .sen-btn-n {
-  opacity: 0.85;
+.sen-chip.active .sen-chip-n {
+  opacity: 0.9;
 }
-.sen-clear {
-  background: none;
-  border: none;
+.chart-scope {
+  font-weight: 600;
+}
+.empty {
   color: #888;
-  font-size: 0.8rem;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 3px 4px;
+  font-size: 0.85rem;
+  padding: 10px 4px;
 }
 
 .job-list {
