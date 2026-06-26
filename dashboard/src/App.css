@@ -290,19 +290,19 @@ footer {
 }
 .upload-btn {
   display: inline-block;
-  background: #4f46e5;
+  background: #0d9488;
   color: #fff;
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 8px 16px;
   border-radius: 8px;
   cursor: pointer;
 }
 .upload-btn:hover {
-  background: #4338ca;
+  background: #0f766e;
 }
 .upload-btn.busy {
-  background: #8b86d6;
+  background: #5eb0a8;
   cursor: progress;
 }
 .upload-hint {
