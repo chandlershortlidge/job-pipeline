@@ -17,7 +17,8 @@ proven (`extract.js`), normalization is proven (`canonicalMap.js`), and the Anth
 
 ## The contract (front-end ⇄ backend) — build to this
 
-**New endpoint** `POST /api/match-resume` (a *new* file — we do **not** touch the working
+**New endpoint** `POST /api/resume` (a *new* file `dashboard/api/resume.js` — Vercel routes by
+filename, so the route is `/api/resume` — and we do **not** touch the working
 `extract.js`).
 
 **Request:**
@@ -88,7 +89,7 @@ Clone the structure of `extract.js`, with these changes:
   `{ profile }` with normalized skills. Printed and eyeballed.
 
 ### Step 3 — Deploy + verify the endpoint
-`git push`, then `curl -X POST .../api/match-resume` with a base64 PDF.
+`git push`, then `curl -X POST .../api/resume` with a base64 PDF.
 - **Done-when:** HTTP 200 + a `profile` from the **deployed** endpoint (not just local).
 
 ### Step 4 — Front-end: upload + matching + results

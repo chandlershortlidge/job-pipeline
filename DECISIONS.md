@@ -36,14 +36,29 @@ normalize logic. Run locally through the real handler on the CV → HTTP 200 + n
 profile whose canonicals (RAG, AWS, Evaluation, APIs, Vector Databases) match the job
 vocabulary. Simulated match: 13 of ~25 resume skills hit a REQUIRED job skill.
 
-**Contract:** `POST /api/match-resume {pdf, media_type}` → `{profile:{title,
-years_experience, skills:[{canonical, raw_text}]}}`. Match runs client-side against jobs.json.
+**Contract:** `POST /api/resume {pdf, media_type}` → `{profile:{title,
+years_experience, skills:[{canonical, raw_text}]}}`. (Route is `/api/resume` — Vercel routes
+by filename; the plan's earlier `/api/match-resume` name was wrong.) Match runs client-side
+against jobs.json.
 
 **Decisions:** score = % of a job's REQUIRED skills the candidate has (extra skills never
 hurt the score); resume skills matching no job shown as an honest "extra skills" line.
 
-**REMAINING:** Step 3 deploy + curl the live endpoint; Step 4 front-end (upload + match +
-results). Deployed path untested for this endpoint until pushed.
+**Step 3 done — deployed path verified:** deployed `POST /api/resume` → HTTP 200 + profile
+(~11s). Same pass confirmed the existing `POST /api/extract` is also healthy deployed
+(Netconomy job, 200, ~17s) — resolves the prior "ANTHROPIC_API_KEY deployed path untested"
+note from the 12:37 entry.
+
+**Step 4 done — front-end built & match logic verified:** PDF upload section + client-side
+ranking (score = matched/required, top 6) + matched/missing chips + "extra skills" line, all
+appended below the existing dashboard (touches nothing above). Match logic verified on real
+data: top match "AI Application Engineer" 75%, ranking degrades sensibly, all 20 jobs ranked.
+
+**KNOWN LIMITATION (deferred, revisit):** the canonical "LLMs" shows as *missing* on almost
+every job — the résumé extraction emits specific LLM tools (OpenAI API, LangChain, RAG) but no
+umbrella "LLMs" skill, while most JDs *require* "LLMs". Match math is correct; this is a
+résumé-side normalization gap. Accepted for now (under-matching is the safe direction); options
+to revisit: nudge the résumé prompt to emit umbrella terms, or a conservative alias.
 
 ---
 

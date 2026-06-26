@@ -27,6 +27,9 @@ export default function App() {
   const [showAll, setShowAll] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
+  const [resumeProfile, setResumeProfile] = useState(null)
+  const [resumeBusy, setResumeBusy] = useState(false)
+  const [resumeError, setResumeError] = useState(null)
 
   useEffect(() => {
     fetch('/jobs.json')
@@ -56,6 +59,30 @@ export default function App() {
     } finally {
       setUploading(false)
       e.target.value = '' // allow re-uploading the same file
+    }
+  }
+
+  // Résumé match: parse an uploaded PDF in a Daytona sandbox, get back a normalized profile.
+  async function handleResume(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setResumeError(null)
+    setResumeBusy(true)
+    try {
+      const pdf = await fileToBase64(file)
+      const res = await fetch('/api/resume', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ pdf, media_type: file.type || 'application/pdf' }),
+      })
+      const payload = await res.json()
+      if (!res.ok || !payload.profile) throw new Error(payload.error || 'parse failed')
+      setResumeProfile(payload.profile)
+    } catch (err) {
+      setResumeError(String(err.message || err))
+    } finally {
+      setResumeBusy(false)
+      e.target.value = ''
     }
   }
 
@@ -103,6 +130,33 @@ export default function App() {
       max,
     }
   }, [data, showAll, selectedSeniority])
+
+  // Match the résumé profile against every job: % of each job's REQUIRED skills the
+  // candidate has. Extra skills (not required anywhere) never affect the score; they're
+  // surfaced separately so the match reflects the candidate's whole profile honestly.
+  const resumeMatch = useMemo(() => {
+    if (!resumeProfile || !data) return null
+    const resumeSet = new Set(resumeProfile.skills.map((s) => s.canonical))
+    const allJobCanon = new Set()
+    for (const j of data.jobs) for (const s of j.skills) allJobCanon.add(s.canonical)
+
+    const ranked = data.jobs
+      .map((j) => {
+        const req = [
+          ...new Set(j.skills.filter((s) => s.requirement === 'required').map((s) => s.canonical)),
+        ]
+        const matched = req.filter((c) => resumeSet.has(c))
+        const missing = req.filter((c) => !resumeSet.has(c))
+        return { job: j, matched, missing, score: req.length ? matched.length / req.length : 0 }
+      })
+      .filter((m) => m.matched.length + m.missing.length > 0)
+      .sort((a, b) => b.score - a.score || b.matched.length - a.matched.length)
+
+    const extra = resumeProfile.skills
+      .map((s) => s.canonical)
+      .filter((c) => !allJobCanon.has(c))
+    return { ranked, extra }
+  }, [resumeProfile, data])
 
   if (!derived) {
     return (
@@ -248,6 +302,65 @@ export default function App() {
             <JobRow key={j.id} job={j} />
           ))}
         </ul>
+      </section>
+
+      <section className="resume">
+        <h2>Match your résumé</h2>
+        <p className="hint">
+          Upload your résumé (PDF) — it's parsed live in a Daytona sandbox, normalized to the
+          same canonical skills, and matched against every job by the share of required skills
+          you already have.
+        </p>
+        <div className="upload">
+          <label className={'upload-btn' + (resumeBusy ? ' busy' : '')}>
+            {resumeBusy ? 'Parsing in a Daytona sandbox…' : '+ upload résumé (PDF)'}
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={handleResume}
+              disabled={resumeBusy}
+              hidden
+            />
+          </label>
+          {resumeProfile?.title && (
+            <span className="upload-hint">read as: {resumeProfile.title}</span>
+          )}
+          {resumeError && <span className="upload-err">⚠ {resumeError}</span>}
+        </div>
+
+        {resumeMatch && (
+          <>
+            <ul className="match-list">
+              {resumeMatch.ranked.slice(0, 6).map(({ job, matched, missing, score }) => (
+                <li key={job.id} className="match">
+                  <div className="match-head">
+                    <span className="match-co">{job.company || '—'}</span>
+                    <span className="match-title">{job.title || '—'}</span>
+                    <span className="match-score">{Math.round(score * 100)}%</span>
+                  </div>
+                  <div className="chips">
+                    {matched.map((c) => (
+                      <span key={c} className="chip have">
+                        {c}
+                      </span>
+                    ))}
+                    {missing.map((c) => (
+                      <span key={c} className="chip miss">
+                        {c}
+                      </span>
+                    ))}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {resumeMatch.extra.length > 0 && (
+              <p className="extra">
+                <strong>You also have:</strong> {resumeMatch.extra.join(', ')}
+                <span className="extra-note"> — not asked for in these roles.</span>
+              </p>
+            )}
+          </>
+        )}
       </section>
 
       <footer>AI extraction + deterministic normalization · built at the hackathon</footer>
