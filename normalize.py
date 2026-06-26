@@ -34,6 +34,9 @@ ALIASES = {
     "generative ai": "LLMs",            # gen AI in these JDs = LLM-based (domain call)
     "generative ai applications": "LLMs",
     "generative ai solutions": "LLMs",
+    "large language models": "LLMs",
+    "google cloud platform": "GCP",
+    "model fine-tuning": "Fine-tuning",
     "retrieval-augmented generation": "RAG",
     "agentic frameworks": "Agents",
     "agent frameworks": "Agents",

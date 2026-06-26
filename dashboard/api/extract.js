@@ -17,11 +17,13 @@ function normalizeSkills(skills) {
     const raw = (s.canonical || '').trim()
     const parts = splits[raw.toLowerCase()] || [raw]
     for (const part of parts) {
-      // try the exact lowercased form, then with any "(...)" stripped (catches
-      // "Retrieval-Augmented Generation (RAG)" -> "retrieval-augmented generation" -> RAG)
+      // Try, in order: exact lowercased form; the parenthetical acronym (catches
+      // "Large Language Models (LLMs)" -> "llms" -> LLMs); the paren-stripped form
+      // (catches "Retrieval-Augmented Generation (RAG)" -> "retrieval-augmented generation").
       const k1 = part.toLowerCase()
+      const k3 = (part.match(/\(([^)]+)\)/)?.[1] || '').toLowerCase().trim()
       const k2 = k1.replace(/\s*\([^)]*\)/g, '').trim()
-      const canon = map[k1] || map[k2] || part
+      const canon = map[k1] || map[k3] || map[k2] || part
       if (!canon) continue
       if (!byCanon[canon]) {
         byCanon[canon] = { canonical: canon, raw_text: s.raw_text, requirement: s.requirement }
