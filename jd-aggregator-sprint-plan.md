@@ -40,11 +40,16 @@ These are hard gates from the event description, not nice-to-haves. Check them o
 ## The Load-Bearing Risk
 Normalization is the whole ballgame. If "React," "ReactJS," and "React.js" land as three separate bars, the aggregate is noise. This is the reconciliation problem in a new domain — your home turf, but non-negotiable. Budget real time here, not at the end.
 
-**Where normalization must live (proven by the probe):** make it a **deterministic post-extraction step over the aggregate** — a canonical alias map + case-fold + slash-list split, run once in code — **not** a prompt instruction. Each screenshot is extracted independently, so the model never sees the other jobs and *cannot* be globally consistent; a prompt-level "normalize case" rule was added and the rerun proved it does nothing. Two failure modes the probe surfaced that only code can fix:
-- **Case/spacing duplicates:** "Vector databases" and "Vector Databases" landed as two separate bars in the same run.
-- **Slash-list collapse:** a JD's "n8n/Make/Zapier" became just `n8n`, and "GCP/AWS/Azure" became just `GCP` — the model keeps the first alternative and silently drops the rest, inconsistently between runs (so it defeats the "keep GCP/AWS/Azure separate" rule too).
+**Where normalization must live (proven by the probe):** do it as a **deterministic post-extraction step** — a plain piece of code that runs once over *all* the extracted skills together, after the AI is done. ("Deterministic" = the same input always gives the same output — unlike the model, which answers differently run to run.) Do **not** try to make the model do it: each screenshot is extracted on its own, so the model never sees the other jobs and can't be consistent across them. We tried a prompt-level "normalize case" rule, and the rerun proved it does nothing.
 
-So: the LLM extracts `raw_text`; deterministic code maps `raw_text -> canonical` (and splits slash-lists into separate raw skills first). Treat the model's own `canonical` as a hint, not the source of truth.
+The code does three things, in this order:
+1. **Split slash-lists** — break "A/B/C" chunks ("GCP/AWS/Azure", "n8n/Make/Zapier") into separate skills (split on `/`, `,`, " or ", "&"). Left alone, the model keeps only the first and silently drops the rest.
+2. **Case-fold** — lowercase and trim stray spaces/punctuation before comparing, so "Vector Databases" and "vector databases" count as one skill, not two.
+3. **Canonical alias map** — a hand-written lookup of "this spelling → that official name" (`large language models → LLMs`, `ReactJS → React`). Keep it conservative: only merge pairs you've eyeballed; when unsure, leave them separate. Under-merging is safe (two honest bars); over-merging is a visible error a judge will catch.
+
+So: the LLM extracts the raw skill text (`raw_text`); this code turns it into the clean name (`canonical`). Treat the model's own `canonical` guess as a hint, not the source of truth.
+
+Both failure modes here are real, not hypothetical — the probe produced the "Vector databases" double-bar and the "GCP/AWS/Azure → GCP" collapse, and did it inconsistently between runs. That's the proof normalization can't live in the prompt.
 
 ## Normalization — contingency plan
 Normalization is the make-or-break block (13:00–14:15 on the clock). It will **not** be
@@ -74,7 +79,7 @@ the problems we'll likely hit and the move for each — pick the move, don't ago
   noisy, raise the threshold to ≥3 or show only the top-N.
 
 **If at 14:15 the top of the chart still looks like noise — escalation ladder (in order):**
-1. **Switch from "normalize everything" to a curated allowlist.** You've seen the corpus —
+1. **Switch from "normalize everything" to a curated allowlist.** 
    hand-pick ~15–25 canonical skills you care about and chart only skills that map into that
    set. Everything else stays in the data and on click-through, just off the chart. This turns
    an open-ended reconciliation problem into a closed-set lookup: fast and demo-safe. **This is
