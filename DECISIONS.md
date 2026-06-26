@@ -26,8 +26,10 @@ After eyeballing the real chart, extended the deterministic alias map (`normaliz
   → "Observability" (4).
 - **Fine-tuning** — `LLM fine-tuning` → "Fine-tuning".
 
-Stayed conservative on *bucketing* (generic API / Testing / Cloud / data-pipeline terms left
-separate, pending review) — under-merge is safe, over-merge is the error a judge catches.
+Then, per review, also bucketed generic **APIs / Testing / Cloud / Data pipelines** (keeping
+specific tools — FastAPI, A/B Testing, GCP/AWS/Azure, Airflow/Prefect/dbt — as their own bars).
+APIs jumped to a top-7 bar (7). Principle held throughout: under-merge is safe, over-merge is the
+error a judge catches — so only generic terms were bucketed, never distinct tools.
 
 Note: extraction was re-run (new `data/extracted.json`, 09:11), so unrelated counts also shifted.
 

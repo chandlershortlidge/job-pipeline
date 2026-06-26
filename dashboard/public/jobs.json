@@ -47,7 +47,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API development",
+          "canonical": "APIs",
           "raw_text": "Strong understanding of modern application architecture and API development",
           "requirement": "required"
         },
@@ -104,7 +104,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API architecture",
           "requirement": "required"
         },
@@ -176,7 +176,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "debugging & testing",
+          "canonical": "Testing",
           "raw_text": "debugging and testing practices",
           "requirement": "required"
         },
@@ -285,7 +285,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API design and testing",
           "requirement": "required"
         },
@@ -459,7 +459,7 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "Integration Testing",
+          "canonical": "Testing",
           "raw_text": "writing integration tests",
           "requirement": "nice_to_have"
         },
@@ -501,7 +501,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "REST APIs",
+          "canonical": "APIs",
           "raw_text": "Experience building and integrating REST APIs (e.g., FastAPI/Flask) for AI services",
           "requirement": "required"
         },
@@ -643,7 +643,7 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "Cloud infrastructure",
+          "canonical": "Cloud",
           "raw_text": "Familiarity with cloud infrastructure (we provision VMs and networks dynamically per exercise)",
           "requirement": "nice_to_have"
         },
@@ -951,12 +951,12 @@
           "requirement": "required"
         },
         {
-          "canonical": "Test automation",
+          "canonical": "Testing",
           "raw_text": "test automation",
           "requirement": "required"
         },
         {
-          "canonical": "API integration",
+          "canonical": "APIs",
           "raw_text": "APIs, tools, and enterprise systems integration",
           "requirement": "required"
         },
@@ -1212,7 +1212,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Cloud Platforms",
+          "canonical": "Cloud",
           "raw_text": "cloud platforms (AWS, Azure or GCP)",
           "requirement": "required"
         },
@@ -1294,7 +1294,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "ETL pipelines",
+          "canonical": "Data pipelines",
           "raw_text": "ETL/ELT pipeline design",
           "requirement": "nice_to_have"
         },
@@ -1309,7 +1309,7 @@
           "requirement": "nice_to_have"
         },
         {
-          "canonical": "API integrations",
+          "canonical": "APIs",
           "raw_text": "API integrations",
           "requirement": "nice_to_have"
         },
@@ -1376,7 +1376,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "API Design",
+          "canonical": "APIs",
           "raw_text": "API design",
           "requirement": "required"
         },
@@ -1406,7 +1406,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Automated Testing",
+          "canonical": "Testing",
           "raw_text": "automated testing frameworks",
           "requirement": "required"
         },
@@ -1605,7 +1605,7 @@
           "requirement": "required"
         },
         {
-          "canonical": "Data Pipelines",
+          "canonical": "Data pipelines",
           "raw_text": "Data pipelines and validation",
           "requirement": "required"
         },
@@ -1672,6 +1672,12 @@
     "FastAPI": [
       "FastAPI/Flask"
     ],
+    "APIs": [
+      "API architecture",
+      "API design",
+      "API design and testing",
+      "API integrations"
+    ],
     "Agents": [
       "AI agents",
       "AI-powered agents",
@@ -1703,10 +1709,6 @@
     "n8n": [
       "n8n/Make/Zapier"
     ],
-    "API Design": [
-      "API architecture",
-      "API design and testing"
-    ],
     "Evaluation": [
       "AI evaluation frameworks",
       "evaluation frameworks",
@@ -1715,8 +1717,11 @@
     "automation/integrations": [
       "building automations or integrations"
     ],
-    "debugging & testing": [
-      "debugging and testing practices"
+    "Testing": [
+      "automated testing frameworks",
+      "debugging and testing practices",
+      "test automation",
+      "writing integration tests"
     ],
     "German language": [
       "German language skills"
@@ -1725,7 +1730,7 @@
       "backend software engineering"
     ],
     "Tool calling": [
-      "tool use",
+      "Tool Use",
       "tool/function calling"
     ],
     "Observability": [
@@ -1754,9 +1759,6 @@
     ],
     "Model Development": [
       "custom model development"
-    ],
-    "Integration Testing": [
-      "writing integration tests"
     ],
     "Docker": [
       "Experience working with Docker"
@@ -1787,6 +1789,9 @@
     "Databricks": [
       "Experience working with Databricks"
     ],
+    "Cloud": [
+      "cloud platforms (AWS, Azure or GCP)"
+    ],
     "TensorFlow": [
       "TensorFlow or PyTorch"
     ],
@@ -1809,17 +1814,12 @@
     "German": [
       "German (Nice-to-have)"
     ],
-    "Cloud Platforms": [
-      "cloud platforms (AWS, Azure or GCP)"
-    ],
-    "ETL pipelines": [
+    "Data pipelines": [
+      "Data pipelines and validation",
       "ETL/ELT pipeline design"
     ],
     "BigQuery": [
       "BigQuery/Snowflake"
-    ],
-    "Automated Testing": [
-      "automated testing frameworks"
     ],
     "Performance Optimization": [
       "performance optimization at scale"
@@ -1829,9 +1829,6 @@
     ],
     "PySpark": [
       "Spark/PySpark"
-    ],
-    "Data Pipelines": [
-      "Data pipelines and validation"
     ],
     "AI Architecture": [
       "AI solution architecture"

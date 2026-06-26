@@ -51,6 +51,25 @@ ALIASES = {
     "monitoring & observability": "Observability",
     # Fine-tuning (clearly the same skill)
     "llm fine-tuning": "Fine-tuning",
+    # APIs (generic) — keep FastAPI and LLM APIs separate
+    "api design": "APIs",
+    "api development": "APIs",
+    "api integration": "APIs",
+    "api integrations": "APIs",
+    "apis": "APIs",
+    "rest apis": "APIs",
+    "restful apis": "APIs",
+    # Testing (QA) — keep A/B Testing separate
+    "test automation": "Testing",
+    "automated testing": "Testing",
+    "integration testing": "Testing",
+    "debugging & testing": "Testing",
+    # Cloud (generic) — GCP / AWS / Azure stay separate
+    "cloud infrastructure": "Cloud",
+    "cloud platforms": "Cloud",
+    # Data pipelines (generic) — keep Airflow / Prefect / dbt as their own bars
+    "etl pipelines": "Data pipelines",
+    "data pipelines": "Data pipelines",
 }
 
 
