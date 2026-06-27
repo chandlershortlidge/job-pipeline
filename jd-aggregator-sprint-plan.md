@@ -221,7 +221,7 @@ demo, not forwards from the start — the deadline is the anchor, everything els
 | 16:15–16:30 | **Phase 3d — click-to-filter** | Job → its skills, skill → its jobs. Deploy. (First thing to cut if behind.) |
 | **16:30** | **🛑 HARD STOP — stop building** | No new code or features past this line, no matter what. |
 | 16:30–16:45 | **Freeze + stranger test** | Redeploy from a clean `main`. Open the live URL in a **fresh incognito window** and click through it **as a stranger would** — nothing cached, nothing assumed. Fix only show-stoppers. |
-| 16:45–17:00 | **Demo prep + buffer** | Rehearse the 2-minute story (script: `demo-script.md`), URL open in a tab. Buffer for Wi-Fi / nerves. |
+| 16:45–17:00 | **Demo prep + buffer** | Rehearse the 2-minute story, URL open in a tab. Buffer for Wi-Fi / nerves. |
 | **17:00** | **Demo + judging** | |
 
 **The rule that overrides the table:** if you're behind at any checkpoint, cut **upward
@@ -260,50 +260,49 @@ locked in `frontend-spec.md` — build against that, don't redesign on the clock
 - 3d — click-to-filter: job → its skills, skill → its jobs.
 Drop from the bottom (3d first) if time runs short, never from the top.
 
-**Phase 4 — Stretch (only if Phase 3 deployed with time to spare)**
-Live drop-in of a new screenshot — and this *is* the **Daytona sponsor showcase**: the upload
-is parsed on-demand inside a Daytona sandbox (see "Sponsor angle — Daytona" below). Only attempt
-it if the round-trip was de-risked during the week. Then — distant third — the chatbot.
+**Phase 4 — Live Daytona features (built)**
+Beyond the static dashboard: the **live JD drop-in** and the **résumé match**, both parsing fresh
+input on demand in a Daytona sandbox. See "Live features (Daytona-powered)" below.
 
-## Sponsor angle — Daytona (live drop-in showcase)
-**Why:** Daytona is the event sponsor; using its sandbox runtime in a *visible* way is the edge
-for the **sponsor prize** (not required to qualify — the live URL covers that). Daytona is secure
-infrastructure for running code in fast, isolated **sandboxes** via an SDK. Our app has no organic
-need to run code, so we place Daytona deliberately in the one feature that genuinely fits:
-**on-demand extraction of a freshly uploaded screenshot.**
+## Live features (Daytona-powered)
+Two features run extraction on demand inside a **Daytona sandbox**, so the dashboard isn't just a
+static read of `jobs.json` — it parses fresh input live. Both are served by Vercel serverless
+functions in `dashboard/api/` (same repo, same `git push`, no separate backend) and share one
+in-sandbox extraction approach.
 
-**The feature (Phase 4 stretch):** on the live site, a judge uploads a JD screenshot → it's parsed
-on-demand → the dashboard updates. The parse runs the Python extraction **inside a Daytona
-sandbox**, so Daytona is doing real work, not decoration.
+**How the sandbox extraction works (shared by both):** a thin JS function creates an **ephemeral**
+Daytona sandbox and runs Python in it that calls the model's HTTP API directly via the standard
+library (`urllib`) — so the sandbox needs no `pip install` and boots fast. The function reads the
+sandbox's stdout, normalizes the skills against the chart's vocabulary (`canonicalMap.js`, generated
+by `normalize.py`), and returns JSON. Secrets (`DAYTONA_API_KEY`, `ANTHROPIC_API_KEY`) live in Vercel
+env vars. Sandboxes are created `ephemeral` with a short auto-stop so they self-delete (see the
+disk-leak fix in `DECISIONS.md`).
 
-**Architecture — still "one repo, one deploy" (no separate host):**
 ```
 Browser (live site)
-  → POST screenshot to /api/extract     (Vercel serverless function — same repo, holds secrets)
-     → Daytona SDK: create sandbox, run the Python extraction in it, read JSON back
-  ← returns the parsed job
-React appends the job to the on-screen list (in memory — NO database)
+  → POST to /api/extract (screenshot) or /api/resume (PDF)   (Vercel serverless fn, holds secrets)
+     → Daytona SDK: create ephemeral sandbox, run Python extraction in it (stdlib urllib), read JSON
+  ← returns the parsed job / profile (skills normalized to the chart vocabulary)
+React updates in memory — NO database
 ```
-- A **Vercel serverless function** (`dashboard/api/extract.*`) deploys with the same `git push` —
-  it's not a second backend, just a function file.
-- **Stateless:** the new job lives in React state for the demo; it need not survive a refresh, so no DB.
-- The thin function (JS) orchestrates; the **Python extraction runs in the Daytona sandbox** — which
-  also avoids Python-on-Vercel friction and is the genuine sponsor use.
-- Secrets (Daytona key, model key) live in **Vercel env vars**, never in the repo.
 
-**Hard condition — de-risk this week or don't attempt it.** This stacks three first-time things
-(Vercel function, Daytona SDK, Python-in-sandbox); cold on the day it can eat 2+ hours and yield
-nothing. Prove a hello-world round-trip during the week (see `daytona-prep-checklist.md`); then the
-day-of task is just swapping the trivial script for the real extraction. If the round-trip isn't
-working by the end of that prep, drop the showcase.
+### Live JD drop-in
+Upload a JD screenshot → it's parsed in a sandbox → the new job is **prepended to the dashboard**
+(chart, stats, and list re-derive; a green "live" badge marks it). Stateless — React state only.
+- **Contract:** `POST /api/extract` `{ image: <base64>, media_type }` → `{ job }` (same shape as a
+  `jobs.json` job).
 
-**Guardrails:**
-- **Gated stretch only.** Build it after Phase 3 is deployed — the static dashboard + live URL (your
-  prize floor) must already be live and safe.
-- **Cut line ~16:00.** If it's not working by then, drop it; it's additive, so removing it touches
-  nothing else.
-- **Lighter fallback** if you want *some* Daytona without the live UI: run the offline batch
-  extraction through a Daytona sandbox. Weaker story, but genuine sponsor usage that never risks the URL.
+### Résumé match
+Upload your résumé **PDF** → it's parsed in a sandbox (the model reads PDFs natively via a `document`
+content block — no PDF-parsing code) → its skills are normalized to the chart's vocabulary → every
+job is ranked **client-side** by how much of its *required* skills you already have, with matched and
+missing skills shown per job. Extra skills you have that no job asks for never lower the score; they're
+listed separately as an honest "you also have…" line.
+- **Contract:** `POST /api/resume` `{ pdf, media_type }` → `{ profile: { title, years_experience,
+  skills:[{canonical, raw_text}] } }`. Match runs against the in-memory `jobs`.
+- **"LLMs" inference:** a résumé rarely says "LLMs" literally even when the candidate clearly does LLM
+  work, so deterministic code (not a prompt) adds "LLMs" when the résumé carries a strong LLM-signal
+  skill (RAG, LangChain, Agents, Prompt engineering, …). Same normalize-in-code principle as the corpus.
 
 ## Sprint AGENTS.md Posture (lightweight variant)
 Keep: tight scope, explicit definition of done, English-explanation sanity checks before moving on.
