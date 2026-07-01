@@ -8,7 +8,25 @@
 //
 // Env vars (Vercel project settings): DAYTONA_API_KEY, ANTHROPIC_API_KEY.
 import { Daytona } from '@daytona/sdk'
+import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
+
+// Best-effort save of a parsed résumé profile to the cv table. Returns { id, name }
+// on success, null otherwise — never throws into the request path.
+async function persistCv(profile) {
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) return null
+  const supabase = createClient(url, key)
+  const name = `${profile.title || 'Résumé'} — ${new Date().toISOString().slice(0, 10)}`
+  const { data, error } = await supabase
+    .from('cv')
+    .insert({ name, skills: profile.skills, raw_profile: profile })
+    .select('id')
+    .single()
+  if (error) throw error
+  return { id: data.id, name }
+}
 
 const MODEL = 'claude-sonnet-4-6'
 
@@ -171,7 +189,13 @@ export default async function handler(req, res) {
       years_experience: parsed.years_experience ?? null,
       skills: addInferredLLMs(normalizeSkills(parsed.skills)),
     }
-    return res.status(200).json({ profile })
+    let cv = null
+    try {
+      cv = await persistCv(profile) // save so it can be toggled without re-uploading; best-effort
+    } catch (e) {
+      console.error('persistCv failed', e)
+    }
+    return res.status(200).json({ profile, cv })
   } catch (e) {
     return res.status(500).json({ error: String(e) })
   } finally {

@@ -4,7 +4,30 @@
 //
 // Env vars (Vercel project settings): DAYTONA_API_KEY, ANTHROPIC_API_KEY.
 import { Daytona } from '@daytona/sdk'
+import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
+
+// Best-effort write of a parsed job to Supabase. Never throws into the request path —
+// if persistence fails or isn't configured, the user still gets their job in the UI.
+async function persistJob(job) {
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) return
+  const supabase = createClient(url, key)
+  const { skills, ...jobRow } = job
+  const { error } = await supabase.from('job').insert(jobRow)
+  if (error) throw error
+  if (skills?.length) {
+    await supabase.from('skill').insert(
+      skills.map((s) => ({
+        job_id: job.id,
+        raw_text: s.raw_text,
+        canonical: s.canonical,
+        requirement: s.requirement,
+      })),
+    )
+  }
+}
 
 const MODEL = 'claude-sonnet-4-6'
 
@@ -165,6 +188,11 @@ export default async function handler(req, res) {
       source: 'screenshot',
       ...parsed,
       skills: normalizeSkills(parsed.skills),
+    }
+    try {
+      await persistJob(job) // persist so it survives a refresh; best-effort
+    } catch (e) {
+      console.error('persistJob failed', e)
     }
     return res.status(200).json({ job })
   } catch (e) {
