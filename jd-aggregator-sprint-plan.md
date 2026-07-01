@@ -304,6 +304,64 @@ listed separately as an honest "you also have…" line.
   work, so deterministic code (not a prompt) adds "LLMs" when the résumé carries a strong LLM-signal
   skill (RAG, LangChain, Agents, Prompt engineering, …). Same normalize-in-code principle as the corpus.
 
+## Part 1.5 — Persistent Storage (Supabase)
+Adds a Supabase (Postgres) layer *under* the two live features so results survive a refresh. It does
+**not** rebuild either feature or touch the Daytona sandbox logic — the only change to the serverless
+functions is a write-to-Supabase call *after* the sandbox returns. (Decision + rejected alternatives
+are in `DECISIONS.md`.)
+
+**Done when:** a live-drop-in JD persists across a hard refresh; a parsed résumé profile is saved with
+a name and can be toggled between; the `jobs.json` corpus seeds the DB once (on an empty database);
+no new host — Supabase is called from the existing Vercel functions + React app.
+
+**Does add:** Supabase project + schema; `@supabase/supabase-js` in the functions (write job+skills
+after `/api/extract`, write profile after `/api/resume`); React reads jobs from Supabase; a CV toggle
+to switch saved résumé profiles; a one-time corpus seed.
+**Does NOT add:** any change to the Daytona/extraction logic; the match logic (already client-side);
+auth / multi-user; the part-2 `application` table (keep `job.id` as the join point, don't build it).
+
+**Schema:**
+```sql
+create table job (
+  id text primary key, company text, title text,
+  seniority text, seniority_signal text, seniority_basis text,
+  summary text, source text,               -- 'corpus' (seed) | 'screenshot' (live)
+  created_at timestamptz default now()
+);
+create table skill (
+  id bigserial primary key, job_id text references job(id),
+  raw_text text, canonical text, requirement text
+);
+create table cv (
+  id bigserial primary key, name text not null,
+  skills jsonb, raw_profile jsonb, created_at timestamptz default now()
+);
+-- part 2 only — don't build; keep job.id as the join point
+```
+
+**Steps (each has a checkpoint before moving on):**
+1. **Supabase setup** — create project, run the schema SQL, put URL + keys in env (client:
+   `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` in `dashboard/.env`; server: `SUPABASE_URL` /
+   `SUPABASE_SERVICE_ROLE_KEY` in root `.env` + Vercel). **Enable RLS:** public SELECT allowed, inserts
+   only via the service-role key (server-side).
+2. **Seed** — a one-off `seed.py` reads `dashboard/public/jobs.json` and inserts all jobs + skills once.
+   Verify row counts. Don't re-run against a populated DB (duplicate `job.id` errors).
+3. **React reads from Supabase** — replace `fetch('/jobs.json')` with a Supabase query; the dashboard
+   renders identically. `jobs.json` stays as the dev fallback + corpus snapshot.
+4. **Persist JD drop-in** — in `api/extract.js`, after the sandbox returns, write job + skills to
+   Supabase before responding. Verify: upload → hard-refresh → job persists.
+5. **Persist résumé** — in `api/resume.js`, after the sandbox returns, write the profile to `cv`
+   (auto-named); return the saved `id`.
+6. **CV toggle** — fetch saved CVs on load; a selector re-runs the client-side match against the chosen
+   profile (no new Daytona call).
+
+**Pitfalls (load-bearing):**
+- **RLS is mandatory.** The publishable/anon key ships in the browser bundle; without RLS anyone could
+  write. Enable it and restrict inserts to the service-role key before anything goes live.
+- **Seed once.** Re-running the seed on a populated DB errors on duplicate `job.id`; truncate first if reseeding.
+- **Don't touch the Daytona pipeline.** Only append a Supabase write after the sandbox returns.
+- **Keep `jobs.json`** as the committed corpus snapshot / audit trail even after the DB is the source of truth.
+
 ## Sprint AGENTS.md Posture (lightweight variant)
 Keep: tight scope, explicit definition of done, English-explanation sanity checks before moving on.
 Drop: full planning docs, promotion-to-module ceremony, comprehensive test coverage.
