@@ -15,6 +15,25 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-01 15:09 — Supabase (Postgres) chosen as the persistent store
+
+Adding persistence under the two live features (JD drop-in, résumé match) — results currently live
+in React state and die on refresh. **Supabase (Postgres)** chosen to hold jobs, skills, résumé
+profiles, and (future) applications.
+
+**Over the alternatives:**
+- **Vercel KV** — key-value, wrong data model (ours is relational).
+- **Turso** — weaker Python client story for the extraction side.
+- **SQLite** — Vercel's filesystem is ephemeral; serverless functions can't persist writes to it.
+
+Both `supabase-py` (Python) and `@supabase/supabase-js` (React) are first-class. The existing
+`job`/`skill`/`application` schema drops into Postgres unchanged; part 2's email parser writes
+`application` rows joined on `job_id` — one query gives the full picture. **No new host** — Supabase
+is called from the existing Vercel functions and the React app. The Daytona extraction pipeline is
+**unchanged**; only a write-to-Supabase call is appended after the sandbox returns.
+
+---
+
 ## 2026-06-26 15:27 — Daytona disk-limit leak fixed (sandboxes now ephemeral)
 
 **Symptom:** live uploads started failing with "Total disk limit exceeded. Maximum allowed: 30GiB."
