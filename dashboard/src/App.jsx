@@ -31,6 +31,8 @@ export default function App() {
   const [resumeProfile, setResumeProfile] = useState(null)
   const [resumeBusy, setResumeBusy] = useState(false)
   const [resumeError, setResumeError] = useState(null)
+  const [savedCvs, setSavedCvs] = useState([])
+  const [selectedCvId, setSelectedCvId] = useState(null)
 
   useEffect(() => {
     async function load() {
@@ -66,6 +68,27 @@ export default function App() {
     }
     load()
   }, [])
+
+  // Load previously-saved résumés so they can be re-selected without re-uploading.
+  useEffect(() => {
+    supabase
+      .from('cv')
+      .select('id, name, raw_profile')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (error || !data?.length) return
+        const cvs = data.map((c) => ({ id: c.id, name: c.name, profile: c.raw_profile }))
+        setSavedCvs(cvs)
+        setSelectedCvId(cvs[0].id)
+        setResumeProfile(cvs[0].profile) // restore the most recent match on load
+      })
+  }, [])
+
+  // Switch to a saved résumé — re-runs the client-side match against its skills.
+  function selectCv(cv) {
+    setSelectedCvId(cv.id)
+    setResumeProfile(cv.profile)
+  }
 
   // Live drop-in: parse an uploaded screenshot in a Daytona sandbox, prepend the job.
   async function handleUpload(e) {
@@ -107,6 +130,11 @@ export default function App() {
       const payload = await res.json()
       if (!res.ok || !payload.profile) throw new Error(payload.error || 'parse failed')
       setResumeProfile(payload.profile)
+      if (payload.cv) {
+        const entry = { id: payload.cv.id, name: payload.cv.name, profile: payload.profile }
+        setSavedCvs((prev) => [entry, ...prev.filter((c) => c.id !== entry.id)])
+        setSelectedCvId(payload.cv.id)
+      }
     } catch (err) {
       setResumeError(String(err.message || err))
     } finally {
@@ -356,6 +384,21 @@ export default function App() {
           )}
           {resumeError && <span className="upload-err">⚠ {resumeError}</span>}
         </div>
+
+        {savedCvs.length > 0 && (
+          <div className="cv-toggle">
+            <span className="cv-toggle-label">Saved résumés:</span>
+            {savedCvs.map((cv) => (
+              <button
+                key={cv.id}
+                className={'cv-chip' + (selectedCvId === cv.id ? ' active' : '')}
+                onClick={() => selectCv(cv)}
+              >
+                {cv.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         {resumeMatch && (
           <>
