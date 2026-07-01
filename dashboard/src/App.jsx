@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import { supabase } from './supabase'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -32,10 +33,38 @@ export default function App() {
   const [resumeError, setResumeError] = useState(null)
 
   useEffect(() => {
-    fetch('/jobs.json')
-      .then((r) => r.json())
-      .then(setData)
-      .catch((e) => console.error('failed to load jobs.json', e))
+    async function load() {
+      try {
+        // Jobs (+ their skills) come from Supabase now. The "merged from" reveal map
+        // (skill_variants) stays in the static jobs.json corpus snapshot.
+        const [{ data: rows, error }, variants] = await Promise.all([
+          supabase.from('job').select('*, skill(*)').order('created_at', { ascending: false }),
+          fetch('/jobs.json').then((r) => r.json()),
+        ])
+        if (error) throw error
+        const jobs = rows.map((j) => ({
+          id: j.id,
+          company: j.company,
+          title: j.title,
+          seniority: j.seniority,
+          seniority_signal: j.seniority_signal,
+          seniority_basis: j.seniority_basis,
+          summary: j.summary,
+          source: j.source,
+          skills: (j.skill || []).map((s) => ({
+            canonical: s.canonical,
+            raw_text: s.raw_text,
+            requirement: s.requirement,
+          })),
+        }))
+        setData({ jobs, skill_variants: variants.skill_variants || {} })
+      } catch (e) {
+        // Fallback: if Supabase is unreachable, render the static corpus snapshot.
+        console.error('Supabase load failed, falling back to jobs.json', e)
+        setData(await fetch('/jobs.json').then((r) => r.json()))
+      }
+    }
+    load()
   }, [])
 
   // Live drop-in: parse an uploaded screenshot in a Daytona sandbox, prepend the job.
