@@ -15,6 +15,26 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-02 08:10 — Part 1.5 (Supabase persistence) code-complete; PENDING deployed verify
+
+**⏸ Resume point.** All 6 Part 1.5 steps are built, committed, and pushed (schema + RLS, `seed.py`,
+React reads jobs from Supabase, persist JD drop-in in `extract.js`, persist résumé in `resume.js`,
+CV toggle in `App.jsx`). Each verified **locally**: read path via the publishable key, write path via
+the secret key, `npm run build` green. Local dev reads from Supabase; the **deployed** site is still
+on the `jobs.json` fallback because the Vercel env vars aren't set yet.
+
+**To finish (do this on return):**
+1. Add 4 env vars in Vercel (all environments): `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`,
+   `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`. (`VITE_` = build-time; the others = function runtime.)
+2. Redeploy (env vars only take effect on a new deploy).
+3. Verify the deployed loop: (a) dashboard reads jobs from Supabase (bundle contains the Supabase URL),
+   (b) a live drop-in job survives a hard refresh, (c) a résumé saves and the toggle switches between
+   saved CVs.
+
+Nothing else is half-done; safe to pause here.
+
+---
+
 ## 2026-07-01 15:09 — Supabase (Postgres) chosen as the persistent store
 
 Adding persistence under the two live features (JD drop-in, résumé match) — results currently live
