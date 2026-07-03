@@ -1,6 +1,6 @@
 # job-pipeline
 
-** See What AI Employers Want** — answers one question, visually: *what skills are the job market prioritizing?*
+**See What AI Employers Want** — answers one question, visually: *what skills are the job market prioritizing?*
 
 Job hunting in AI engineering is confusing. Outside Python and LLM basics, every company wants something different — MLOps, RAG, agents, LangChain, cloud, eval. Drop in screenshots of job descriptions you're applying to, and get a live view of what the market's actually prioritizing — by skill, by seniority, per job vs. your own resume.
 
