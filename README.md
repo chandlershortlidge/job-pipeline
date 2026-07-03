@@ -1,9 +1,8 @@
 # job-pipeline
 
-**JD Skills Aggregator** — answer one question, visually: *what is the job market prioritizing?*
+** See What AI Employers Want** — answers one question, visually: *what skills are the job market prioritizing?*
 
-Feed it a corpus of job-description screenshots; it extracts the skills, normalizes the messy
-variants into a canonical vocabulary, and shows the market as a ranked, clickable dashboard.
+Job hunting in AI engineering is confusing. Outside Python and LLM basics, every company wants something different — MLOps, RAG, agents, LangChain, cloud, eval. Drop in screenshots of job descriptions you're applying to, and get a live view of what the market's actually prioritizing — by skill, by seniority, per job vs. your own resume.
 
 > Built solo at a one-day AI hackathon. Open source (MIT).
 > **Live:** https://job-pipeline-opal.vercel.app
@@ -11,7 +10,7 @@ variants into a canonical vocabulary, and shows the market as a ranked, clickabl
 ## The idea
 Job descriptions are inconsistent and unstructured — "React", "ReactJS", and "React.js" are the
 same skill written three ways, and the signal (what employers actually want) is buried. This tool
-reads 20 real AI-Engineer JD screenshots with a vision model, reconciles the skill names, and
+reads 20+ real AI-Engineer JD screenshots with a vision model, reconciles the skill names, and
 aggregates by **document frequency** (how many jobs mention a skill) to surface the real market signal.
 
 ## What it does
