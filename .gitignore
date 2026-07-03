@@ -227,3 +227,5 @@ scratch/resumes/
 # Node deps (Daytona de-risk script, etc.) — never commit
 node_modules/
 .
+.vercel
+.env*

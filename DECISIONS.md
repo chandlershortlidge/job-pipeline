@@ -15,6 +15,39 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-03 13:12 — Deployed frontend was blank: missing VITE_ env vars on Vercel
+
+**Symptom:** Live site (`job-pipeline-opal.vercel.app`) served HTTP 200 but rendered a
+blank page. This is the Part 1.5 "pending deployed verify" resolving.
+
+**Root cause:** The Supabase integration on Vercel auto-added a pile of env vars
+(`SUPABASE_URL`, `SUPABASE_ANON_KEY`, and `NEXT_PUBLIC_SUPABASE_*`) — but the dashboard
+is a **Vite** app, and Vite only exposes vars prefixed with `VITE_` to the browser.
+`dashboard/src/supabase.js` reads `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`, neither
+of which existed. So `createClient(undefined, undefined)` threw at module load, before
+React rendered → white screen. Confirmed by grepping the built bundle: no `supabase.co`
+URL was in it.
+
+**Fix:** Added `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` (Production) with the
+values from local `dashboard/.env`, then **redeployed** (Vite inlines env at *build*
+time, so setting them without a rebuild does nothing). Verified end-to-end: new bundle
+contains the URL + publishable key, Supabase REST returns HTTP 200, and `content-range:
+0-19/20` confirms all 20 seeded jobs reach the anon browser client.
+
+**Gotchas for future-you:**
+- Adding env vars requires a **redeploy** to take effect for Vite/Vercel.
+- `npx vercel env add NAME production` fed from a pipe **silently stored empty values**
+  (reported "✓ Added" but the value was `""`). Setting these via the Vercel **dashboard**
+  UI is the reliable path; if scripting, verify with `vercel env pull` afterward.
+- The local anon key is the new short `sb_publishable_…` format, not the long legacy JWT
+  that the integration stored under `SUPABASE_ANON_KEY` — both are valid for the project.
+- Same Supabase project either way (host `mnfqhklvzeorvwjwrzro`), so the seeded data was
+  never in doubt — only the frontend's ability to reach it.
+- **Latent risk:** `supabase.js` calls `createClient` with no guard, so a missing env var
+  white-screens the whole app instead of falling back to `jobs.json`. Worth a guard.
+
+---
+
 ## 2026-07-02 08:10 — Part 1.5 (Supabase persistence) code-complete; PENDING deployed verify
 
 **⏸ Resume point.** All 6 Part 1.5 steps are built, committed, and pushed (schema + RLS, `seed.py`,
