@@ -15,6 +15,34 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-04 — Saved résumés: rename + delete, and name-by-filename
+
+**Feature:** The saved-résumé chips can now be **renamed** (✎ → inline input, Enter/blur
+saves, Esc cancels) and **deleted** (×). New uploads are named after the **uploaded file**
+(extension stripped) instead of the old `title — date`.
+
+**How:** The browser has read-only RLS on `cv`, so writes go through a new server route
+`dashboard/api/cv.js` (`PATCH {id,name}` rename, `DELETE ?id=` remove) using the
+service-role key — same "writes are server-side only" pattern as extract.js/resume.js.
+`resume.js` now takes the filename from the client and derives the name. Front-end
+rename/delete are optimistic with rollback; deleting the active résumé falls back to the
+next saved one. Existing rows keep their old names (only new uploads use the filename).
+
+**Verified:** `vite build` green; the exact DB ops (insert → update name → delete) run
+against the real `cv` table via a throwaway row (id integer, not UUID). Tested on a
+Vercel **preview** deploy before prod.
+
+**Gotcha (important):** `vercel env add <NAME> <env>` non-interactively stores an **empty
+value** in this environment — both piped (`printf | ...`) and file-redirect (`... < f`)
+forms report "✓ Added" but the value is `""`. This bit us on the VITE_ vars too
+(2026-07-03). Reliable paths: the Vercel **dashboard**, or the **REST API**
+(`POST /v10/projects/{id}/env?teamId=...` with `{key,value,type:'encrypted',target:[...]}`
+using the token in `~/Library/Application Support/com.vercel.cli/auth.json`). **Always
+verify with `vercel env pull` afterward.** Preview env needed `SUPABASE_URL` +
+`SUPABASE_SERVICE_ROLE_KEY` added (they were Production-only).
+
+---
+
 ## 2026-07-03 13:12 — Deployed frontend was blank: missing VITE_ env vars on Vercel
 
 **Symptom:** Live site (`job-pipeline-opal.vercel.app`) served HTTP 200 but rendered a

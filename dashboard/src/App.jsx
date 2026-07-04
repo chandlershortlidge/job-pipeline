@@ -33,6 +33,8 @@ export default function App() {
   const [resumeError, setResumeError] = useState(null)
   const [savedCvs, setSavedCvs] = useState([])
   const [selectedCvId, setSelectedCvId] = useState(null)
+  const [editingCvId, setEditingCvId] = useState(null)
+  const [editingName, setEditingName] = useState('')
 
   useEffect(() => {
     async function load() {
@@ -90,6 +92,53 @@ export default function App() {
     setResumeProfile(cv.profile)
   }
 
+  function startRename(cv) {
+    setEditingCvId(cv.id)
+    setEditingName(cv.name)
+  }
+
+  // Persist a rename via the server (browser has read-only RLS on cv). Optimistic:
+  // update the chip immediately, roll back if the request fails.
+  async function commitRename() {
+    const id = editingCvId
+    const name = editingName.trim()
+    setEditingCvId(null)
+    const current = savedCvs.find((c) => c.id === id)
+    if (!id || !name || !current || name === current.name) return
+    const prev = savedCvs
+    setSavedCvs((cvs) => cvs.map((c) => (c.id === id ? { ...c, name } : c)))
+    try {
+      const res = await fetch('/api/cv', {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ id, name }),
+      })
+      if (!res.ok) throw new Error((await res.json()).error || 'rename failed')
+    } catch (e) {
+      setSavedCvs(prev) // roll back
+      setResumeError(String(e.message || e))
+    }
+  }
+
+  // Delete a saved résumé server-side. Optimistic; if it was the active one, fall
+  // back to the next saved résumé (or clear the match if none remain).
+  async function deleteCv(id) {
+    const prev = savedCvs
+    const remaining = prev.filter((c) => c.id !== id)
+    setSavedCvs(remaining)
+    if (selectedCvId === id) {
+      setSelectedCvId(remaining[0]?.id ?? null)
+      setResumeProfile(remaining[0]?.profile ?? null)
+    }
+    try {
+      const res = await fetch(`/api/cv?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error((await res.json()).error || 'delete failed')
+    } catch (e) {
+      setSavedCvs(prev) // roll back
+      setResumeError(String(e.message || e))
+    }
+  }
+
   // Live drop-in: parse an uploaded screenshot in a Daytona sandbox, prepend the job.
   async function handleUpload(e) {
     const file = e.target.files?.[0]
@@ -125,7 +174,7 @@ export default function App() {
       const res = await fetch('/api/resume', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ pdf, media_type: file.type || 'application/pdf' }),
+        body: JSON.stringify({ pdf, media_type: file.type || 'application/pdf', filename: file.name }),
       })
       const payload = await res.json()
       if (!res.ok || !payload.profile) throw new Error(payload.error || 'parse failed')
@@ -388,15 +437,45 @@ export default function App() {
         {savedCvs.length > 0 && (
           <div className="cv-toggle">
             <span className="cv-toggle-label">Saved résumés:</span>
-            {savedCvs.map((cv) => (
-              <button
-                key={cv.id}
-                className={'cv-chip' + (selectedCvId === cv.id ? ' active' : '')}
-                onClick={() => selectCv(cv)}
-              >
-                {cv.name}
-              </button>
-            ))}
+            {savedCvs.map((cv) =>
+              editingCvId === cv.id ? (
+                <input
+                  key={cv.id}
+                  className="cv-edit-input"
+                  value={editingName}
+                  autoFocus
+                  onChange={(e) => setEditingName(e.target.value)}
+                  onBlur={commitRename}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') commitRename()
+                    if (e.key === 'Escape') setEditingCvId(null)
+                  }}
+                />
+              ) : (
+                <span
+                  key={cv.id}
+                  className={'cv-chip' + (selectedCvId === cv.id ? ' active' : '')}
+                >
+                  <button className="cv-chip-name" onClick={() => selectCv(cv)}>
+                    {cv.name}
+                  </button>
+                  <button
+                    className="cv-chip-btn"
+                    title="Rename"
+                    onClick={() => startRename(cv)}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    className="cv-chip-btn"
+                    title="Delete"
+                    onClick={() => deleteCv(cv.id)}
+                  >
+                    ×
+                  </button>
+                </span>
+              ),
+            )}
           </div>
         )}
 

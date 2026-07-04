@@ -397,11 +397,13 @@ footer {
   font-size: 0.8rem;
 }
 .cv-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   background: #fff;
   border: 1px solid #e0e0e8;
   border-radius: 999px;
-  padding: 3px 12px;
-  cursor: pointer;
+  padding: 3px 10px 3px 12px;
   font-size: 0.82rem;
   color: #555;
 }
@@ -412,4 +414,34 @@ footer {
   background: #0d9488;
   border-color: #0d9488;
   color: #fff;
+}
+.cv-chip-name {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+.cv-chip-btn {
+  background: none;
+  border: none;
+  padding: 0 1px;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.5;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+.cv-chip-btn:hover {
+  opacity: 1;
+}
+.cv-edit-input {
+  border: 1px solid #0d9488;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.82rem;
+  color: #333;
+  outline: none;
+  min-width: 120px;
 }

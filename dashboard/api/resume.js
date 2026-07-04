@@ -11,14 +11,22 @@ import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
 
+// Name a saved résumé after the uploaded file (extension stripped). Falls back to the
+// old "title — date" form when the client didn't send a filename.
+function cvName(profile, filename) {
+  const base = (filename || '').replace(/\.[^.]+$/, '').trim()
+  if (base) return base
+  return `${profile.title || 'Résumé'} — ${new Date().toISOString().slice(0, 10)}`
+}
+
 // Best-effort save of a parsed résumé profile to the cv table. Returns { id, name }
 // on success, null otherwise — never throws into the request path.
-async function persistCv(profile) {
+async function persistCv(profile, filename) {
   const url = process.env.SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) return null
   const supabase = createClient(url, key)
-  const name = `${profile.title || 'Résumé'} — ${new Date().toISOString().slice(0, 10)}`
+  const name = cvName(profile, filename)
   const { data, error } = await supabase
     .from('cv')
     .insert({ name, skills: profile.skills, raw_profile: profile })
@@ -158,6 +166,7 @@ export default async function handler(req, res) {
   }
   const pdf = body?.pdf
   const mediaType = body?.media_type || 'application/pdf'
+  const filename = body?.filename
   if (!pdf) return res.status(400).json({ error: 'no pdf provided' })
 
   const params = JSON.stringify({
@@ -191,7 +200,7 @@ export default async function handler(req, res) {
     }
     let cv = null
     try {
-      cv = await persistCv(profile) // save so it can be toggled without re-uploading; best-effort
+      cv = await persistCv(profile, filename) // save so it can be toggled without re-uploading; best-effort
     } catch (e) {
       console.error('persistCv failed', e)
     }
