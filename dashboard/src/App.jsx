@@ -25,6 +25,7 @@ export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
   const [selectedSeniority, setSelectedSeniority] = useState(null)
+  const [jobsOpen, setJobsOpen] = useState(true)
   const [showAll, setShowAll] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
@@ -394,8 +395,17 @@ export default function App() {
       <section className="jobs">
         <div className="jobs-head">
           <h2>
-            Jobs{selectedSkill ? <> wanting <em>{selectedSkill}</em></> : ''}
-            <span className="count"> ({shownJobs.length})</span>
+            <button
+              className="jobs-toggle"
+              onClick={() => setJobsOpen((o) => !o)}
+              aria-expanded={jobsOpen}
+            >
+              <span className="caret" aria-hidden="true">
+                {jobsOpen ? '▾' : '▸'}
+              </span>
+              Jobs{selectedSkill ? <> wanting <em>{selectedSkill}</em></> : ''}
+              <span className="count"> ({shownJobs.length})</span>
+            </button>
           </h2>
           {selectedSkill && (
             <button className="clear" onClick={() => setSelectedSkill(null)}>
@@ -403,11 +413,13 @@ export default function App() {
             </button>
           )}
         </div>
-        <ul className="job-list">
-          {shownJobs.map((j) => (
-            <JobRow key={j.id} job={j} />
-          ))}
-        </ul>
+        {jobsOpen && (
+          <ul className="job-list">
+            {shownJobs.map((j) => (
+              <JobRow key={j.id} job={j} />
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="resume">
