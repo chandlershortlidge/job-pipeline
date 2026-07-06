@@ -11,6 +11,15 @@ const SENIORITY_LEVELS = [
   { level: 'Senior', color: '#dc2626' },
 ]
 
+// A job is "New" if it was added in the last 7 days. Drives the New badge and the
+// default (new-only) Jobs view. Jobs from jobs.json have no created_at -> never New.
+const NEW_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
+const JOBS_PAGE = 20
+function isNewJob(job) {
+  if (!job.created_at) return false
+  return Date.now() - new Date(job.created_at).getTime() < NEW_WINDOW_MS
+}
+
 // Read a File into a base64 string (no data: prefix) for POSTing to /api/extract.
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -25,7 +34,8 @@ export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
   const [selectedSeniority, setSelectedSeniority] = useState(null)
-  const [jobsOpen, setJobsOpen] = useState(true)
+  const [jobsExpanded, setJobsExpanded] = useState(false)
+  const [visibleOlder, setVisibleOlder] = useState(JOBS_PAGE)
   const [showAll, setShowAll] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
@@ -56,6 +66,7 @@ export default function App() {
           seniority_basis: j.seniority_basis,
           summary: j.summary,
           source: j.source,
+          created_at: j.created_at,
           skills: (j.skill || []).map((s) => ({
             canonical: s.canonical,
             raw_text: s.raw_text,
@@ -283,6 +294,11 @@ export default function App() {
       (!selectedSkill || j.skills.some((s) => s.canonical === selectedSkill)) &&
       (!selectedSeniority || j.seniority === selectedSeniority),
   )
+  // The list shows New jobs (last 7 days) by default; expanding reveals the rest,
+  // paginated JOBS_PAGE at a time.
+  const newJobs = shownJobs.filter(isNewJob)
+  const olderJobs = shownJobs.filter((j) => !isNewJob(j))
+  const olderVisible = olderJobs.slice(0, visibleOlder)
 
   return (
     <div className="app">
@@ -397,11 +413,12 @@ export default function App() {
           <h2 className="jobs-h2">
             <button
               className="jobs-toggle"
-              onClick={() => setJobsOpen((o) => !o)}
-              aria-expanded={jobsOpen}
+              onClick={() => setJobsExpanded((o) => !o)}
+              aria-expanded={jobsExpanded}
+              disabled={olderJobs.length === 0}
             >
               <svg
-                className={'chevron' + (jobsOpen ? ' open' : '')}
+                className={'chevron' + (jobsExpanded ? ' open' : '')}
                 width="15"
                 height="15"
                 viewBox="0 0 16 16"
@@ -419,6 +436,7 @@ export default function App() {
               <span className="jobs-title-text">
                 Jobs{selectedSkill ? <> wanting <em>{selectedSkill}</em></> : ''}
               </span>
+              {newJobs.length > 0 && <span className="new-count">{newJobs.length} new</span>}
               <span className="count">{shownJobs.length}</span>
             </button>
           </h2>
@@ -428,15 +446,64 @@ export default function App() {
             </button>
           )}
         </div>
-        <div className={'jobs-collapse' + (jobsOpen ? ' open' : '')}>
-          <div className="jobs-collapse-inner">
-            <ul className="job-list">
-              {shownJobs.map((j) => (
-                <JobRow key={j.id} job={j} />
-              ))}
-            </ul>
+
+        {/* New jobs (last 7 days) — always visible */}
+        {newJobs.length > 0 ? (
+          <ul className="job-list">
+            {newJobs.map((j) => (
+              <JobRow key={j.id} job={j} />
+            ))}
+          </ul>
+        ) : (
+          !jobsExpanded &&
+          olderJobs.length > 0 && (
+            <p className="jobs-empty-new">No new jobs in the last 7 days.</p>
+          )
+        )}
+
+        {/* Older jobs — smooth reveal, paginated */}
+        {olderJobs.length > 0 && (
+          <div className={'jobs-collapse' + (jobsExpanded ? ' open' : '')}>
+            <div className="jobs-collapse-inner">
+              <ul className={'job-list' + (newJobs.length > 0 ? ' job-list-older' : '')}>
+                {olderVisible.map((j) => (
+                  <JobRow key={j.id} job={j} />
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Controls */}
+        {olderJobs.length > 0 && (
+          <div className="jobs-more">
+            {!jobsExpanded ? (
+              <button className="jobs-more-btn" onClick={() => setJobsExpanded(true)}>
+                Show all {shownJobs.length} jobs
+              </button>
+            ) : (
+              <>
+                {olderVisible.length < olderJobs.length && (
+                  <button
+                    className="jobs-more-btn"
+                    onClick={() => setVisibleOlder((n) => n + JOBS_PAGE)}
+                  >
+                    See more ({newJobs.length + olderVisible.length} of {shownJobs.length})
+                  </button>
+                )}
+                <button
+                  className="jobs-less-btn"
+                  onClick={() => {
+                    setJobsExpanded(false)
+                    setVisibleOlder(JOBS_PAGE)
+                  }}
+                >
+                  Show less
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </section>
 
       <section className="resume">
@@ -555,7 +622,7 @@ function JobRow({ job }) {
       <button className="job-head" onClick={() => setOpen((o) => !o)}>
         <span className="job-co">
           {job.company || '—'}
-          {job.id?.startsWith('live-') && <span className="live-badge">live</span>}
+          {isNewJob(job) && <span className="new-badge">New</span>}
         </span>
         <span className="job-title">{job.title || '—'}</span>
         <span className="job-sen">

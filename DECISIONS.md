@@ -15,6 +15,28 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-06 — Jobs list: "New" (last 7 days) + progressive disclosure
+
+**Feature:** Renamed the meaningless **Live** badge (it keyed off an `id` prefix) to
+**New**, defined as `created_at` within the last 7 days. The Jobs list now shows **only
+New jobs by default**; a "Show all N jobs" / header chevron reveals the rest, paginated
+`JOBS_PAGE = 20` at a time ("See more" appears only when there are >20 *older* jobs — New
+jobs are pinned on top and excluded from pagination so recent adds never get buried).
+Header gained a subtle "N new" hint. Replaces the earlier full-collapse behavior.
+
+**Data change (applied, not code):** the 20 seeded `job-*` rows all had `created_at` ≈
+2026-07-01 (when `seed.py` ran) — a load-time artifact, not a posting date — so *every*
+job counted as "New" and the feature was degenerate. Per approval, backdated each seed
+row by −20 days (→ 2026-06-11) via service-role PATCH, **preserving relative order**.
+Now only the two real drop-ins (eduBITES, Enpal) are New. Live drop-ins keep their real
+`created_at`. If the corpus is ever re-seeded, seed.py will re-stamp today's date — either
+re-run this backdate or set a sensible `created_at` in the seed itself.
+
+**Verified:** `vite build` green; headless-Chrome screenshots of both states against real
+data (default = 2 New + "Show all 22 jobs"; expanded = 22 with New pinned + "Show less").
+
+---
+
 ## 2026-07-04 — Saved résumés: rename + delete, and name-by-filename
 
 **Feature:** The saved-résumé chips can now be **renamed** (✎ → inline input, Enter/blur
