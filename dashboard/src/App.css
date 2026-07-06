@@ -577,8 +577,9 @@ footer {
   color: #15803d;
 }
 .chip.miss {
-  border-style: dashed;
-  color: #b0b0b8;
+  background: #fef3c7;
+  border-color: #fcd66b;
+  color: #b45309;
 }
 .extra {
   font-size: 0.82rem;
