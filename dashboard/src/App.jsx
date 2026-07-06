@@ -465,7 +465,7 @@ export default function App() {
         {olderJobs.length > 0 && (
           <div className={'jobs-collapse' + (jobsExpanded ? ' open' : '')}>
             <div className="jobs-collapse-inner">
-              <ul className={'job-list' + (newJobs.length > 0 ? ' job-list-older' : '')}>
+              <ul className="job-list">
                 {olderVisible.map((j) => (
                   <JobRow key={j.id} job={j} />
                 ))}
