@@ -15,6 +15,21 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-06 — Per-row résumé compare (reveal on expand)
+
+**Feature (additive):** Expanding **any** job row now shows how the selected résumé
+compares to that job ("Your résumé — N%" + have/missing chips) at the top of the detail,
+above the existing summary/skill list. No upload needed; works on every job in the list.
+Chosen affordance: reveal-on-expand (no per-row button clutter, reuses the existing click).
+
+**How:** Extracted the have/missing chips into a shared `<MatchChips>` component used by
+both the post-upload card and the row; hoisted the résumé skill-set to one `resumeSet`
+passed into each `JobRow`, which runs the existing `matchJob()`. Upload card behavior
+unchanged. Only shows when a résumé is loaded.
+
+**Verified:** `vite build` green; drove the real app headless — expanded a row with the
+auto-loaded saved résumé and captured the match (14%, Python matched, rest missing).
+
 ## 2026-07-06 — Instant résumé-vs-uploaded-job comparison
 
 **Feature:** After a JD screenshot drop-in, an inline comparison card appears at the top

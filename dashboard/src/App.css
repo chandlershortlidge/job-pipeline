@@ -330,6 +330,37 @@ h2 {
 .job-detail {
   padding: 0 13px 13px;
 }
+/* per-row résumé comparison, shown at the top of an expanded job */
+.job-match {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f0f0f5;
+}
+.job-match-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.job-match-label {
+  color: #0f766e;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.job-match-score {
+  background: #0d9488;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 1px 9px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+.match-none {
+  color: #777;
+  font-size: 0.83rem;
+  margin: 0;
+}
 .job-sum {
   color: #555;
   font-size: 0.83rem;

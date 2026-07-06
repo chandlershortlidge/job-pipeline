@@ -283,11 +283,12 @@ export default function App() {
     return { ranked, extra }
   }, [resumeProfile, data])
 
+  // The selected résumé's canonical skills, shared by the upload card and per-row compare.
+  const resumeSet = resumeProfile
+    ? new Set(resumeProfile.skills.map((s) => s.canonical))
+    : null
   // Immediate résumé-vs-job comparison for a freshly dropped-in JD.
-  const jdCompare =
-    lastUploadedJob && resumeProfile
-      ? matchJob(lastUploadedJob, new Set(resumeProfile.skills.map((s) => s.canonical)))
-      : null
+  const jdCompare = lastUploadedJob && resumeSet ? matchJob(lastUploadedJob, resumeSet) : null
 
   if (!derived) {
     return (
@@ -364,22 +365,7 @@ export default function App() {
             </button>
           </div>
           {jdCompare ? (
-            jdCompare.matched.length + jdCompare.missing.length > 0 ? (
-              <div className="chips">
-                {jdCompare.matched.map((c) => (
-                  <span key={c} className="chip have">
-                    {c}
-                  </span>
-                ))}
-                {jdCompare.missing.map((c) => (
-                  <span key={c} className="chip miss">
-                    {c}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="jd-compare-none">No required skills were detected for this job.</p>
-            )
+            <MatchChips match={jdCompare} />
           ) : (
             <p className="jd-compare-none">
               Job added. Upload a résumé below to see how your skills compare.
@@ -506,7 +492,7 @@ export default function App() {
         {newJobs.length > 0 ? (
           <ul className="job-list">
             {newJobs.map((j) => (
-              <JobRow key={j.id} job={j} />
+              <JobRow key={j.id} job={j} resumeSet={resumeSet} />
             ))}
           </ul>
         ) : (
@@ -522,7 +508,7 @@ export default function App() {
             <div className="jobs-collapse-inner">
               <ul className="job-list">
                 {olderVisible.map((j) => (
-                  <JobRow key={j.id} job={j} />
+                  <JobRow key={j.id} job={j} resumeSet={resumeSet} />
                 ))}
               </ul>
             </div>
@@ -670,8 +656,31 @@ export default function App() {
   )
 }
 
-function JobRow({ job }) {
+// Shared "have (green) / missing (dashed)" chips for a matchJob() result. Used by both
+// the post-upload comparison card and the per-row compare, so the visual can't drift.
+function MatchChips({ match }) {
+  if (match.matched.length + match.missing.length === 0) {
+    return <p className="match-none">No required skills listed for this job.</p>
+  }
+  return (
+    <div className="chips">
+      {match.matched.map((c) => (
+        <span key={c} className="chip have">
+          {c}
+        </span>
+      ))}
+      {match.missing.map((c) => (
+        <span key={c} className="chip miss">
+          {c}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function JobRow({ job, resumeSet }) {
   const [open, setOpen] = useState(false)
+  const myMatch = resumeSet ? matchJob(job, resumeSet) : null
   return (
     <li className="job">
       <button className="job-head" onClick={() => setOpen((o) => !o)}>
@@ -691,6 +700,15 @@ function JobRow({ job }) {
       </button>
       {open && (
         <div className="job-detail">
+          {myMatch && (
+            <div className="job-match">
+              <div className="job-match-head">
+                <span className="job-match-label">Your résumé</span>
+                <span className="job-match-score">{Math.round(myMatch.score * 100)}%</span>
+              </div>
+              <MatchChips match={myMatch} />
+            </div>
+          )}
           {job.summary && <p className="job-sum">{job.summary}</p>}
           <div className="chips">
             {job.skills.map((s) => (
