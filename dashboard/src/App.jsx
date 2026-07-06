@@ -394,17 +394,32 @@ export default function App() {
 
       <section className="jobs">
         <div className="jobs-head">
-          <h2>
+          <h2 className="jobs-h2">
             <button
               className="jobs-toggle"
               onClick={() => setJobsOpen((o) => !o)}
               aria-expanded={jobsOpen}
             >
-              <span className="caret" aria-hidden="true">
-                {jobsOpen ? '▾' : '▸'}
+              <svg
+                className={'chevron' + (jobsOpen ? ' open' : '')}
+                width="15"
+                height="15"
+                viewBox="0 0 16 16"
+                aria-hidden="true"
+              >
+                <path
+                  d="M6 4l4 4-4 4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              <span className="jobs-title-text">
+                Jobs{selectedSkill ? <> wanting <em>{selectedSkill}</em></> : ''}
               </span>
-              Jobs{selectedSkill ? <> wanting <em>{selectedSkill}</em></> : ''}
-              <span className="count"> ({shownJobs.length})</span>
+              <span className="count">{shownJobs.length}</span>
             </button>
           </h2>
           {selectedSkill && (
@@ -413,13 +428,15 @@ export default function App() {
             </button>
           )}
         </div>
-        {jobsOpen && (
-          <ul className="job-list">
-            {shownJobs.map((j) => (
-              <JobRow key={j.id} job={j} />
-            ))}
-          </ul>
-        )}
+        <div className={'jobs-collapse' + (jobsOpen ? ' open' : '')}>
+          <div className="jobs-collapse-inner">
+            <ul className="job-list">
+              {shownJobs.map((j) => (
+                <JobRow key={j.id} job={j} />
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section className="resume">
