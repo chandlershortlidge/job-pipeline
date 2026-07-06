@@ -15,6 +15,25 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-06 — Instant résumé-vs-uploaded-job comparison
+
+**Feature:** After a JD screenshot drop-in, an inline comparison card appears at the top
+("Your résumé vs {company} — {N}%") with green "have" chips and dashed "missing" chips
+for the job's REQUIRED skills, so you see your fit immediately. Dismissible; if no résumé
+is loaded it prompts to upload one.
+
+**How:** Extracted the per-job match math (required skills the résumé has vs lacks + a
+coverage %) into a reusable `matchJob(job, resumeSet)` helper and DRY'd the existing
+résumé-ranking `useMemo` to use it. `handleUpload` stashes the parsed job in
+`lastUploadedJob`; the card reuses the same `.chip.have/.miss` styles as the résumé
+section. Purely client-side — no new API surface.
+
+**Verified:** `vite build` green; unit-tested `matchJob` (75% on 3/4 required, nice-to-have
+excluded, empty-required → no chips); card visual rendered with the real CSS. The full
+upload→card flow (live Daytona parse) is best confirmed on a preview.
+
+---
+
 ## 2026-07-06 — Jobs list: "New" (last 7 days) + progressive disclosure
 
 **Feature:** Renamed the meaningless **Live** badge (it keyed off an `id` prefix) to

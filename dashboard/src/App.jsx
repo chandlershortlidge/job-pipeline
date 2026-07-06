@@ -20,6 +20,17 @@ function isNewJob(job) {
   return Date.now() - new Date(job.created_at).getTime() < NEW_WINDOW_MS
 }
 
+// Compare one job's REQUIRED skills against a résumé's canonical skill set.
+// Returns the skills the résumé has (matched), lacks (missing), and the share covered.
+function matchJob(job, resumeSet) {
+  const req = [
+    ...new Set(job.skills.filter((s) => s.requirement === 'required').map((s) => s.canonical)),
+  ]
+  const matched = req.filter((c) => resumeSet.has(c))
+  const missing = req.filter((c) => !resumeSet.has(c))
+  return { matched, missing, score: req.length ? matched.length / req.length : 0 }
+}
+
 // Read a File into a base64 string (no data: prefix) for POSTing to /api/extract.
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
@@ -39,6 +50,7 @@ export default function App() {
   const [showAll, setShowAll] = useState(false)
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
+  const [lastUploadedJob, setLastUploadedJob] = useState(null)
   const [resumeProfile, setResumeProfile] = useState(null)
   const [resumeBusy, setResumeBusy] = useState(false)
   const [resumeError, setResumeError] = useState(null)
@@ -167,6 +179,8 @@ export default function App() {
       const payload = await res.json()
       if (!res.ok || !payload.job) throw new Error(payload.error || 'extraction failed')
       setData((prev) => ({ ...prev, jobs: [payload.job, ...prev.jobs] }))
+      setLastUploadedJob(payload.job) // surface an immediate résumé-vs-this-job comparison
+
     } catch (err) {
       setUploadError(String(err.message || err))
     } finally {
@@ -259,14 +273,7 @@ export default function App() {
     for (const j of data.jobs) for (const s of j.skills) allJobCanon.add(s.canonical)
 
     const ranked = data.jobs
-      .map((j) => {
-        const req = [
-          ...new Set(j.skills.filter((s) => s.requirement === 'required').map((s) => s.canonical)),
-        ]
-        const matched = req.filter((c) => resumeSet.has(c))
-        const missing = req.filter((c) => !resumeSet.has(c))
-        return { job: j, matched, missing, score: req.length ? matched.length / req.length : 0 }
-      })
+      .map((j) => ({ job: j, ...matchJob(j, resumeSet) }))
       .filter((m) => m.matched.length + m.missing.length > 0)
       .sort((a, b) => b.score - a.score || b.matched.length - a.matched.length)
 
@@ -275,6 +282,12 @@ export default function App() {
       .filter((c) => !allJobCanon.has(c))
     return { ranked, extra }
   }, [resumeProfile, data])
+
+  // Immediate résumé-vs-job comparison for a freshly dropped-in JD.
+  const jdCompare =
+    lastUploadedJob && resumeProfile
+      ? matchJob(lastUploadedJob, new Set(resumeProfile.skills.map((s) => s.canonical)))
+      : null
 
   if (!derived) {
     return (
@@ -332,6 +345,48 @@ export default function App() {
         <span className="upload-hint">parsed live in a Daytona sandbox</span>
         {uploadError && <span className="upload-err">⚠ {uploadError}</span>}
       </section>
+
+      {lastUploadedJob && (
+        <section className="jd-compare">
+          <div className="jd-compare-head">
+            <span className="jd-compare-label">Your résumé vs</span>
+            <strong className="jd-compare-co">{lastUploadedJob.company || '—'}</strong>
+            <span className="jd-compare-title">{lastUploadedJob.title || ''}</span>
+            {jdCompare && (
+              <span className="jd-compare-score">{Math.round(jdCompare.score * 100)}%</span>
+            )}
+            <button
+              className="jd-compare-x"
+              title="Dismiss"
+              onClick={() => setLastUploadedJob(null)}
+            >
+              ×
+            </button>
+          </div>
+          {jdCompare ? (
+            jdCompare.matched.length + jdCompare.missing.length > 0 ? (
+              <div className="chips">
+                {jdCompare.matched.map((c) => (
+                  <span key={c} className="chip have">
+                    {c}
+                  </span>
+                ))}
+                {jdCompare.missing.map((c) => (
+                  <span key={c} className="chip miss">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="jd-compare-none">No required skills were detected for this job.</p>
+            )
+          ) : (
+            <p className="jd-compare-none">
+              Job added. Upload a résumé below to see how your skills compare.
+            </p>
+          )}
+        </section>
+      )}
 
       <section className="chart">
         <div className="sen-view">
