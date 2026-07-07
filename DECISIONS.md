@@ -15,6 +15,28 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-07 — normalize.py made genuinely deterministic (+ pure-function refactor)
+
+**Refactor:** Split the normalization logic out of `normalize.main()` into pure, testable
+functions (`build_display`, `resolve`, `clean_variants`, `normalize_jobs`, `build_canon_map`)
+per AGENTS.md's layout rule; `main()` is now a thin read→normalize→write wrapper.
+Behavior-preserving, guarded by a golden characterization test.
+
+**Bug the golden test caught:** `normalize.py`'s docstring claimed "same input, same output,
+every run" — but it wasn't true. `clean_variants` sorted the "merged from" variants by
+length only; for two variants of equal length and same lowercase (e.g. `"Tool Use"` vs
+`"tool use"`), which spelling survived depended on Python's per-process **set-iteration order**
+(hash-randomized), so `jobs.json`'s `skill_variants` varied run to run. It only looked stable
+because the tie is rare — the golden test failed in a fresh pytest process while the CLI runs
+happened to agree.
+
+**Fix:** deterministic tiebreak — `sorted(raws, key=lambda r: (len(r), r))` instead of
+`key=len`. Equal-length variants now break alphabetically. Output is unchanged vs the committed
+`jobs.json` (which already had the alphabetically-winning spelling) — the fix just guarantees it
+every run. Locked by unit tests + a golden fixture; verified green across repeated fresh processes.
+
+---
+
 ## 2026-07-07 — Delete job listings
 
 **Feature:** Delete a job from the dashboard. In the expanded job row, a red-outlined

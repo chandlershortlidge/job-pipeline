@@ -113,7 +113,10 @@ def clean_variants(canon: str, raws) -> list[str]:
     """The "merged from" reveal: keep short, skill-like phrasings that folded into
     `canon` — dedupe case-insensitively, drop the canonical itself, cap for display."""
     seen = {}
-    for r in sorted(raws, key=len):
+    # (len, value) tiebreak, not len alone: equal-length variants must break
+    # deterministically, else set-iteration order (hash-randomized) picks the survivor
+    # and jobs.json varies run to run. See DECISIONS.md.
+    for r in sorted(raws, key=lambda r: (len(r), r)):
         r = r.strip()
         low = r.lower()
         if not r or len(r) > 40 or low == canon.lower() or low in seen:
