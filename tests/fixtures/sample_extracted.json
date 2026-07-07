@@ -1,0 +1,146 @@
+{
+  "generated_at": "2026-06-26T09:11:55.212289+00:00",
+  "jobs": [
+    {
+      "id": "job-1",
+      "source_file": "AI Application Engineer - XpertDirect.png",
+      "source": "screenshot",
+      "company": null,
+      "title": "AI Application Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "3+ years of software engineering",
+      "seniority_basis": "inferred",
+      "summary": "A rapidly growing AI SaaS company in Berlin is seeking an AI Application Engineer to build next-generation AI-powered business applications using large language models, intelligent agents, and workflow automation. The role involves designing, developing, and deploying production-ready AI solutions that improve productivity and automate complex workflows.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "OpenAI APIs",
+          "canonical": "LLM APIs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "LangChain",
+          "canonical": "LangChain",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG (Retrieval-Augmented Generation)",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Vector databases",
+          "canonical": "Vector databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "FastAPI",
+          "canonical": "FastAPI",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Experience building and deploying production AI applications",
+          "canonical": "AI application development",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Hands-on experience integrating and optimising LLM-based solutions",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Strong understanding of modern application architecture and API development",
+          "canonical": "API development",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Agentic AI frameworks",
+          "canonical": "Agents",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Prompt engineering and evaluation workflows",
+          "canonical": "Prompt engineering",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "AWS",
+          "canonical": "AWS",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "Azure",
+          "canonical": "Azure",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "GCP",
+          "canonical": "GCP",
+          "requirement": "nice_to_have"
+        },
+        {
+          "raw_text": "MLOps or AI deployment experience",
+          "canonical": "MLOps",
+          "requirement": "nice_to_have"
+        }
+      ]
+    },
+    {
+      "id": "job-2",
+      "source_file": "AI Automation Engineer - Cosuno.png",
+      "source": "screenshot",
+      "company": "Cosuno",
+      "title": "AI Automation Engineer",
+      "seniority": "Mid",
+      "seniority_signal": "proficient in Python, n8n, and API architecture. You have hands-on experience with RAG and connecting LLMs to proprietary data sources",
+      "seniority_basis": "inferred",
+      "summary": "Cosuno is looking for an AI Automation Engineer to be the driving force behind scaling efficiency by designing and implementing AI-driven workflows across the company. The role involves building a modular automation platform leveraging state-of-the-art LLMs, RAG, and orchestration tools like n8n rather than training proprietary models from scratch.",
+      "skills": [
+        {
+          "raw_text": "Python",
+          "canonical": "Python",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "n8n",
+          "canonical": "n8n",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "API architecture",
+          "canonical": "API design",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "RAG",
+          "canonical": "RAG",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "connecting LLMs to proprietary data sources",
+          "canonical": "LLMs",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Vector Databases",
+          "canonical": "Vector Databases",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "Reasoning Chains",
+          "canonical": "Prompt engineering",
+          "requirement": "required"
+        },
+        {
+          "raw_text": "orchestration stack",
+          "canonical": "LLM orchestration",
+          "requirement": "required"
+        }
+      ]
+    }
+  ]
+}
