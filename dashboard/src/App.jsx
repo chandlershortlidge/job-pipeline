@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { supabase } from './supabase'
+import { matchJob } from './match'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -18,17 +19,6 @@ const JOBS_PAGE = 20
 function isNewJob(job) {
   if (!job.created_at) return false
   return Date.now() - new Date(job.created_at).getTime() < NEW_WINDOW_MS
-}
-
-// Compare one job's REQUIRED skills against a résumé's canonical skill set.
-// Returns the skills the résumé has (matched), lacks (missing), and the share covered.
-function matchJob(job, resumeSet) {
-  const req = [
-    ...new Set(job.skills.filter((s) => s.requirement === 'required').map((s) => s.canonical)),
-  ]
-  const matched = req.filter((c) => resumeSet.has(c))
-  const missing = req.filter((c) => !resumeSet.has(c))
-  return { matched, missing, score: req.length ? matched.length / req.length : 0 }
 }
 
 // Read a File into a base64 string (no data: prefix) for POSTing to /api/extract.
