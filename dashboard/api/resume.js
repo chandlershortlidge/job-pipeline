@@ -10,6 +10,7 @@
 import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
+import { normalizeSkills } from './normalizeSkills.js'
 
 // Name a saved résumé after the uploaded file (extension stripped). Falls back to the
 // old "title — date" form when the client didn't send a filename.
@@ -37,30 +38,6 @@ async function persistCv(profile, filename) {
 }
 
 const MODEL = 'claude-sonnet-4-6'
-
-// Apply the same deterministic normalization the corpus got, so a resume skill lands on the
-// SAME canonical the chart uses (split slash-lists -> map lowercased / paren-acronym /
-// paren-stripped spelling -> canonical; fallback: keep as-is). Dedupe by canonical.
-// (Verified on a real CV: 13 of 25 skills mapped onto required job skills.)
-function normalizeSkills(skills) {
-  const { splits, map } = canonicalMap
-  const byCanon = {}
-  for (const s of skills || []) {
-    const raw = (s.canonical || '').trim()
-    const parts = splits[raw.toLowerCase()] || [raw]
-    for (const part of parts) {
-      const k1 = part.toLowerCase()
-      const k3 = (part.match(/\(([^)]+)\)/)?.[1] || '').toLowerCase().trim()
-      const k2 = k1.replace(/\s*\([^)]*\)/g, '').trim()
-      const canon = map[k1] || map[k3] || map[k2] || part
-      if (!canon) continue
-      if (!byCanon[canon]) {
-        byCanon[canon] = { canonical: canon, raw_text: s.raw_text }
-      }
-    }
-  }
-  return Object.values(byCanon)
-}
 
 // "LLMs" rarely appears literally on a résumé even when the candidate clearly does LLM work,
 // so most JDs mark it as missing. Deterministic inference (in code, NOT the prompt — per the
@@ -196,7 +173,7 @@ export default async function handler(req, res) {
     const profile = {
       title: parsed.title ?? null,
       years_experience: parsed.years_experience ?? null,
-      skills: addInferredLLMs(normalizeSkills(parsed.skills)),
+      skills: addInferredLLMs(normalizeSkills(parsed.skills, canonicalMap)),
     }
     let cv = null
     try {

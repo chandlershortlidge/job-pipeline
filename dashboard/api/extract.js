@@ -7,6 +7,7 @@ import crypto from 'node:crypto'
 import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
+import { normalizeSkills } from './normalizeSkills.js'
 
 // Service-role Supabase client, or null if not configured — dedup + persistence both
 // degrade gracefully (the user still gets their job in the UI) when it's absent.
@@ -49,32 +50,6 @@ async function persistJob(supabase, job) {
 
 const MODEL = 'claude-sonnet-4-6'
 
-// Apply the same deterministic normalization the corpus got, so an uploaded job
-// increments the right bars (split slash-lists -> map lowercased spelling -> canonical).
-function normalizeSkills(skills) {
-  const { splits, map } = canonicalMap
-  const byCanon = {}
-  for (const s of skills || []) {
-    const raw = (s.canonical || '').trim()
-    const parts = splits[raw.toLowerCase()] || [raw]
-    for (const part of parts) {
-      // Try, in order: exact lowercased form; the parenthetical acronym (catches
-      // "Large Language Models (LLMs)" -> "llms" -> LLMs); the paren-stripped form
-      // (catches "Retrieval-Augmented Generation (RAG)" -> "retrieval-augmented generation").
-      const k1 = part.toLowerCase()
-      const k3 = (part.match(/\(([^)]+)\)/)?.[1] || '').toLowerCase().trim()
-      const k2 = k1.replace(/\s*\([^)]*\)/g, '').trim()
-      const canon = map[k1] || map[k3] || map[k2] || part
-      if (!canon) continue
-      if (!byCanon[canon]) {
-        byCanon[canon] = { canonical: canon, raw_text: s.raw_text, requirement: s.requirement }
-      } else if (s.requirement === 'required') {
-        byCanon[canon].requirement = 'required'
-      }
-    }
-  }
-  return Object.values(byCanon)
-}
 const USER_TEXT = 'Extract the job posting from this screenshot.'
 
 // Plain JSON schema (no $ref) for the tool the model must call.
@@ -220,7 +195,7 @@ export default async function handler(req, res) {
       source: 'screenshot',
       screenshot_hash: hash,
       ...parsed,
-      skills: normalizeSkills(parsed.skills),
+      skills: normalizeSkills(parsed.skills, canonicalMap, { withRequirement: true }),
     }
     if (supabase) {
       try {
