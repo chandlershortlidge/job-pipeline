@@ -15,6 +15,22 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-07 — Delete job listings
+
+**Feature:** Delete a job from the dashboard. In the expanded job row, a red-outlined
+**Delete** button reveals a two-step inline confirm ("Delete this job? Delete / Cancel") —
+deliberately gated behind expand + confirm since it's a permanent Supabase delete.
+
+**How:** New server route `api/job.js` (`DELETE ?id=`, service-role key — browser has
+read-only RLS) deletes the `skill` rows (FK `job_id`) then the `job` row. Front-end
+`deleteJob()` is optimistic: drops it from `data.jobs` immediately, rolls back + shows an
+error line if the request fails, and clears any dangling reference (upload card / dup
+banner) to the deleted id. Same pattern as the saved-résumé delete.
+
+**Verified:** `vite build` green; the exact delete ops (insert job+skills → delete skills →
+delete job → no orphans) run against the real schema via a throwaway row; screenshotted
+both the button and the confirm state (only clicked the first Delete, no real deletion).
+
 ## 2026-07-07 — Duplicate-screenshot detection by file hash (v1)
 
 **Feature:** Block re-uploading the same JD screenshot. `api/extract.js` computes a

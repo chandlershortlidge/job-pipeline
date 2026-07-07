@@ -361,6 +361,61 @@ h2 {
   font-size: 0.83rem;
   margin: 0;
 }
+/* delete a job — lives at the bottom of the expanded detail, two-step confirm */
+.job-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f5;
+}
+.job-del {
+  background: none;
+  border: 1px solid #f0d0d0;
+  color: #c0392b;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.job-del:hover {
+  background: #fdeaea;
+  border-color: #e0a0a0;
+}
+.job-del-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: #555;
+}
+.job-del-yes {
+  background: #dc2626;
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.job-del-yes:hover {
+  background: #b91c1c;
+}
+.job-del-cancel {
+  background: none;
+  border: 1px solid #ddd;
+  color: #666;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.delete-error {
+  color: #dc2626;
+  font-size: 0.82rem;
+  margin: 0 0 8px;
+}
 .job-sum {
   color: #555;
   font-size: 0.83rem;

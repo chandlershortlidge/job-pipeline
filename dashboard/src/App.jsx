@@ -53,6 +53,7 @@ export default function App() {
   const [lastUploadedJob, setLastUploadedJob] = useState(null)
   const [dupNotice, setDupNotice] = useState(null) // { id, label } when an upload is a dup
   const [highlight, setHighlight] = useState({ id: null, n: 0 }) // scroll+expand target
+  const [deleteError, setDeleteError] = useState(null)
   const [resumeProfile, setResumeProfile] = useState(null)
   const [resumeBusy, setResumeBusy] = useState(false)
   const [resumeError, setResumeError] = useState(null)
@@ -172,6 +173,23 @@ export default function App() {
     setJobsExpanded(true)
     setVisibleOlder(Number.MAX_SAFE_INTEGER)
     setHighlight((h) => ({ id, n: h.n + 1 }))
+  }
+
+  // Permanently delete a job (and its skills) server-side. Optimistic: drop it from the
+  // list immediately, roll back if the request fails. Also clears any dangling reference.
+  async function deleteJob(id) {
+    const prev = data
+    setDeleteError(null)
+    setData((d) => ({ ...d, jobs: d.jobs.filter((j) => j.id !== id) }))
+    setLastUploadedJob((j) => (j && j.id === id ? null : j))
+    setDupNotice((n) => (n && n.id === id ? null : n))
+    try {
+      const res = await fetch(`/api/job?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error((await res.json()).error || 'delete failed')
+    } catch (e) {
+      setData(prev) // roll back — the row reappears
+      setDeleteError(`Couldn't delete that job — ${String(e.message || e)}`)
+    }
   }
 
   async function handleUpload(e) {
@@ -489,6 +507,7 @@ export default function App() {
         )}
       </section>
 
+      {deleteError && <p className="delete-error">⚠ {deleteError}</p>}
       <section className="jobs">
         <div className="jobs-head">
           <h2 className="jobs-h2">
@@ -532,7 +551,13 @@ export default function App() {
         {newJobs.length > 0 ? (
           <ul className="job-list">
             {newJobs.map((j) => (
-              <JobRow key={j.id} job={j} resumeSet={resumeSet} highlight={highlight} />
+              <JobRow
+                key={j.id}
+                job={j}
+                resumeSet={resumeSet}
+                highlight={highlight}
+                onDelete={deleteJob}
+              />
             ))}
           </ul>
         ) : (
@@ -548,7 +573,13 @@ export default function App() {
             <div className="jobs-collapse-inner">
               <ul className="job-list">
                 {olderVisible.map((j) => (
-                  <JobRow key={j.id} job={j} resumeSet={resumeSet} highlight={highlight} />
+                  <JobRow
+                key={j.id}
+                job={j}
+                resumeSet={resumeSet}
+                highlight={highlight}
+                onDelete={deleteJob}
+              />
                 ))}
               </ul>
             </div>
@@ -718,9 +749,10 @@ function MatchChips({ match }) {
   )
 }
 
-function JobRow({ job, resumeSet, highlight }) {
+function JobRow({ job, resumeSet, highlight, onDelete }) {
   const [open, setOpen] = useState(false)
   const [flash, setFlash] = useState(false)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
   const ref = useRef(null)
   const myMatch = resumeSet ? matchJob(job, resumeSet) : null
 
@@ -784,6 +816,23 @@ function JobRow({ job, resumeSet, highlight }) {
               ))}
             </div>
           )}
+          <div className="job-actions">
+            {confirmingDelete ? (
+              <span className="job-del-confirm">
+                Delete this job?
+                <button className="job-del-yes" onClick={() => onDelete?.(job.id)}>
+                  Delete
+                </button>
+                <button className="job-del-cancel" onClick={() => setConfirmingDelete(false)}>
+                  Cancel
+                </button>
+              </span>
+            ) : (
+              <button className="job-del" onClick={() => setConfirmingDelete(true)}>
+                Delete
+              </button>
+            )}
+          </div>
         </div>
       )}
     </li>
