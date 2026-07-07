@@ -21,9 +21,11 @@ undoing a decision without knowing the reason behind it.
 SHA-256 of the screenshot bytes **before** the Daytona parse and looks it up in
 `job.screenshot_hash`; an exact match returns HTTP 409 with the existing job's
 `{id, company, title}` and **no sandbox is created** (no wasted parse). No match →
-parse, then persist the job with its hash. The dashboard shows "Already added — {company
-· title}" with a link that expands + scrolls to + pulses the existing row (fallback text
-"a job already in your list" only when company/title are null).
+parse, then persist the job with its hash. The dashboard shows a **persistent amber
+banner** under the upload button — "⚠ Already added — {company · title}" (fallback "a job
+already in your list" when both null) — that stays until dismissed or the next upload.
+It does **not** auto-scroll; only clicking the banner's link expands + scrolls to +
+pulses the existing row.
 
 **Storage:** No interim store needed — persistence already shipped. Added `screenshot_hash
 text` to the `job` table with a **UNIQUE** index (`job_screenshot_hash_key`) to close the

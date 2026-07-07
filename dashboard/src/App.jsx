@@ -191,8 +191,8 @@ export default function App() {
       if (res.status === 409 && payload.duplicate) {
         const d = payload.duplicate
         const label = [d.company, d.title].filter(Boolean).join(' · ') || 'a job already in your list'
-        setDupNotice({ id: d.id, label })
-        revealJob(d.id) // scroll to + expand the entry it was already parsed into
+        setLastUploadedJob(null) // clear any stale "résumé vs …" card so the banner stands alone
+        setDupNotice({ id: d.id, label }) // banner only — reveal happens on explicit link click
         return
       }
       if (!res.ok || !payload.job) throw new Error(payload.error || 'extraction failed')
@@ -363,15 +363,29 @@ export default function App() {
         </label>
         <span className="upload-hint">parsed live in a Daytona sandbox</span>
         {uploadError && <span className="upload-err">⚠ {uploadError}</span>}
-        {dupNotice && (
-          <span className="upload-dup">
-            ⚠ Already added —{' '}
-            <button className="upload-dup-link" onClick={() => revealJob(dupNotice.id)}>
+      </section>
+
+      {dupNotice && (
+        <div className="dup-banner" role="alert">
+          <span className="dup-banner-msg">
+            <span className="dup-banner-icon" aria-hidden="true">
+              ⚠
+            </span>{' '}
+            Already added —{' '}
+            <button className="dup-banner-link" onClick={() => revealJob(dupNotice.id)}>
               {dupNotice.label}
             </button>
           </span>
-        )}
-      </section>
+          <button
+            className="dup-banner-x"
+            title="Dismiss"
+            aria-label="Dismiss"
+            onClick={() => setDupNotice(null)}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {lastUploadedJob && (
         <section className="jd-compare">

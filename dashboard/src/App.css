@@ -479,20 +479,49 @@ footer {
   color: #dc2626;
   font-size: 0.8rem;
 }
-/* duplicate-screenshot notice — links to the existing job entry */
-.upload-dup {
-  color: #b45309;
-  font-size: 0.8rem;
+/* duplicate-screenshot banner — prominent, persistent, sits under the upload button.
+   Stays until dismissed or a new upload is attempted; the link reveals the existing job. */
+.dup-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 24px;
+  padding: 12px 16px;
+  border: 1px solid #fcd66b;
+  background: #fef3c7;
+  border-radius: 10px;
+  color: #92400e;
+  font-size: 0.9rem;
 }
-.upload-dup-link {
+.dup-banner-msg {
+  flex: 1;
+  font-weight: 500;
+}
+.dup-banner-icon {
+  font-weight: 700;
+}
+.dup-banner-link {
   background: none;
   border: none;
   padding: 0;
-  color: #b45309;
+  color: #92400e;
   font: inherit;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: underline;
   cursor: pointer;
+}
+.dup-banner-x {
+  flex: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #b45309;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0 2px;
+}
+.dup-banner-x:hover {
+  color: #78350f;
 }
 /* pulse the revealed job row so the eye lands on it */
 .job.flash .job-head,
