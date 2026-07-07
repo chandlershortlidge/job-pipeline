@@ -1,60 +1,405 @@
-# AGENTS.md — job-pipeline (sprint variant)
+# AGENTS.md
 
-This is the scaled-down harness for a time-boxed solo build. It covers only *how to work* — verify, test, commit, when to check in. **Scope, build order, architecture, and the data contract live in the planning doc (`jd-aggregator-sprint-plan.md`), not here.** If you need to know what to build or in what order, read that. This file is how to build it.
+This is the operating manual for any AI agent working in this repo. Read it
+before starting. It has two kinds of content: the **way of working** (the same
+in every project — follow it as written) and the **project specifics** (the
+`<...>` placeholders — particular to this repo). If a placeholder is still
+unfilled, say so before relying on it rather than guessing.
 
-What's deliberately dropped for this sprint (do not reintroduce): the full written-plan ritual, the handoff ceremony, module-promotion with docstrings/layout rules, and comprehensive test coverage. Keep only what's below. (One exception, added mid-project: a lightweight `DECISIONS.md` log **is** kept — see "Decision log" below.)
+---
 
 ## Who you're working with
-I think clearly about systems and specify precisely, but I do **not** verify code by reading it line by line. I verify by *behavior*: by running things, checking outputs on real inputs, and reading your plain-English account of what the code does against what I asked for. So, always:
+
+The person you're working with thinks clearly about systems and writes precise
+instructions, but does not verify code by reading it line by line. They verify by
+*behavior*: by running things, by checking outputs on real inputs, and by
+reading your plain-English explanation of what the code does and comparing it to
+what they asked for.
+
+What this means for you, always:
 
 - Explain what your code does in plain English, not just by handing over code.
-- Show outputs on real inputs whenever you can, and say what they mean.
-- Leave behavior inspectable — print the intermediate values that let me see what actually happened, especially around the LLM calls and the normalization step.
-- If your explanation and your code don't match, stop and resolve it — don't paper over it.
-- You are not the authority. You produce a recommendation; I evaluate it. Expect to be questioned, and treat that as normal.
+- Show outputs on real inputs whenever you can, and say what those outputs mean.
+- Leave behavior inspectable: print or log the intermediate values that would let
+  the person — or a later agent — see what actually happened, especially around
+  LLM calls and data transforms. A result you can't trace back is one they can't
+  trust.
+- If your explanation and your code don't match, that's a real problem — stop and
+  resolve it, don't paper over it.
+- You are not the authority here. You produce a recommendation; the person
+  evaluates it. You are sometimes confidently wrong. Expect to be questioned, and
+  treat being questioned as normal.
 
-## Verify load-bearing code before trusting it
-Extraction and skill-normalization are load-bearing: a wrong result there is hard to spot by eye and sinks the whole demo. For that code, before it's trusted: run it on **real screenshots** (not invented input), print meaningful output at each step, and explain in plain English what the output means and what to expect. I check three things against each other — the output, my expectation, and your explanation. If they line up, it's good. If not, expect a specific question first.
+---
 
-This does **not** apply to UI, glue, or wiring code — build that directly.
+## What this project is
 
-## Testing
-No test suite this sprint; verification is by eyeballing output on real inputs, per above. The one rule that still holds: **if you write any test, mock the LLM call — never make a live one.**
+**See What AI Employers Want** — a dashboard that reads AI-engineer job-description
+screenshots with a vision model, reconciles the messy skill names, and aggregates them
+to show what the AI job market is actually prioritizing — by skill, by seniority, and
+against your own résumé. Built solo at a one-day hackathon. Full "why" in README.md;
+live at https://job-pipeline-opal.vercel.app.
 
-## Commits
-Commit at each working checkpoint, so there's always a working state to roll back to — you have standing permission to do this, don't wait to be asked. Keep each commit to one logical thing, and say in a line what it contains. Don't bundle unrelated cleanup into a commit because you noticed it while working — mention it instead.
+---
 
-## Decision log (DECISIONS.md)
-Keep `DECISIONS.md` (repo root) current as you work. This is the one record-keeping habit kept for this sprint — do it **silently and proactively**, never as a thing we stop to discuss on the day.
+## Three documents hold the project's intent
 
-**Do not narrate it.** Don't write "I added to DECISIONS.md, here's why" in your reply — that burns my time mid-event. Just write the entry and fold it into the same commit as the change it documents. I'll read the log when *I* choose to, not in your chat output; the commit line is enough of a signal.
+You have no memory of past sessions. Anything not written down does not exist to
+you. So intent is kept in three files, and you should read them:
 
-**When to add an entry — over-share, don't under-share. When in doubt, log it.** Add one whenever you:
-- chose between approaches, or made a trade-off;
-- tried something that didn't work (so it isn't retried later);
-- changed the data model, schema, extraction, normalization, or deploy setup;
-- picked a default, threshold, or number someone might later wonder about;
-- hit a gotcha worth not rediscovering.
+- **README.md** — why this project exists and what it's for.
+- **DECISIONS.md** — the choices that have been made and why. Read it before
+  proposing anything that might contradict a past choice. If a new proposal does
+  contradict one, say so plainly rather than silently overriding it.
+- **AGENTS.md** — this file: how to work here.
 
-Skip it only for pure mechanical edits with no judgment (typos, formatting) or things already obvious from the diff.
+### First task in a new project: fill the project specifics
 
-**How:** newest entry first; stamp it with the real time (`date`, or the git commit time — don't guess); a few plain-English lines I can read; include what you tried and what failed when it's relevant.
+When this file is copied into a new repo, the first agent task is to fill the
+project-specific sections from README.md, DECISIONS.md, the project brief, and
+the actual repo structure.
 
-## Honesty (applies every turn)
-- Before claiming a function, import, or symbol exists, verify it by reading the file or grepping. Never fabricate symbols.
-- Don't claim a script, test, or build succeeded unless you actually ran it this session.
-- Never invent error messages, API responses, or outputs. If you didn't see it, say so.
-- "I haven't verified this," "I don't know," and "I need to check first" are all correct answers and are preferred over a confident guess. If a guess is load-bearing, don't write code on top of it.
+Do not invent missing details. If the docs do not say something, leave the
+placeholder or mark it as unknown.
 
-## Review & pushback
-There's no formal review pass this sprint — no time for it. Verification is the eyeball-on-output already described above: I'm watching the printed output of the load-bearing code as it runs and reacting when the numbers don't match what I expected. That's the whole check.
+After filling the sections, present them for review before relying on them. Once
+confirmed, commit the filled AGENTS.md before starting feature work.
 
-The one active guard that still matters, because solo there's no one else to catch it: **scope drift.** If the work grows past what the planning doc scoped — a panel, feature, or abstraction that isn't in v0 — stop and flag it before building, don't absorb it. Surfacing it is enough; I decide whether it's in.
+### Starting each session
 
-## Reporting work to the person
-When reporting what you did, lead with: what it does, and whether it works (tests pass? ran clean?). Keep it plain.
+At the start of every coding session, read AGENTS.md, README.md, and
+DECISIONS.md before proposing work. Then report any unfilled placeholders,
+contradictions, missing commands, or project-specific facts you cannot verify.
+Do not rely on placeholder text as fact. If the docs are incomplete, say what is
+missing and propose the smallest useful next step that does not require guessing.
 
-- Assume the person does not know tooling/type-checker jargon (pyright, cast, type stubs, SimpleNamespace, etc.). Don't explain these unless asked.
-- Tooling internals (linter quirks, type-checker workarounds, mocking mechanics) get at most a ONE-LINE flag — "had to work around a LiteLLM type-stub quirk, not a logic bug" — not a paragraph.
-- If you went down a side-track (typing, config plumbing), don't narrate the whole detour. State the outcome.
-- Plain English over precision-jargon. If a thing matters for a decision the person makes, explain it at a level they can act on. If it doesn't, leave it out.
+A normal session-start response should include:
+
+- what you understand the task to be;
+- any repo facts or decisions that constrain the task;
+- anything missing or ambiguous that affects the work;
+- the smallest plan that can be reviewed before code changes begin.
+
+---
+
+## The build loop
+
+Every meaningful change runs the same four steps: **plan → check it in a
+notebook → move it into the codebase with a test → commit.** Keep the loop small
+so each pass produces something that's actually been checked, not a pile of
+unreviewed code.
+
+**What "meaningful" means, and who decides:** default to the full loop for
+anything that ships or persists in the repo. You don't get to decide a change is
+"too small" for the loop — that judgment stays with the person. They will tell
+you when a task is exempt (a throwaway probe, a demo that won't outlive itself,
+pure exploration before something is worth building seriously). Until they do,
+run the loop.
+
+### 1. Plan before writing code
+
+Every meaningful change starts with a short written plan, before any code. A plan
+covers:
+
+- **Purpose** — what this is for.
+- **Definition of done** — specific things that must be true to call it finished.
+- **Adds / does not add** — what's in scope and, just as importantly, what's
+  deliberately left out.
+- **Steps** — ordered, with checkpoints.
+- **Pitfalls** — known traps to avoid.
+- **Budget** — concrete limits for this pass: files touched, sample inputs,
+  expected test commands, LLM/API calls, cost-sensitive operations, and anything
+  deliberately deferred. Avoid vague time estimates when a mechanical cap would
+  be clearer.
+
+The person reviews the plan before you build. If a plan is too long to review
+carefully, it's too long to build — make it shorter first. The first plan you
+propose is usually too big; expect to be asked what can be cut.
+
+Do not start writing persistent code until the person has accepted the plan,
+unless they explicitly asked for a throwaway probe or exploration. If the request
+is urgent or clearly scoped, keep the plan very short, but still state it before
+changing files.
+
+### 2. Check new behavior in a notebook first
+
+Any new code that produces or transforms data gets built in a notebook before it
+becomes part of the codebase. "Notebook" here means a runnable scratch file (a
+`.ipynb` or a plain script — either is fine) that lives in `scratch/`, runs, and
+shows its output. It is not part of the codebase. In it:
+
+1. Write the function.
+2. Call it on real input data from `tests/fixtures/`, not invented. If you have no
+   real input, say so and ask, rather than fabricating it.
+3. Print meaningful output at each step.
+4. Explain in plain English what the output means and what to expect.
+
+The person then compares three things: the output, what they expected, and your
+explanation of the output. Bugs usually hide where your explanation and their
+expectation disagree. If all three line up, the code moves into the codebase. If
+not, expect a specific question before anything moves.
+
+This applies to anything where a wrong result would be hard to spot by eye —
+extractors, evaluators, parsers, data transformations. It does not apply to
+config changes, simple refactors, or UI work. When you are unsure whether the
+notebook step applies, say why and ask before skipping it. Do not silently decide
+that risky behavior is "too small" to check.
+
+### 3. Move it into the codebase with a test
+
+Once the notebook shows the code works, move it into its proper file and write a
+pytest test that locks in the behavior just verified. The test is not optional.
+The notebook proved it worked once; the test proves it keeps working as other
+things change. When you move it, say what's moving where and what the test locks
+down, so the person can confirm the test matches what was actually checked.
+
+Give the new module a top docstring per the layout rules below (what it does,
+what it does NOT do, its invariants). After the move, the notebook can be deleted
+or kept as documentation. It is not shipped code.
+
+Tests should cover: schema rules (required vs optional fields, limits, defaults),
+plain function behavior, important paths (extraction with the LLM call mocked,
+retry logic, what happens when validation fails), and every bug ever found. Tests
+should not cover: exact wording of prompts (changes too often), behavior of
+libraries you haven't customized, or trivial code. **Always mock LLM calls in
+tests — never make real ones.** Tests need to be fast and give the same result
+every time.
+
+### 4. One commit, one thing
+
+Each commit does a single thing — a refactor is one commit, a feature is another,
+a test update is another. A broken change made of one commit is easy to find; a
+broken change buried in ten is not. On longer work, commit at each working
+checkpoint rather than all at once.
+
+Do not create a git commit unless the person explicitly asks you to commit, or
+the task was already given with commit permission. If you are not sure whether
+you may commit, stop after the tested file changes and summarize exactly what is
+ready to commit. Never bundle unrelated cleanup into a commit just because you
+noticed it while working.
+
+### Staying inside the plan
+
+When you spot follow-up work beyond the current plan, name it in your summary and
+leave it out of the current change. Don't expand the task to absorb it — scope
+creep is exactly what the plan exists to prevent. Surfacing it is enough; the
+person decides whether it becomes its own planned change.
+
+### When something fails or the repo disagrees with the docs
+
+Failures are information. Do not hide them, hand-wave them, or keep patching
+blindly. When a command fails, a fixture is missing, a test contradicts the plan,
+or the repo layout disagrees with AGENTS.md, stop and report:
+
+- the exact command or action that failed;
+- the relevant error or mismatch;
+- what you think it means;
+- the smallest next check or change you recommend.
+
+Do not invent missing fixtures, commands, environment variables, or project
+constraints. If a required input is absent, say so and either use the nearest real
+fixture with permission or propose adding the missing fixture as its own small
+step.
+
+---
+
+## Recording decisions and bugs as you go
+
+The loop produces intent the next session won't have unless it's written down:
+
+- **A decision** (chose X over Y, and why) goes in DECISIONS.md as a few lines:
+  the conclusion and the reasoning that still matters — not a transcript. If it
+  can't be put in a few lines, it isn't settled yet, so it doesn't belong in the
+  file.
+- **A fixed bug** becomes two things: a regression test (locks in what broke) and
+  a one-line note on why it happened. The test stops that exact bug; the note
+  helps stop the whole class of bug.
+
+Do not put chat transcripts in the repo, and do not try to archive whole
+discussions so a future session can "catch up." The repo holds decisions and
+reasoning, not history.
+
+**When a decision gets committed depends on when it was made:**
+
+- Decided *before* any code (a discussion that settled a design question): it
+  commits on its own, first — there's no code yet to attach it to.
+- Decided *during* the work (you hit a fork mid-task and the person resolves it):
+  it commits together with the code it affected, since the reasoning and the
+  change belong together.
+
+Either way, the rule that matters: the decision must be in the current files
+*before* anything depends on it. You read the current files, not the git history,
+so timing is what counts — not how the commits are bundled.
+
+---
+
+## Handing off from a discussion to a coding task
+
+Design thinking often happens in a separate chat, away from you. When one of
+those discussions settles a decision, the handoff produces **two separate
+things** — never one mixed-together blob:
+
+1. **A decision entry** ready to paste into DECISIONS.md. The person confirms it
+   says what they meant, then commits it on its own, before any code.
+2. **A coding instruction** for you that *points at* that decision rather than
+   re-explaining it — e.g. "Per the DECISIONS.md entry on X, refactor Y to…"
+
+The decision is committed first, then you get the coding task. By the time you
+start, the reasoning is already in the files you read.
+
+### Command: "prep this for decisions"
+
+When the person says **"prep this for decisions"** (or something close), a
+discussion has settled a decision they want to record and act on. Produce the two
+separate things above:
+
+1. **Decision entry** — formatted for DECISIONS.md: a few lines, conclusion plus
+   the reasoning that survived. Not a transcript. If it can't be stated in a few
+   lines, say so — it isn't settled yet.
+2. **Coding instruction** — for the next task, pointing at the decision entry
+   rather than restating it.
+
+Do **not** write to DECISIONS.md or change code in response to this command. The
+person commits the decision entry themselves, then gives you the coding task
+separately. This command only produces the two things for review.
+
+Only do this when a decision was actually reached. A discussion that explained
+something but settled nothing has nothing to prep.
+
+---
+
+## How you'll be reviewed, and when to expect pushback
+
+When you produce code, the person runs a fixed check: reads the function name and
+docstring, asks for a plain-English explanation, checks outputs on real input,
+and scans for tells (names that don't match the description, unexplained numbers,
+vague logic). For load-bearing code — schemas, evaluation logic, anything that
+transforms data — expect to be asked to critique your own work and call out edge
+cases.
+
+Expect pushback when any of these is true. Treat each as a signal to slow down and
+explain, not to defend:
+
+- Your proposal contradicts a recorded decision in DECISIONS.md.
+- You're adding a dependency or an abstraction for something used only once.
+- The work has grown past what the plan said.
+- There's a number, retry count, or limit with no stated reason.
+- Your plain-English explanation doesn't match the code you wrote.
+
+### Reading a function together
+
+Once a session, the person may pick one function you wrote and read it line by
+line, asking you to explain as they go. When this happens, explain plainly and
+honestly, one line at a time — this is how they build their own ability to read
+code, so don't rush it or skip ahead.
+
+---
+
+## How this project is built and laid out
+
+### Filling in the project specifics (once, at launch)
+
+Everything below this line, plus "What this project is" near the top, are the
+project-specific parts of this file. Fill them from the project brief and
+README — don't invent.
+
+- **What this project is / Stack / Running and testing:** transcribe from the
+  brief. Keep "What this project is" a *pointer* at README, not a paraphrase of
+  it — less to drift.
+- **Where things live:** scaffold from the intended layout, but this section
+  describes the repo as it *is*, not as it's planned — keep it updated whenever
+  files move. `scratch/` and `tests/fixtures/` are fixed; fill in the rest.
+- **Pitfalls:** record only pitfalls the brief explicitly names or that have
+  actually been hit. Do not generate plausible-sounding ones — an invented
+  pitfall is noise the agent will then treat as a real constraint. This accretes
+  over time like DECISIONS.md; near-empty at launch is correct.
+
+After filling these, present the filled sections for the person to confirm before
+relying on them. The fill is a draft to confirm, not a fact to accept.
+
+### Running and testing
+
+```bash
+# Install — Python (uv) + frontend (npm)
+uv sync                          # Python deps (pyproject.toml / uv.lock)
+cd dashboard && npm install      # frontend + serverless-fn deps
+
+# Extraction pipeline (offline; writes the static corpus)
+uv run extract.py                # screenshots → data/extracted.json
+uv run normalize.py              # → dashboard/public/jobs.json
+uv run seed.py                   # load the corpus into Supabase
+
+# Run the dashboard
+cd dashboard && npm run dev       # Vite dev server — UI only (no api/ functions)
+cd dashboard && vercel dev        # full stack incl. api/ serverless functions
+
+# Tests (LLM calls are mocked — never live)
+# None configured yet — no pytest setup, no JS test runner. Tracked as a separate task;
+# when it lands, wire the command in here.
+```
+
+### Stack
+
+- **Extraction (Python 3.13, `uv`):** `anthropic` / `openai` SDKs (provider-agnostic;
+  ran on Claude Sonnet), `pydantic`, `python-dotenv`, `supabase`.
+- **Frontend:** Vite + React (JSX); the chart is hand-rolled CSS bars — **no chart library**.
+- **Serverless (Vercel Functions, Node):** `@daytona/sdk` (runs the live extraction in a
+  Daytona sandbox), `@supabase/supabase-js`.
+- **Persistence:** Supabase (Postgres) — `job` / `skill` / `cv` tables. Browser reads via
+  the anon/publishable key (RLS = **public read only**); all writes happen server-side with
+  the service-role key.
+- **Deploy:** Vercel (push to `main` auto-deploys; project **Root Directory = `dashboard`**).
+
+### Where things live
+
+The repo as it is today (keep this updated when files move):
+
+- `extract.py` — Phase 1: vision extraction over the screenshots → `data/extracted.json`.
+  *Not* the live drop-in.
+- `normalize.py` — Phase 2: deterministic normalization + aggregation →
+  `dashboard/public/jobs.json`.
+- `seed.py` — loads the normalized corpus into Supabase (`job` / `skill`).
+- `test_key.py` — one-call API-key smoke test for both providers. Despite the name,
+  *not* a pytest test.
+- `dashboard/` — the Vite + React app; Vercel's Root Directory.
+  - `dashboard/src/` — React UI: `App.jsx` (the whole dashboard), `App.css`,
+    `supabase.js` (browser client + missing-env guard).
+  - `dashboard/api/` — Vercel serverless functions (Node): `extract.js` (JD drop-in:
+    dup-check + parse + persist), `resume.js` (résumé PDF parse), `cv.js` (saved-résumé
+    rename/delete), `job.js` (delete a job), `canonicalMap.js` (shared normalization map).
+  - `dashboard/public/` — static assets incl. `jobs.json` (corpus snapshot / fallback).
+- `data/` — `extracted.json` (raw per-screenshot extraction output).
+- Other docs: `ARCHITECTURE.md`, `jd-aggregator-sprint-plan.md`, `frontend-spec.md`
+  (design/spec detail beyond README).
+- `scratch/` — where step-2 notebooks/probes live; gitignored, not shipped code (fixed
+  convention across projects — don't rename it)
+- `tests/fixtures/` — the real/sample inputs to run new code against in step 2 and in
+  review (fixed convention across projects — don't rename it). **Does not exist yet** —
+  create it when test infra lands.
+
+Three layout rules:
+
+- Imports flow one direction — lower-level files don't import from higher-level
+  ones.
+- Functions that mix input/output with logic get split into pure logic plus a
+  thin I/O wrapper. The pure part is what gets tested.
+- Every module gets a top docstring: what it does, what it explicitly does *not*
+  do, and the invariants it holds. The "does not" line is the one that matters —
+  it's the boundary that keeps code from landing in the wrong place.
+
+### Pitfalls specific to this project
+
+- **Vite env vars:** only `VITE_`-prefixed vars reach the browser, and Vite inlines them
+  at **build** time — after changing them on Vercel you must **redeploy**; a missing
+  `VITE_SUPABASE_*` white-screens the app (now guarded).
+- **`vercel env add` (non-interactive) silently stores empty values** — set vars via the
+  Vercel dashboard or REST API, and verify with `vercel env pull`.
+- **Preview deploys share the *production* Supabase DB** — writing/deleting on a preview
+  mutates prod data; test destructive actions with throwaway rows.
+- **Daytona sandboxes leak disk** unless created `{ ephemeral: true, autoStopInterval: 2 }`;
+  `daytona.list()` is an async iterable.
+- **Supabase access model:** job ids are text (`job-N`, `live-<ts>`); the browser has
+  **read-only RLS**; all writes go through Vercel functions with the service-role key.
+- **`seed.py` re-stamps `created_at`** — re-seeding makes every job look "New" (last-7-days);
+  re-apply the backdate or bake in a real date.
+- **Vercel Root Directory is `dashboard`** — import the existing repo, not a generated template.
