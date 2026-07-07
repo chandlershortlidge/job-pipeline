@@ -710,16 +710,20 @@ function JobRow({ job, resumeSet }) {
             </div>
           )}
           {job.summary && <p className="job-sum">{job.summary}</p>}
-          <div className="chips">
-            {job.skills.map((s) => (
-              <span
-                key={s.canonical}
-                className={'chip' + (s.requirement === 'required' ? ' req' : '')}
-              >
-                {s.canonical}
-              </span>
-            ))}
-          </div>
+          {/* Full skill list only when there's no résumé to compare against — otherwise
+              the have/missing chips above already cover the (required) skills. */}
+          {!myMatch && (
+            <div className="chips">
+              {job.skills.map((s) => (
+                <span
+                  key={s.canonical}
+                  className={'chip' + (s.requirement === 'required' ? ' req' : '')}
+                >
+                  {s.canonical}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </li>
