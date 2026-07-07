@@ -3,17 +3,35 @@
 // sandbox (stdlib urllib, no pip install) -> returns { job } in jobs.json shape.
 //
 // Env vars (Vercel project settings): DAYTONA_API_KEY, ANTHROPIC_API_KEY.
+import crypto from 'node:crypto'
 import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
 
-// Best-effort write of a parsed job to Supabase. Never throws into the request path —
-// if persistence fails or isn't configured, the user still gets their job in the UI.
-async function persistJob(job) {
+// Service-role Supabase client, or null if not configured — dedup + persistence both
+// degrade gracefully (the user still gets their job in the UI) when it's absent.
+function supaClient() {
   const url = process.env.SUPABASE_URL
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) return
-  const supabase = createClient(url, key)
+  return url && key ? createClient(url, key) : null
+}
+
+// Look up a previously-parsed screenshot by its file hash. Returns { id, company, title }
+// or null. Throws if the query itself fails (caller decides whether to hard-block).
+async function findDuplicate(supabase, hash) {
+  const { data, error } = await supabase
+    .from('job')
+    .select('id, company, title')
+    .eq('screenshot_hash', hash)
+    .limit(1)
+    .maybeSingle()
+  if (error) throw error
+  return data || null
+}
+
+// Persist a parsed job. Throws on a UNIQUE screenshot_hash collision (Postgres 23505)
+// so the caller can turn a race into a clean duplicate response.
+async function persistJob(supabase, job) {
   const { skills, ...jobRow } = job
   const { error } = await supabase.from('job').insert(jobRow)
   if (error) throw error
@@ -159,6 +177,20 @@ export default async function handler(req, res) {
   const mediaType = body?.media_type || 'image/png'
   if (!image) return res.status(400).json({ error: 'no image provided' })
 
+  // Duplicate check BEFORE the expensive Daytona parse: hash the screenshot bytes and
+  // block if we've parsed this exact file before. Best-effort — if the lookup errors
+  // (e.g. Supabase down), we proceed rather than fail the upload.
+  const hash = crypto.createHash('sha256').update(Buffer.from(image, 'base64')).digest('hex')
+  const supabase = supaClient()
+  if (supabase) {
+    try {
+      const dup = await findDuplicate(supabase, hash)
+      if (dup) return res.status(409).json({ error: 'duplicate', duplicate: dup })
+    } catch (e) {
+      console.error('duplicate pre-check failed (proceeding to parse):', e)
+    }
+  }
+
   const params = JSON.stringify({
     apiKey: modelKey,
     model: MODEL,
@@ -186,15 +218,30 @@ export default async function handler(req, res) {
     const job = {
       id: 'live-' + Date.now(),
       source: 'screenshot',
+      screenshot_hash: hash,
       ...parsed,
       skills: normalizeSkills(parsed.skills),
     }
-    try {
-      await persistJob(job) // persist so it survives a refresh; best-effort
-    } catch (e) {
-      console.error('persistJob failed', e)
+    if (supabase) {
+      try {
+        await persistJob(supabase, job) // persist so it survives a refresh; best-effort
+      } catch (e) {
+        // Race: a concurrent identical upload won the UNIQUE index between our pre-check
+        // and this insert. Surface it as the duplicate it is rather than a 500.
+        if (e?.code === '23505') {
+          try {
+            const dup = await findDuplicate(supabase, hash)
+            if (dup) return res.status(409).json({ error: 'duplicate', duplicate: dup })
+          } catch (e2) {
+            console.error('post-collision lookup failed:', e2)
+          }
+        }
+        console.error('persistJob failed', e)
+      }
     }
-    return res.status(200).json({ job })
+    // Don't leak the internal hash column into the client-side job shape.
+    const { screenshot_hash, ...jobForClient } = job
+    return res.status(200).json({ job: jobForClient })
   } catch (e) {
     return res.status(500).json({ error: String(e) })
   } finally {

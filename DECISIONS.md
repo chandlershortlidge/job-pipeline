@@ -15,6 +15,30 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-07 — Duplicate-screenshot detection by file hash (v1)
+
+**Feature:** Block re-uploading the same JD screenshot. `api/extract.js` computes a
+SHA-256 of the screenshot bytes **before** the Daytona parse and looks it up in
+`job.screenshot_hash`; an exact match returns HTTP 409 with the existing job's
+`{id, company, title}` and **no sandbox is created** (no wasted parse). No match →
+parse, then persist the job with its hash. The dashboard shows "Already added — {company
+· title}" with a link that expands + scrolls to + pulses the existing row (fallback text
+"a job already in your list" only when company/title are null).
+
+**Storage:** No interim store needed — persistence already shipped. Added `screenshot_hash
+text` to the `job` table with a **UNIQUE** index (`job_screenshot_hash_key`) to close the
+pre-check→insert race; the loser of a race re-queries and also returns 409. Nullable +
+Postgres NULL-distinct, so the 22 hash-less legacy rows don't collide. Migration run by
+hand in the Supabase SQL editor (no POSTGRES_URL locally for DDL).
+
+**Scope (v1):** exact file hash only. A different screenshot of the same posting (different
+crop/scroll/compression) has a different hash and is NOT caught — no fuzzy
+company/title/seniority matching. Legacy rows have null hashes so only post-ship uploads
+are deduped.
+
+**Verified:** `vite build` green; SHA-256 determinism unit-tested. Full upload→409→reveal
+needs the live Daytona parse — tested on the preview after the migration.
+
 ## 2026-07-06 — Per-row résumé compare (reveal on expand)
 
 **Feature (additive):** Expanding **any** job row now shows how the selected résumé

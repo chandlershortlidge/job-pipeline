@@ -479,6 +479,34 @@ footer {
   color: #dc2626;
   font-size: 0.8rem;
 }
+/* duplicate-screenshot notice — links to the existing job entry */
+.upload-dup {
+  color: #b45309;
+  font-size: 0.8rem;
+}
+.upload-dup-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #b45309;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+/* pulse the revealed job row so the eye lands on it */
+.job.flash .job-head,
+.job.flash .job-detail {
+  animation: jobflash 2s ease;
+}
+@keyframes jobflash {
+  0% {
+    background: #fef3c7;
+  }
+  100% {
+    background: #fff;
+  }
+}
 .new-badge {
   margin-left: 7px;
   font-size: 0.62rem;

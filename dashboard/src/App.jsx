@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { supabase } from './supabase'
 
@@ -51,6 +51,8 @@ export default function App() {
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState(null)
   const [lastUploadedJob, setLastUploadedJob] = useState(null)
+  const [dupNotice, setDupNotice] = useState(null) // { id, label } when an upload is a dup
+  const [highlight, setHighlight] = useState({ id: null, n: 0 }) // scroll+expand target
   const [resumeProfile, setResumeProfile] = useState(null)
   const [resumeBusy, setResumeBusy] = useState(false)
   const [resumeError, setResumeError] = useState(null)
@@ -164,10 +166,19 @@ export default function App() {
   }
 
   // Live drop-in: parse an uploaded screenshot in a Daytona sandbox, prepend the job.
+  // Reveal an existing job in the list: expand the panel, render enough rows to include
+  // it, and pulse it. The bumped nonce re-triggers even if it's the same job as last time.
+  function revealJob(id) {
+    setJobsExpanded(true)
+    setVisibleOlder(Number.MAX_SAFE_INTEGER)
+    setHighlight((h) => ({ id, n: h.n + 1 }))
+  }
+
   async function handleUpload(e) {
     const file = e.target.files?.[0]
     if (!file) return
     setUploadError(null)
+    setDupNotice(null)
     setUploading(true)
     try {
       const image = await fileToBase64(file)
@@ -177,6 +188,13 @@ export default function App() {
         body: JSON.stringify({ image, media_type: file.type || 'image/png' }),
       })
       const payload = await res.json()
+      if (res.status === 409 && payload.duplicate) {
+        const d = payload.duplicate
+        const label = [d.company, d.title].filter(Boolean).join(' · ') || 'a job already in your list'
+        setDupNotice({ id: d.id, label })
+        revealJob(d.id) // scroll to + expand the entry it was already parsed into
+        return
+      }
       if (!res.ok || !payload.job) throw new Error(payload.error || 'extraction failed')
       setData((prev) => ({ ...prev, jobs: [payload.job, ...prev.jobs] }))
       setLastUploadedJob(payload.job) // surface an immediate résumé-vs-this-job comparison
@@ -345,6 +363,14 @@ export default function App() {
         </label>
         <span className="upload-hint">parsed live in a Daytona sandbox</span>
         {uploadError && <span className="upload-err">⚠ {uploadError}</span>}
+        {dupNotice && (
+          <span className="upload-dup">
+            ⚠ Already added —{' '}
+            <button className="upload-dup-link" onClick={() => revealJob(dupNotice.id)}>
+              {dupNotice.label}
+            </button>
+          </span>
+        )}
       </section>
 
       {lastUploadedJob && (
@@ -492,7 +518,7 @@ export default function App() {
         {newJobs.length > 0 ? (
           <ul className="job-list">
             {newJobs.map((j) => (
-              <JobRow key={j.id} job={j} resumeSet={resumeSet} />
+              <JobRow key={j.id} job={j} resumeSet={resumeSet} highlight={highlight} />
             ))}
           </ul>
         ) : (
@@ -508,7 +534,7 @@ export default function App() {
             <div className="jobs-collapse-inner">
               <ul className="job-list">
                 {olderVisible.map((j) => (
-                  <JobRow key={j.id} job={j} resumeSet={resumeSet} />
+                  <JobRow key={j.id} job={j} resumeSet={resumeSet} highlight={highlight} />
                 ))}
               </ul>
             </div>
@@ -678,11 +704,31 @@ function MatchChips({ match }) {
   )
 }
 
-function JobRow({ job, resumeSet }) {
+function JobRow({ job, resumeSet, highlight }) {
   const [open, setOpen] = useState(false)
+  const [flash, setFlash] = useState(false)
+  const ref = useRef(null)
   const myMatch = resumeSet ? matchJob(job, resumeSet) : null
+
+  // When this row is the reveal target (e.g. a duplicate upload points here), open it,
+  // scroll it into view, and pulse it. Depends on the nonce so a repeat still fires.
+  useEffect(() => {
+    if (!highlight || highlight.id !== job.id) return
+    setOpen(true)
+    setFlash(true)
+    const scrollT = setTimeout(
+      () => ref.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
+      350, // let the panel's expand animation settle first
+    )
+    const flashT = setTimeout(() => setFlash(false), 2000)
+    return () => {
+      clearTimeout(scrollT)
+      clearTimeout(flashT)
+    }
+  }, [highlight, job.id])
+
   return (
-    <li className="job">
+    <li className={'job' + (flash ? ' flash' : '')} ref={ref}>
       <button className="job-head" onClick={() => setOpen((o) => !o)}>
         <span className="job-co">
           {job.company || '—'}
