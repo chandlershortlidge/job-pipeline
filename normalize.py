@@ -89,34 +89,49 @@ def split_skill(canonical: str) -> list[str]:
     return [canonical.strip()]
 
 
-def main():
-    data = json.loads(IN_PATH.read_text())
-    jobs = data["jobs"]
+# --- Pure normalization logic (no I/O — tested directly) --------------------------
 
-    # Pass 1: pick a display spelling per case-folded key = the most common one seen.
+def build_display(jobs: list[dict]) -> dict[str, str]:
+    """Pick a display spelling per case-folded key = the most common one seen."""
     spelling_counts: dict[str, collections.Counter] = collections.defaultdict(collections.Counter)
     for job in jobs:
         for s in job["skills"]:
             for part in split_skill(s["canonical"]):
                 spelling_counts[part.lower()][part] += 1
-    display = {key: c.most_common(1)[0][0] for key, c in spelling_counts.items()}
+    return {key: c.most_common(1)[0][0] for key, c in spelling_counts.items()}
 
-    def resolve(part: str) -> str:
-        key = part.strip().lower()
-        if key in ALIASES:
-            return ALIASES[key]
-        return display.get(key, part.strip())
 
-    # Pass 2: rebuild each job's skills with normalized canonical, distinct per job.
-    # Also collect, per final canonical, the distinct model-canonical spellings that
-    # folded into it — the clean "merged from" reveal for the chart.
+def resolve(part: str, display: dict[str, str]) -> str:
+    """A raw skill part -> its final canonical: alias first, else the display spelling."""
+    key = part.strip().lower()
+    if key in ALIASES:
+        return ALIASES[key]
+    return display.get(key, part.strip())
+
+
+def clean_variants(canon: str, raws) -> list[str]:
+    """The "merged from" reveal: keep short, skill-like phrasings that folded into
+    `canon` — dedupe case-insensitively, drop the canonical itself, cap for display."""
+    seen = {}
+    for r in sorted(raws, key=len):
+        r = r.strip()
+        low = r.lower()
+        if not r or len(r) > 40 or low == canon.lower() or low in seen:
+            continue
+        seen[low] = r
+    return sorted(seen.values())[:6]
+
+
+def normalize_jobs(jobs: list[dict], display: dict[str, str]) -> tuple[list[dict], dict[str, list]]:
+    """Rebuild each job's skills with normalized canonicals (distinct per job, required
+    wins), and collect the per-canonical "merged from" variants map. Pure."""
     variants: dict[str, set] = collections.defaultdict(set)
     out_jobs = []
     for job in jobs:
         by_canon: dict[str, dict] = {}
         for s in job["skills"]:
             for part in split_skill(s["canonical"]):
-                canon = resolve(part)
+                canon = resolve(part, display)
                 variants[canon].add(s["raw_text"].strip())
                 if canon not in by_canon:
                     by_canon[canon] = {"canonical": canon, "raw_text": s["raw_text"], "requirement": s["requirement"]}
@@ -134,24 +149,30 @@ def main():
             "skills": list(by_canon.values()),
         })
 
-    # "merged from" map: final canonical -> the distinct raw phrasings that folded in.
-    # Keep short, skill-like phrases (drop full JD sentences), dedupe case-insensitively,
-    # drop the canonical itself, cap for display.
-    def clean_variants(canon, raws):
-        seen = {}
-        for r in sorted(raws, key=len):
-            r = r.strip()
-            low = r.lower()
-            if not r or len(r) > 40 or low == canon.lower() or low in seen:
-                continue
-            seen[low] = r
-        return sorted(seen.values())[:6]
-
     skill_variants = {}
     for canon, raws in variants.items():
         cv = clean_variants(canon, raws)
         if cv:
             skill_variants[canon] = cv
+    return out_jobs, skill_variants
+
+
+def build_canon_map(display: dict[str, str]) -> dict:
+    """The static map the live drop-in (Daytona) uses to normalize a single new job the
+    same way: lowercased spelling -> final display canonical, plus the slash-splits."""
+    canon_map = {k: ALIASES.get(k, v) for k, v in display.items()}
+    canon_map.update(ALIASES)
+    return {"splits": SPLITS, "map": canon_map}
+
+
+# --- I/O wrapper ------------------------------------------------------------------
+
+def main():
+    data = json.loads(IN_PATH.read_text())
+    jobs = data["jobs"]
+
+    display = build_display(jobs)
+    out_jobs, skill_variants = normalize_jobs(jobs, display)
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUT_PATH.write_text(json.dumps(
@@ -159,12 +180,8 @@ def main():
         indent=2, ensure_ascii=False,
     ))
 
-    # Static map so the live drop-in (Daytona) normalizes a single new job the same way:
-    # lowercased spelling -> final display canonical, plus the slash-splits. Written as a JS
-    # module so the serverless function can import it directly (no bundling surprises).
-    canon_map = {k: ALIASES.get(k, v) for k, v in display.items()}
-    canon_map.update(ALIASES)
-    payload = {"splits": SPLITS, "map": canon_map}
+    # Written as a JS module so the serverless function can import it directly.
+    payload = build_canon_map(display)
     Path("dashboard/public/canonical_map.json").write_text(
         json.dumps(payload, indent=2, ensure_ascii=False)
     )
