@@ -194,6 +194,10 @@ export default async function handler(req, res) {
       id: 'live-' + Date.now(),
       source: 'screenshot',
       screenshot_hash: hash,
+      // Stamp created_at here so it's both persisted AND returned to the client — the
+      // freshly dropped-in job then shows the "New" badge immediately, not just after a
+      // reload (isNewJob keys off created_at, which the API otherwise wouldn't return).
+      created_at: new Date().toISOString(),
       ...parsed,
       skills: normalizeSkills(parsed.skills, canonicalMap, { withRequirement: true }),
     }
