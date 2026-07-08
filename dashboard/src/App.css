@@ -584,6 +584,11 @@ footer {
   color: #92400e;
   font-size: 0.9rem;
 }
+/* soft variant — "possible duplicate": job WAS added, warning only, so quieter */
+.dup-banner.soft {
+  border-color: #f3e0a4;
+  background: #fdf8e9;
+}
 .dup-banner-msg {
   flex: 1;
   font-weight: 500;

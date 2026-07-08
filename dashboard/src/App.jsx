@@ -3,6 +3,7 @@ import './App.css'
 import { supabase } from './supabase'
 import { matchJob } from './match'
 import { filterJobsByCompany } from './searchJobs'
+import { findSimilarJob } from './similar'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -44,6 +45,7 @@ export default function App() {
   const [uploadError, setUploadError] = useState(null)
   const [lastUploadedJob, setLastUploadedJob] = useState(null)
   const [dupNotice, setDupNotice] = useState(null) // { id, label } when an upload is a dup
+  const [similarNotice, setSimilarNotice] = useState(null) // { id, label } same-company soft warning
   const [highlight, setHighlight] = useState({ id: null, n: 0 }) // scroll+expand target
   const [deleteError, setDeleteError] = useState(null)
   const [resumeProfile, setResumeProfile] = useState(null)
@@ -175,6 +177,7 @@ export default function App() {
     setData((d) => ({ ...d, jobs: d.jobs.filter((j) => j.id !== id) }))
     setLastUploadedJob((j) => (j && j.id === id ? null : j))
     setDupNotice((n) => (n && n.id === id ? null : n))
+    setSimilarNotice((n) => (n && n.id === id ? null : n))
     try {
       const res = await fetch(`/api/job?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
       if (!res.ok) throw new Error((await res.json()).error || 'delete failed')
@@ -189,6 +192,7 @@ export default function App() {
     if (!file) return
     setUploadError(null)
     setDupNotice(null)
+    setSimilarNotice(null)
     setUploading(true)
     try {
       const image = await fileToBase64(file)
@@ -206,6 +210,15 @@ export default function App() {
         return
       }
       if (!res.ok || !payload.job) throw new Error(payload.error || 'extraction failed')
+      // Soft dedup: the hash check upstream only blocks byte-identical files. If an
+      // existing job shares this company, warn (non-blocking) — the job is still added.
+      const similar = findSimilarJob(data?.jobs || [], payload.job)
+      if (similar) {
+        const label =
+          [similar.company, similar.title].filter(Boolean).join(' · ') ||
+          'a job already in your list'
+        setSimilarNotice({ id: similar.id, label })
+      }
       setData((prev) => ({ ...prev, jobs: [payload.job, ...prev.jobs] }))
       setLastUploadedJob(payload.job) // surface an immediate résumé-vs-this-job comparison
 
@@ -395,6 +408,29 @@ export default function App() {
             title="Dismiss"
             aria-label="Dismiss"
             onClick={() => setDupNotice(null)}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {similarNotice && (
+        <div className="dup-banner soft" role="status">
+          <span className="dup-banner-msg">
+            <span className="dup-banner-icon" aria-hidden="true">
+              ⚠
+            </span>{' '}
+            Added — but this may duplicate{' '}
+            <button className="dup-banner-link" onClick={() => revealJob(similarNotice.id)}>
+              {similarNotice.label}
+            </button>{' '}
+            (click to compare)
+          </span>
+          <button
+            className="dup-banner-x"
+            title="Dismiss"
+            aria-label="Dismiss"
+            onClick={() => setSimilarNotice(null)}
           >
             ×
           </button>
