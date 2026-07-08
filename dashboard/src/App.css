@@ -238,6 +238,42 @@ h2 {
   font-size: 0.8rem;
   color: #555;
 }
+/* company search — lives in the Jobs panel header, next to the title */
+.job-search-wrap {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 12px;
+}
+.job-search {
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.82rem;
+  color: #333;
+  background: #fff;
+  outline: none;
+  width: 150px;
+  transition: border-color 0.15s ease, width 0.15s ease;
+}
+.job-search:focus {
+  border-color: #0d9488;
+  width: 190px;
+}
+.job-search-x {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #8a8a9c;
+  font-size: 1rem;
+  padding: 0 2px;
+  line-height: 1;
+}
+.job-search-x:hover {
+  color: #333;
+}
 /* seniority view selector — re-scopes + recolors the chart */
 .sen-view {
   display: flex;

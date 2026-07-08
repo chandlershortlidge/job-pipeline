@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 import { supabase } from './supabase'
 import { matchJob } from './match'
+import { filterJobsByCompany } from './searchJobs'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -35,6 +36,7 @@ export default function App() {
   const [data, setData] = useState(null)
   const [selectedSkill, setSelectedSkill] = useState(null)
   const [selectedSeniority, setSelectedSeniority] = useState(null)
+  const [companyQuery, setCompanyQuery] = useState('')
   const [jobsExpanded, setJobsExpanded] = useState(false)
   const [visibleOlder, setVisibleOlder] = useState(JOBS_PAGE)
   const [showAll, setShowAll] = useState(false)
@@ -328,17 +330,21 @@ export default function App() {
   const activeColor = selectedSeniority
     ? SENIORITY_LEVELS.find((s) => s.level === selectedSeniority).color
     : GLOBAL_COLOR
-  // The job list composes both filters: the clicked skill AND the selected seniority.
-  const shownJobs = jobs.filter(
+  // The job list composes all three filters: company search, the clicked skill, AND the
+  // selected seniority. Search scopes the list only — chart and stats stay global.
+  const searching = companyQuery.trim() !== ''
+  const shownJobs = filterJobsByCompany(jobs, companyQuery).filter(
     (j) =>
       (!selectedSkill || j.skills.some((s) => s.canonical === selectedSkill)) &&
       (!selectedSeniority || j.seniority === selectedSeniority),
   )
   // The list shows New jobs (last 7 days) by default; expanding reveals the rest,
-  // paginated JOBS_PAGE at a time.
+  // paginated JOBS_PAGE at a time. An active search overrides the collapse — matches
+  // would otherwise hide behind the new-only default view.
   const newJobs = shownJobs.filter(isNewJob)
   const olderJobs = shownJobs.filter((j) => !isNewJob(j))
-  const olderVisible = olderJobs.slice(0, visibleOlder)
+  const listExpanded = jobsExpanded || searching
+  const olderVisible = searching ? olderJobs : olderJobs.slice(0, visibleOlder)
 
   return (
     <div className="app">
@@ -530,12 +536,36 @@ export default function App() {
               <span className="count">{shownJobs.length}</span>
             </button>
           </h2>
+          <span className="job-search-wrap">
+            <input
+              className="job-search"
+              type="search"
+              placeholder="Search company…"
+              aria-label="Search jobs by company"
+              value={companyQuery}
+              onChange={(e) => setCompanyQuery(e.target.value)}
+            />
+            {searching && (
+              <button
+                className="job-search-x"
+                title="Clear search"
+                aria-label="Clear search"
+                onClick={() => setCompanyQuery('')}
+              >
+                ×
+              </button>
+            )}
+          </span>
           {selectedSkill && (
             <button className="clear" onClick={() => setSelectedSkill(null)}>
               clear ✕
             </button>
           )}
         </div>
+
+        {searching && shownJobs.length === 0 && (
+          <p className="jobs-empty-new">No jobs match “{companyQuery.trim()}”.</p>
+        )}
 
         {/* New jobs (last 7 days) — always visible */}
         {newJobs.length > 0 ? (
@@ -551,7 +581,7 @@ export default function App() {
             ))}
           </ul>
         ) : (
-          !jobsExpanded &&
+          !listExpanded &&
           olderJobs.length > 0 && (
             <p className="jobs-empty-new">No new jobs in the last 7 days.</p>
           )
@@ -559,7 +589,7 @@ export default function App() {
 
         {/* Older jobs — smooth reveal, paginated */}
         {olderJobs.length > 0 && (
-          <div className={'jobs-collapse' + (jobsExpanded ? ' open' : '')}>
+          <div className={'jobs-collapse' + (listExpanded ? ' open' : '')}>
             <div className="jobs-collapse-inner">
               <ul className="job-list">
                 {olderVisible.map((j) => (
@@ -576,8 +606,8 @@ export default function App() {
           </div>
         )}
 
-        {/* Controls */}
-        {olderJobs.length > 0 && (
+        {/* Controls — hidden while searching (search already reveals every match) */}
+        {olderJobs.length > 0 && !searching && (
           <div className="jobs-more">
             {!jobsExpanded ? (
               <button className="jobs-more-btn" onClick={() => setJobsExpanded(true)}>
