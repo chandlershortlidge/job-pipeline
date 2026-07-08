@@ -334,8 +334,8 @@ cd dashboard && npm run dev       # Vite dev server — UI only (no api/ functio
 cd dashboard && vercel dev        # full stack incl. api/ serverless functions
 
 # Tests (LLM calls are mocked — never live)
-# None configured yet — no pytest setup, no JS test runner. Tracked as a separate task;
-# when it lands, wire the command in here.
+uv run pytest                    # Python: tests/test_normalize.py (pure functions + golden fixture)
+cd dashboard && npm test         # JS: vitest run — match.test.js, api/normalizeSkills.test.js
 ```
 
 ### Stack
@@ -373,9 +373,12 @@ The repo as it is today (keep this updated when files move):
   (design/spec detail beyond README).
 - `scratch/` — where step-2 notebooks/probes live; gitignored, not shipped code (fixed
   convention across projects — don't rename it)
+- `tests/` — pytest suite: `test_normalize.py` (normalize.py pure functions + golden
+  characterization). JS tests live next to their modules in `dashboard/`
+  (`src/match.test.js`, `api/normalizeSkills.test.js`, run by Vitest).
 - `tests/fixtures/` — the real/sample inputs to run new code against in step 2 and in
-  review (fixed convention across projects — don't rename it). **Does not exist yet** —
-  create it when test infra lands.
+  review (fixed convention across projects — don't rename it). Holds
+  `sample_extracted.json`, `golden_jobs.json`, `golden_canonicalMap.js`.
 
 Three layout rules:
 
