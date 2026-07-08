@@ -15,6 +15,23 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-08 — ⏸ Resume point: source-file storage plan drafted and reviewed, build not started
+
+**Where things stand:** Search-by-company + soft duplicate warning are built, tested,
+deployed, and user-verified live. Next planned change is `source-file-storage-plan.md`
+(store JD screenshots + résumé PDFs in a private Supabase Storage bucket; "View
+screenshot" button; generic signed-URL route). The plan was redrafted to fold in the
+résumé-PDF extension because `tailored-resume-plan.md` (user-authored, in repo) needs
+both artifacts — sequencing: storage v1 → corpus-screenshot backfill (also closes the
+legacy hashless-dedup hole) → project-template synthesis → tailored résumé.
+
+**On return, start at plan step 1:** create the private `sources` bucket + add
+`job.screenshot_path` / `cv.pdf_path` columns (by hand in the Supabase dashboard/SQL
+editor — agent preps the SQL, person runs it). Nothing is half-built; no code for this
+plan exists yet.
+
+---
+
 ## 2026-07-08 — Job search by company (v1)
 
 **Feature:** A search input in the Jobs panel header filters the job list by company name —
