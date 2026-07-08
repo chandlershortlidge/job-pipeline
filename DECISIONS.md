@@ -15,6 +15,44 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-08 — Job search by company (v1)
+
+**Feature:** A search input in the Jobs panel header filters the job list by company name —
+case-insensitive substring, whitespace-trimmed. Pure `filterJobsByCompany` in its own module
+(`src/searchJobs.js`, unit-tested). **Scope calls:** v1 is company-only (title/skill search
+deferred); search scopes the *list only* — chart and stats stay global, same idiom as the
+skill/seniority filters. An active search auto-reveals older matches (they'd otherwise hide
+behind the new-only collapse) and hides the Show all/less controls; clearing restores the
+default view.
+
+**Why:** The Mercanis double-upload showed there's no way to check "do I already have this
+company?" before uploading. Search is the cheap manual guard (the automatic one is the soft
+duplicate warning, next entry).
+
+**Verified:** vitest green (5 filter tests), `vite build` green, headless-Chrome screenshot of
+the header input rendering against real data.
+
+---
+
+## 2026-07-08 — Soft duplicate warning on drop-in (dedup v2, client-side)
+
+**Context:** The same Mercanis posting got in twice — the hash dedup (v1) only blocks a
+byte-identical re-upload; a *new screenshot of the same posting* has a different hash and sails
+through. Fully fuzzy posting-identity matching is unbounded; same-company is the cheap,
+high-signal check.
+
+**Feature:** After a successful parse, the client checks the new job's company against the
+existing list (`findSimilarJob` in `src/similar.js` — case-insensitive, trimmed, newest match
+wins). On a hit: a **non-blocking** softer-amber banner — "Added — but this may duplicate
+{company · title} (click to compare)" — with the same reveal-on-click + dismiss behavior as the
+hard-dup banner. The job is still added; the user decides. Deliberately coarse: a false
+"possible duplicate" costs one glance, a missed one skews the chart.
+
+**Verified:** unit tests (5) + `vite build` green. The full upload→banner flow needs a live
+Daytona parse — confirm on the deployed site with the next real upload.
+
+---
+
 ## 2026-07-08 — 2026-07-07 "regressions" investigated: one real bug (fixed), one known scope limit, one not reproducible
 
 Three core features reported broken on the live site on 07-07. Investigated read-only against
