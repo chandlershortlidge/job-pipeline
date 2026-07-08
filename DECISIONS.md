@@ -15,6 +15,38 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-08 — 2026-07-07 "regressions" investigated: one real bug (fixed), one known scope limit, one not reproducible
+
+Three core features reported broken on the live site on 07-07. Investigated read-only against
+prod (Supabase REST via anon key, deployed function probes, deployed-bundle grep). Baseline
+finding: **the last two 07-07 commits (the normalizeSkills DRY refactor + its tests) were never
+pushed** — the deployed site runs pre-refactor code, so the refactor is ruled out as a cause.
+
+1. **"New" badge missing after a drop-in — real bug, now fixed.** `api/extract.js` never
+   returned `created_at`, and `isNewJob()` keys off it — so a freshly uploaded job showed no
+   New badge until a reload (the reload reads Supabase, which has the column default). Fix:
+   stamp `created_at` server-side so it's both persisted and returned. Locked by new handler
+   tests (`api/extract.test.js`, Daytona mocked): fresh ISO timestamp, `live-` id,
+   `screenshot_hash` stripped, skills normalized. **Committed but not yet pushed/deployed.**
+
+2. **Duplicate not caught (ClickHouse uploaded twice) — v1 scope limit, not a code bug.** The
+   first ClickHouse upload (07-07 08:10 UTC) landed *before* the dedup deploy went live — its
+   row has a **null** `screenshot_hash`, so the 12:24 UTC re-upload had nothing to match and
+   sailed through (the 12:24 row *did* get a hash, so a third upload would 409). This is the
+   documented v1 limitation: hash-less legacy rows are invisible to dedup. Both ClickHouse
+   rows are still in prod (`live-1783411808718` hashless, `live-1783427074891` hashed) —
+   deleting one is a manual call, not done here.
+
+3. **CV uploader — could not reproduce; deployed path verified healthy today.** Full
+   end-to-end test against prod with a throwaway synthetic PDF: `POST /api/resume` → HTTP 200
+   in ~7s, correct profile (incl. the inferred-LLMs rule), persisted as cv id 12, then deleted
+   via `/api/cv` (only the 2 original CVs remain). Frontend wiring (`handleResume`) reads
+   correct. Whatever failed on 07-07 was transient (Daytona/Anthropic hiccup?) or a symptom
+   not yet described — if it recurs, capture the exact on-screen error and check the Vercel
+   function logs before touching code.
+
+---
+
 ## 2026-07-07 — normalize.py made genuinely deterministic (+ pure-function refactor)
 
 **Refactor:** Split the normalization logic out of `normalize.main()` into pure, testable
