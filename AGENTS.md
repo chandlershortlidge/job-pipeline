@@ -369,7 +369,7 @@ The repo as it is today (keep this updated when files move):
     rename/delete), `job.js` (delete a job), `canonicalMap.js` (shared normalization map).
   - `dashboard/public/` — static assets incl. `jobs.json` (corpus snapshot / fallback).
 - `data/` — `extracted.json` (raw per-screenshot extraction output).
-- Other docs: `ARCHITECTURE.md`, `jd-aggregator-sprint-plan.md`, `frontend-spec.md`
+- Other docs: `ARCHITECTURE.md`, `jd-aggregator-sprint-plan.md`
   (design/spec detail beyond README).
 - `scratch/` — where step-2 notebooks/probes live; gitignored, not shipped code (fixed
   convention across projects — don't rename it)
