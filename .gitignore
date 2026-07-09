@@ -229,3 +229,5 @@ node_modules/
 .
 .vercel
 .env*
+CLAUDE.local.md
+graphify-out/

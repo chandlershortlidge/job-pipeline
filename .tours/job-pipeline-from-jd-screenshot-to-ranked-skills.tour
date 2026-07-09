@@ -1,0 +1,70 @@
+{
+  "title": "job-pipeline: from JD screenshot to ranked skills",
+  "steps": [
+    {
+      "file": "README.md",
+      "pattern": "## How it works",
+      "description": "**Start here.** The one-question product: *what skills is the AI job market prioritizing?* This section has the pipeline diagram \u2014 screenshots \u2192 vision extraction \u2192 deterministic normalize \u2192 `jobs.json` \u2192 React dashboard on Vercel. The key mental model is just below: the AI reads the messy images, plain Python makes the results consistent and counts them."
+    },
+    {
+      "file": "extract.py",
+      "pattern": "class JobExtraction(BaseModel)",
+      "description": "**Phase 1 \u2014 extraction target.** This Pydantic schema is what the vision model must fill for a *single* screenshot: company/title (nullable \u2014 screenshots are cropped), inferred seniority + the signal it keyed off, a summary, and a list of `Skill`s. Each skill carries `raw_text` (as written), a `canonical` *guess*, and required vs nice-to-have."
+    },
+    {
+      "file": "extract.py",
+      "pattern": "SYSTEM_PROMPT = \"\"\"You extract structured data",
+      "description": "The prompt that drives the model. Note the discipline: **be honest about absence** (null over guessing), a *strict* seniority ladder (years + language cues) so the model can't freelance, and a seed normalization hint. Gotcha: the prompt's `canonical` is only a hint \u2014 the real canonical name is decided later by code, not here."
+    },
+    {
+      "file": "extract.py",
+      "pattern": "def extract_anthropic(b64, media)",
+      "description": "The Anthropic call: a forced tool-call (`tool_choice` \u2192 `record_job`) with the Pydantic JSON schema as the tool's input schema \u2014 that's how structured output is guaranteed. `extract_openai` just below mirrors it for the other provider; `PROVIDER` at the top picks which. `main()` loops the screenshots and writes `data/extracted.json`."
+    },
+    {
+      "file": "normalize.py",
+      "pattern": "ALIASES = {",
+      "description": "**Phase 2 \u2014 the deterministic heart.** This is where 'React'/'ReactJS'/'React.js' collapse to one skill. `SPLITS` (above) breaks only known slash-lists like `GCP/AWS/Azure`; `ALIASES` is a small, hand-eyeballed synonym map. Everything here is pure code: same input, same output every run \u2014 the fix for the model's run-to-run inconsistency."
+    },
+    {
+      "file": "normalize.py",
+      "pattern": "def main():",
+      "description": "The pipeline in one function: case-fold to pick a display spelling (most common wins) \u2192 rebuild each job's skills on the resolved canonical \u2192 build the 'merged from' variants map \u2192 write `dashboard/public/jobs.json`. It ALSO emits `canonical_map.json` and `api/canonicalMap.js` so the live upload path normalizes identically. It prints the ranked chart so a human can eyeball it."
+    },
+    {
+      "file": "seed.py",
+      "pattern": "job table is not empty",
+      "description": "One-off bridge: loads normalized `jobs.json` into Supabase (`job` + `skill` tables), with a guard so you can't double-seed. Seeded rows are tagged `source: \"corpus\"`; live drop-ins later come in as `source: \"screenshot\"`. After this runs, Supabase \u2014 not the static file \u2014 is the dashboard's primary source."
+    },
+    {
+      "file": "dashboard/src/App.jsx",
+      "pattern": "supabase.from('job').select('*, skill(*)')",
+      "description": "**Frontend entry.** On mount the dashboard reads jobs+skills from Supabase and the `skill_variants` reveal-map from static `/jobs.json` in parallel. Gotcha worth catching: if Supabase throws, the `catch` falls back to rendering the static `jobs.json` snapshot \u2014 the page always renders something."
+    },
+    {
+      "file": "dashboard/src/App.jsx",
+      "pattern": "const derived = useMemo",
+      "description": "The headline computation. Builds the **document-frequency** chart: for each canonical skill, the set of distinct jobs that mention it \u2014 scoped to the selected seniority, filtered to required-only and count \u2265 2 by default. This is the ranked-bar data. The chart itself (further down) is hand-rolled CSS bars, no chart library."
+    },
+    {
+      "file": "dashboard/src/App.jsx",
+      "pattern": "function matchJob(job, resumeSet)",
+      "description": "R\u00e9sum\u00e9 matching: a job's score = share of its *required* skills the candidate has. `matched`/`missing` drive the green/dashed chips (`MatchChips`). Extra r\u00e9sum\u00e9 skills never affect the score \u2014 surfaced separately so the match is honest. `JobRow` (bottom of file) is the expandable per-job card, with reveal/flash when a duplicate upload points at it."
+    },
+    {
+      "file": "dashboard/api/extract.js",
+      "pattern": "sandbox = await daytona.create",
+      "description": "**The live drop-in.** An uploaded screenshot is parsed *inside an ephemeral Daytona sandbox* (stdlib `urllib`, no SDK in the bundle). Before the expensive parse it sha256-hashes the bytes and 409s on a duplicate. After parsing it runs `normalizeSkills` with the SAME generated `canonicalMap`, so a new job increments the exact right bars, then persists via the Supabase service-role key."
+    },
+    {
+      "file": "dashboard/api/resume.js",
+      "pattern": "function addInferredLLMs(skills)",
+      "description": "R\u00e9sum\u00e9 serverless path \u2014 mirrors extract.js but sends a PDF `document` block. This helper encodes a project principle: inference lives in *code, not the prompt*. 'LLMs' rarely appears literally on a r\u00e9sum\u00e9, so if strong LLM-signal skills (RAG, LangChain, Agents\u2026) are present, it deterministically adds 'LLMs'. Kept a separate file so the proven JD path can't regress."
+    },
+    {
+      "file": "dashboard/src/supabase.js",
+      "pattern": "function stubClient(reason)",
+      "description": "**The gotcha that white-screened a deploy.** Vite inlines `VITE_*` env vars at build time; a deploy missing them made `createClient` throw at import, killing the whole app before React rendered. This stub makes every query resolve to `{ data: null, error }` so App.jsx falls back to static `jobs.json` instead of crashing. Closing note: read `DECISIONS.md` for why calls like this were made."
+    }
+  ]
+}
