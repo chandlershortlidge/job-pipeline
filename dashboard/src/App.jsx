@@ -805,6 +805,44 @@ function MatchChips({ match }) {
   )
 }
 
+// "View screenshot" + lightbox for jobs with a stored source screenshot.
+// Fetches a short-lived signed URL from /api/file on demand (the browser has no
+// direct read access to the private bucket) and shows the image in an overlay.
+function ViewScreenshot({ jobId }) {
+  const [url, setUrl] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
+
+  async function openShot() {
+    setBusy(true)
+    setError(null)
+    try {
+      const r = await fetch(`/api/file?kind=screenshot&id=${encodeURIComponent(jobId)}`)
+      const data = await r.json().catch(() => null)
+      if (!r.ok || !data?.url) throw new Error(data?.error || `HTTP ${r.status}`)
+      setUrl(data.url)
+    } catch (e) {
+      setError(String(e.message || e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <>
+      <button className="job-shot" onClick={openShot} disabled={busy}>
+        {busy ? 'Loading…' : 'View screenshot'}
+      </button>
+      {error && <span className="job-shot-err">{error}</span>}
+      {url && (
+        <div className="lightbox" onClick={() => setUrl(null)} title="Click to close">
+          <img src={url} alt="Original JD screenshot" />
+        </div>
+      )}
+    </>
+  )
+}
+
 function JobRow({ job, resumeSet, highlight, onDelete }) {
   const [open, setOpen] = useState(false)
   const [flash, setFlash] = useState(false)
@@ -873,6 +911,7 @@ function JobRow({ job, resumeSet, highlight, onDelete }) {
             </div>
           )}
           <div className="job-actions">
+            {job.screenshot_path && <ViewScreenshot jobId={job.id} />}
             {confirmingDelete ? (
               <span className="job-del-confirm">
                 Delete this job?

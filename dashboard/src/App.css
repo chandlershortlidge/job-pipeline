@@ -400,10 +400,54 @@ h2 {
 /* delete a job — lives at the bottom of the expanded detail, two-step confirm */
 .job-actions {
   display: flex;
+  align-items: center;
+  gap: 8px;
   justify-content: flex-end;
   margin-top: 12px;
   padding-top: 10px;
   border-top: 1px solid #f0f0f5;
+}
+/* View screenshot sits left (margin-right auto), Delete stays right */
+.job-shot {
+  margin-right: auto;
+  background: none;
+  border: 1px solid #cfd8ea;
+  color: #3b5bdb;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.job-shot:hover {
+  background: #eef2fc;
+  border-color: #a9b8dd;
+}
+.job-shot:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.job-shot-err {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin-right: auto;
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15, 18, 30, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 24px;
+}
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+  background: #fff;
 }
 .job-del {
   background: none;
