@@ -3,6 +3,7 @@
 // Writes go through the service-role key because the browser has read-only RLS on the
 // job/skill tables (same pattern as cv.js / extract.js — never write from the client).
 import { createClient } from '@supabase/supabase-js'
+import { removeByPrefix } from './sourceStore.js'
 
 function client() {
   const url = process.env.SUPABASE_URL
@@ -33,6 +34,11 @@ export default async function handler(req, res) {
   if (skillErr) return res.status(500).json({ error: String(skillErr.message || skillErr) })
   const { error: jobErr } = await supabase.from('job').delete().eq('id', id)
   if (jobErr) return res.status(500).json({ error: String(jobErr.message || jobErr) })
+
+  // Remove the stored screenshot by deterministic prefix — regardless of what the
+  // path column said, so files orphaned by partial failures stay reachable (orphan
+  // rule, storage-blueprint.md). Best-effort: a storage error never fails the delete.
+  await removeByPrefix(supabase, 'screenshots', id + '.')
 
   return res.status(200).json({ ok: true })
 }
