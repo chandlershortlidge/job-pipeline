@@ -11,6 +11,15 @@ import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
 import { normalizeSkills } from './normalizeSkills.js'
+import { uploadCvPdf } from './sourceStore.js'
+
+// Service-role Supabase client, or null if not configured — persistence and PDF
+// storage both degrade gracefully (the user still gets their profile) when absent.
+function supaClient() {
+  const url = process.env.SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  return url && key ? createClient(url, key) : null
+}
 
 // Name a saved résumé after the uploaded file (extension stripped). Falls back to the
 // old "title — date" form when the client didn't send a filename.
@@ -22,11 +31,8 @@ function cvName(profile, filename) {
 
 // Best-effort save of a parsed résumé profile to the cv table. Returns { id, name }
 // on success, null otherwise — never throws into the request path.
-async function persistCv(profile, filename) {
-  const url = process.env.SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) return null
-  const supabase = createClient(url, key)
+async function persistCv(supabase, profile, filename) {
+  if (!supabase) return null
   const name = cvName(profile, filename)
   const { data, error } = await supabase
     .from('cv')
@@ -175,11 +181,25 @@ export default async function handler(req, res) {
       years_experience: parsed.years_experience ?? null,
       skills: addInferredLLMs(normalizeSkills(parsed.skills, canonicalMap)),
     }
+    const supabase = supaClient()
     let cv = null
     try {
-      cv = await persistCv(profile, filename) // save so it can be toggled without re-uploading; best-effort
+      cv = await persistCv(supabase, profile, filename) // save so it can be toggled without re-uploading; best-effort
     } catch (e) {
       console.error('persistCv failed', e)
+    }
+    // Store the source PDF for the tailored-résumé feature (capture-only in v1 —
+    // no retrieval route for CVs, see storage-blueprint.md D1). cv.id is a serial
+    // integer, so the insert must come first; then stamp pdf_path on the row.
+    // Both best-effort: a storage failure never fails the upload.
+    if (cv) {
+      const path = await uploadCvPdf(supabase, Buffer.from(pdf, 'base64'), cv.id)
+      if (path) {
+        const { error } = await supabase.from('cv').update({ pdf_path: path }).eq('id', cv.id)
+        // On failure the file stays orphaned by column — delete-cleanup removes by
+        // prefix regardless of the column, so it remains reachable (orphan rule).
+        if (error) console.error('pdf_path update failed:', error)
+      }
     }
     return res.status(200).json({ profile, cv })
   } catch (e) {
