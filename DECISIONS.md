@@ -15,6 +15,21 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-10 — Corpus screenshots backfilled (storage + hashes); legacy dedup hole closed
+
+One-off migration (`scratch/backfill_screenshots.mjs`, dry-run then live, idempotent):
+all 20 corpus screenshots uploaded to `sources/screenshots/<job-id>.png` and their rows
+stamped with `screenshot_path` + SHA-256 `screenshot_hash` — mapping taken from
+`data/extracted.json`'s `source_file`. No `created_at` touched (seed-restamp trap avoided);
+no hash collisions with live rows. Verified: 21 rows with path+hash, 21 bucket objects,
+deployed `/api/file` serves job-1's image (200, 105 KB).
+
+Corpus rows now show "View screenshot" and are visible to hash dedup. Remaining known gap:
+3 pre-dedup live drop-ins (Enpal, eduBITES, POS TUNING) stay hashless — their original
+files are gone; a re-upload of the same screenshot file would not be caught for those.
+
+---
+
 ## 2026-07-10 — Source-file storage v1 SHIPPED and verified on prod
 
 All 7 plan steps done (`source-file-storage-plan.md` + `storage-blueprint.md`).
