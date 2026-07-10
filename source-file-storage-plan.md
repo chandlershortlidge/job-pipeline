@@ -21,8 +21,8 @@ route, no UI yet) — its UI belongs to the tailored-résumé plan.
 
 - New JD drop-in → expanded row shows "View screenshot" → opens the image in a
   lightbox. Rows without a stored image (all pre-existing jobs) show no button.
-- New résumé upload → PDF stored, `cv` row carries its path; retrievable
-  through the signed-URL route (verified by direct request, no UI).
+- New résumé upload → PDF stored, `cv` row carries its path; verified via a
+  service-role probe (no public retrieval in v1 — see `storage-blueprint.md` D1).
 - A storage failure never fails the upload — both paths degrade to today's
   behavior (job/CV saved without a source file).
 - Deleting a job (or CV) also deletes its stored file — no orphans.
@@ -45,9 +45,12 @@ route, no UI yet) — its UI belongs to the tailored-résumé plan.
 - **`resume.js`:** same pattern — upload the PDF to `sources/cvs/<cv-id>.pdf`
   after the profile persists, best-effort; save `pdf_path` on the cv row.
   (Insert first to get the id, then upload + update the path.)
-- **New route `api/file.js`:** `GET ?kind=screenshot|cv&id=` → looks up the
-  path, returns a short-lived signed URL (~1 h). Browser stays read-only;
-  secrets stay server-side — same access model as every other write path.
+- **New route `api/file.js`:** `GET ?kind=screenshot&id=` → looks up the
+  path, returns a signed URL (3600 s — covers a lightbox session, leaked URL
+  dies same-day). **Kind allowlist is `screenshot` only in v1** (D1: no login +
+  sequential cv ids would make résumés publicly enumerable; CV retrieval waits
+  for the tailored-résumé access story). Browser stays read-only; secrets stay
+  server-side — same access model as every other write path.
 - **`api/job.js` / `api/cv.js`:** on delete, also remove the stored file
   (best-effort).
 - **UI:** "View screenshot" button in the expanded job row (only when
@@ -72,8 +75,9 @@ route, no UI yet) — its UI belongs to the tailored-résumé plan.
 1. **Migration + bucket** (by hand in Supabase): create `sources` bucket
    (private), add the two columns. Verify with a REST probe.
 2. **`extract.js` upload + path save**, with a handler test (storage mocked)
-   locking: path saved on success, upload failure → job still returned, path
-   never leaks client-side secrets.
+   locking: path saved on success and present in the response, upload failure →
+   job still returned, and the response contains no service-role key, bucket
+   URL, or signed URL — only the bare `screenshot_path`.
 3. **`resume.js` upload + path save**, same test pattern.
 4. **`api/file.js` signed-URL route** + tests (kind validation, missing id,
    null path → 404).
@@ -97,8 +101,10 @@ than patching around it.
   if the upload succeeds but the update fails, the file is orphaned. Keep the
   cleanup-on-delete logic tolerant of both null paths and missing files.
 - **Vercel function payload/time limits:** the bytes are already in the
-  request today, so no new ceiling — but the extra storage round-trip adds
-  latency; keep it after the response-critical work where possible.
+  request today, so no new ceiling. The upload is response-critical (D2): it
+  runs *before* the row insert and `res.json` — work scheduled after the
+  response can silently never execute on Vercel, and the response must carry
+  `screenshot_path`.
 - **Don't let the signed-URL route grow write abilities.** GET only, kind
   allowlist, no arbitrary-path lookups — the path always comes from the DB
   row, never from the query string.

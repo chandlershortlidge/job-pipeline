@@ -15,6 +15,31 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-10 — Storage v1 design locked (grill → blueprint); public CV retrieval cut from v1
+
+An adversarial grill of `source-file-storage-plan.md` (round 1, verdict BLOCK: 2 HIGH)
+led to `storage-blueprint.md` — components, ordering contracts, and four design
+decisions, all accepted:
+
+- **D1 (the material one):** `api/file.js` serves **screenshots only** in v1. The
+  planned `kind=cv` signed-URL route would have made every stored résumé publicly
+  enumerable — the app has no login and cv ids are small sequential integers, so the
+  "private" bucket was privacy theater. Résumés are still *stored* (capture-only);
+  retrieval ships with the tailored-résumé feature once an access story exists.
+  Screenshots stay retrievable — they're public job ads.
+- **D2:** the screenshot upload is response-critical: it runs before the row insert
+  and the JSON response, and `screenshot_path` rides both — same bug class as the
+  07-08 `created_at` miss (field absent from the API response → feature dead until
+  reload), and post-response work can silently never run on Vercel.
+- **Orphan rule:** deterministic storage prefixes (`screenshots/<job-id>.`,
+  `cvs/<id>.pdf`) + delete-time remove-by-prefix regardless of a null path column.
+- Smaller: media-type allowlist → fixed extensions (no client strings in storage
+  keys); signed-URL TTL pinned at 3600 s.
+
+Plan text updated to match. Design trail: `storage-blueprint.md`.
+
+---
+
 ## 2026-07-08 — ⏸ Resume point: source-file storage plan drafted and reviewed, build not started
 
 **Where things stand:** Search-by-company + soft duplicate warning are built, tested,
