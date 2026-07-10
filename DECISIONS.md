@@ -15,6 +15,31 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-10 — Source-file storage v1 SHIPPED and verified on prod
+
+All 7 plan steps done (`source-file-storage-plan.md` + `storage-blueprint.md`).
+New drop-ins store their screenshot (`sources/screenshots/<job-id>.<ext>`), new résumé
+uploads store their PDF (`sources/cvs/<id>.pdf`, capture-only), expanded rows with a
+stored screenshot get a "View screenshot" lightbox via `GET /api/file` (signed URL,
+3600 s, screenshot-only per D1), and deleting a row removes its file by prefix.
+61 vitest green (storage/LLM mocked); deployed verify: BJAK drop-in → button → image,
+cv 19 → `cvs/19.pdf` in the bucket, `kind=cv` → 400 on prod.
+
+**Deploy gotcha (bit us):** Vercel counts **every** `api/*.js` as a serverless function
+— including co-located `*.test.js` — and the Hobby plan caps a deployment at 12. Our 5
+new test files made 13 → deploy failed with `exceeded_serverless_functions_per_deployment`
+(prod kept serving the old deployment; the site never broke). Fix: `dashboard/.vercelignore`
+excludes `api/*.test.js` from the upload (8 deployed functions). Adding a 5th real route
++ tests will hit this again — watch the count.
+
+**Data notes from the same session:** the `cv` table was found empty on 07-10 (DECISIONS
+07-08 said 2 rows remained; id sequence continued normally, so rows were deleted via
+ordinary deletes — cause unknown, not the ALTER). Re-uploads recreated rows 17/19. Two
+all-null jobs from 07-08 evening (bad parses persisted — extract.js has no minimum-viability
+gate; possible future guard) were user-deleted.
+
+---
+
 ## 2026-07-10 — Storage v1 design locked (grill → blueprint); public CV retrieval cut from v1
 
 An adversarial grill of `source-file-storage-plan.md` (round 1, verdict BLOCK: 2 HIGH)

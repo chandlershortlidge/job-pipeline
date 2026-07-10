@@ -347,7 +347,9 @@ cd dashboard && npm test         # JS: vitest run — match.test.js, api/normali
   Daytona sandbox), `@supabase/supabase-js`.
 - **Persistence:** Supabase (Postgres) — `job` / `skill` / `cv` tables. Browser reads via
   the anon/publishable key (RLS = **public read only**); all writes happen server-side with
-  the service-role key.
+  the service-role key. Source files live in the **private** Supabase Storage bucket
+  `sources` (`screenshots/` + `cvs/` prefixes, no anon policies); the only browser read
+  path is `GET /api/file` (signed URLs, screenshots only — see storage-blueprint.md D1).
 - **Deploy:** Vercel (push to `main` auto-deploys; project **Root Directory = `dashboard`**).
 
 ### Where things live
@@ -365,8 +367,11 @@ The repo as it is today (keep this updated when files move):
   - `dashboard/src/` — React UI: `App.jsx` (the whole dashboard), `App.css`,
     `supabase.js` (browser client + missing-env guard).
   - `dashboard/api/` — Vercel serverless functions (Node): `extract.js` (JD drop-in:
-    dup-check + parse + persist), `resume.js` (résumé PDF parse), `cv.js` (saved-résumé
-    rename/delete), `job.js` (delete a job), `canonicalMap.js` (shared normalization map).
+    dup-check + parse + store screenshot + persist), `resume.js` (résumé PDF parse +
+    store PDF), `cv.js` (saved-résumé rename/delete), `job.js` (delete a job),
+    `file.js` (signed-URL read path for stored screenshots), `canonicalMap.js` (shared
+    normalization map), `sourceStore.js` (the only code touching Supabase Storage),
+    plus co-located `*.test.js` (excluded from deploys via `dashboard/.vercelignore`).
   - `dashboard/public/` — static assets incl. `jobs.json` (corpus snapshot / fallback).
 - `data/` — `extracted.json` (raw per-screenshot extraction output).
 - Other docs: `ARCHITECTURE.md`, `jd-aggregator-sprint-plan.md`
@@ -406,3 +411,9 @@ Three layout rules:
 - **`seed.py` re-stamps `created_at`** — re-seeding makes every job look "New" (last-7-days);
   re-apply the backdate or bake in a real date.
 - **Vercel Root Directory is `dashboard`** — import the existing repo, not a generated template.
+- **Vercel counts every `api/*.js` as a serverless function — Hobby cap is 12 per deploy.**
+  Co-located test files count too (bit us on 2026-07-10: 13 files → deploy ERROR, prod kept
+  serving the old build). `dashboard/.vercelignore` excludes `api/*.test.js`; currently 8
+  deployed functions — check the count before adding routes.
+- **`sources` bucket must stay private** — no anon storage policies, ever. A public bucket
+  or a `kind=cv` route would make stored résumés enumerable (no login, serial cv ids).
