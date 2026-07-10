@@ -1,0 +1,3 @@
+# Vercel counts every api/*.js as a serverless function (Hobby cap: 12).
+# Tests are vitest-only — exclude them from the deployment upload.
+api/*.test.js
