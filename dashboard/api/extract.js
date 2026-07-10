@@ -8,6 +8,7 @@ import { Daytona } from '@daytona/sdk'
 import { createClient } from '@supabase/supabase-js'
 import canonicalMap from './canonicalMap.js'
 import { normalizeSkills } from './normalizeSkills.js'
+import { uploadScreenshot, removeByPrefix } from './sourceStore.js'
 
 // Service-role Supabase client, or null if not configured — dedup + persistence both
 // degrade gracefully (the user still gets their job in the UI) when it's absent.
@@ -201,10 +202,23 @@ export default async function handler(req, res) {
       ...parsed,
       skills: normalizeSkills(parsed.skills, canonicalMap, { withRequirement: true }),
     }
+    // Store the source screenshot BEFORE the insert and the response: the path rides
+    // the single row insert (no second write) and the client response (post-res.json
+    // work can silently never run on Vercel — same class as the created_at bug).
+    // Best-effort: null path = today's behavior, the job still ships.
+    job.screenshot_path = supabase
+      ? await uploadScreenshot(supabase, Buffer.from(image, 'base64'), job.id, mediaType)
+      : null
     if (supabase) {
       try {
         await persistJob(supabase, job) // persist so it survives a refresh; best-effort
       } catch (e) {
+        // The row didn't land, so a stored file would be unreachable — remove it and
+        // drop the path from the response (orphan rule, storage-blueprint.md).
+        if (job.screenshot_path) {
+          await removeByPrefix(supabase, 'screenshots', job.id + '.')
+          job.screenshot_path = null
+        }
         // Race: a concurrent identical upload won the UNIQUE index between our pre-check
         // and this insert. Surface it as the duplicate it is rather than a 500.
         if (e?.code === '23505') {

@@ -29,6 +29,57 @@ vi.mock('@daytona/sdk', () => ({
   },
 }))
 
+// Controllable fake Supabase (DB + Storage) for the persistence/storage tests.
+// The no-Supabase tests below never reach it (env deleted → supaClient() is null).
+const supa = {
+  insertedJobs: [],
+  uploads: [],
+  removed: [],
+  failUpload: false,
+  insertError: null,
+  reset() {
+    this.insertedJobs = []
+    this.uploads = []
+    this.removed = []
+    this.failUpload = false
+    this.insertError = null
+  },
+}
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: () => ({
+    from: (table) => ({
+      // findDuplicate chain — always "no existing row" in these tests
+      select: () => ({ eq: () => ({ limit: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }),
+      insert: async (rows) => {
+        if (table === 'job') {
+          if (supa.insertError) return { error: supa.insertError }
+          supa.insertedJobs.push(rows)
+        }
+        return { error: null }
+      },
+    }),
+    storage: {
+      from: () => ({
+        upload: async (path) => {
+          if (supa.failUpload) return { data: null, error: { message: 'upload boom' } }
+          supa.uploads.push(path)
+          return { data: { path }, error: null }
+        },
+        list: async (folder, opts) => ({
+          data: supa.uploads
+            .filter((p) => p.startsWith(folder + '/') && p.slice(folder.length + 1).includes(opts?.search ?? ''))
+            .map((p) => ({ name: p.slice(folder.length + 1) })),
+          error: null,
+        }),
+        remove: async (paths) => {
+          supa.removed.push(...paths)
+          return { data: paths.map((p) => ({ name: p })), error: null }
+        },
+      }),
+    },
+  }),
+}))
+
 const handler = (await import('./extract.js')).default
 
 function mockRes() {
@@ -89,5 +140,67 @@ describe('POST /api/extract (Daytona mocked, no Supabase)', () => {
     const r2 = mockRes()
     await handler({ method: 'POST', body: {} }, r2)
     expect(r2.statusCode).toBe(400)
+  })
+
+  it('screenshot_path is null when Supabase is absent (no storage to write to)', async () => {
+    const res = mockRes()
+    await handler(REQ, res)
+    expect(res.body.job.screenshot_path).toBe(null)
+  })
+})
+
+describe('POST /api/extract (Daytona + Supabase mocked — source-file storage)', () => {
+  beforeEach(() => {
+    supa.reset()
+    process.env.SUPABASE_URL = 'https://fake.supabase.co'
+    process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role-test-secret'
+  })
+
+  it('uploads before insert: the path rides the row insert AND the response', async () => {
+    const res = mockRes()
+    await handler(REQ, res)
+    expect(res.statusCode).toBe(200)
+    const { job } = res.body
+    expect(job.screenshot_path).toMatch(/^screenshots\/live-\d+\.png$/)
+    expect(supa.uploads).toEqual([job.screenshot_path])
+    // single insert carries the path — no second write
+    expect(supa.insertedJobs).toHaveLength(1)
+    expect(supa.insertedJobs[0].screenshot_path).toBe(job.screenshot_path)
+  })
+
+  it('upload failure degrades: job persists and returns with a null path', async () => {
+    supa.failUpload = true
+    const res = mockRes()
+    await handler(REQ, res)
+    expect(res.statusCode).toBe(200)
+    expect(res.body.job.screenshot_path).toBe(null)
+    expect(supa.insertedJobs[0].screenshot_path).toBe(null)
+  })
+
+  it('insert failure after a successful upload removes the orphaned file (blueprint orphan rule)', async () => {
+    supa.insertError = { code: '23505' }
+    const res = mockRes()
+    await handler(REQ, res)
+    expect(supa.uploads).toHaveLength(1) // the upload did happen...
+    expect(supa.removed).toEqual(supa.uploads) // ...and was cleaned up
+    expect(res.body.job?.screenshot_path ?? null).toBe(null) // path never reaches the client
+  })
+
+  it('disallowed media type: no upload attempted, job still ships', async () => {
+    const res = mockRes()
+    await handler({ ...REQ, body: { ...REQ.body, media_type: 'image/svg+xml' } }, res)
+    expect(res.statusCode).toBe(200)
+    expect(supa.uploads).toEqual([])
+    expect(res.body.job.screenshot_path).toBe(null)
+  })
+
+  it('response leaks no secrets: no service key, no bucket URL, no signed URL (D3)', async () => {
+    const res = mockRes()
+    await handler(REQ, res)
+    const wire = JSON.stringify(res.body)
+    expect(wire).not.toContain('service-role-test-secret')
+    expect(wire).not.toContain('supabase.co')
+    expect(wire).not.toContain('signedUrl')
+    expect(wire).not.toContain('token=')
   })
 })
