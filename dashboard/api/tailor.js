@@ -1,17 +1,26 @@
 // Vercel serverless function — tailor dispatcher (spec C6, slot 9/12).
 // POST {action, ...}: 'transcribe' {cvId, overwrite?} -> {fullText};
-// 'split' {cvId} -> {sections:[{name,start,end}]}. Anthropic calls go direct
-// over fetch (forced tool_use, bodies built by api-lib/tailor/prompts.js);
-// PDF bytes come from the private bucket via sourceStore.download using the
-// DB row's path — never a client-supplied path.
-//
-// What it does NOT do (yet): 'generate'/'revise' are T7 — they answer 501
-// until the guard pipeline lands. No response ever carries API keys, bucket
-// URLs, or signed-URL material (spec C6 final clause).
+// 'split' {cvId} -> {sections:[{name,start,end}]};
+// 'generate'/'revise' {jobId, cvId, sectionName, claimIds, pillClaims,
+// note?, priorBullets?} -> {bullets, verified, objection?} through the guard
+// pipeline (hard provenance -> digit diff -> LLM judge, bounded retries).
+// Anthropic calls go direct over fetch (forced tool_use, bodies built by
+// api-lib/tailor/prompts.js); PDF bytes come from the private bucket via
+// sourceStore.download using the DB row's path — never a client-supplied path.
+// No response ever carries API keys, bucket URLs, signed-URL material, or
+// prompt text (spec C6 final clause).
 import { createClient } from '@supabase/supabase-js'
 import { download } from './sourceStore.js'
-import { buildTranscribeBody, buildSplitBody } from '../api-lib/tailor/prompts.js'
+import {
+  buildTranscribeBody,
+  buildSplitBody,
+  buildPrefix,
+  buildSuffix,
+  buildGenerateBody,
+} from '../api-lib/tailor/prompts.js'
+import { judge } from '../api-lib/tailor/judge.js'
 import { anchorSections, sha256Hex } from '../src/tailor/anchor.js'
+import { validateClaimIds, digitDiff } from '../src/tailor/provenance.js'
 
 // One Anthropic messages call. Returns the forced tool_use input object, or
 // null on non-200 / missing tool block. Network throws propagate to the caller
@@ -92,6 +101,187 @@ async function split(supabase, apiKey, body, res) {
   return res.status(200).json({ sections: anchored.sections })
 }
 
+// One best-effort tailor_log row per guard evaluation (spec C6 step 8).
+// Insert failure (returned error OR throw) never fails the request.
+async function logGuard(supabase, ctx, guard, pass, objection, bullets, evidence) {
+  try {
+    await supabase.from('tailor_log').insert({
+      job_id: ctx.jobId,
+      cv_id: ctx.cvId,
+      section: ctx.sectionName,
+      guard,
+      pass,
+      objection,
+      payload: { bullets, evidence },
+    })
+  } catch {
+    // best-effort logging only
+  }
+}
+
+// Run the full guard chain on one generation attempt, logging every
+// evaluation. → {kind:'ok'} | {kind:'hard'|'soft', objection} |
+// {kind:'judge-error'}. Order is fixed: hard -> digit (short-circuits the
+// judge on failure) -> judge (spec C6 steps 5–7).
+async function evaluateGuards({ supabase, apiKey, ctx, bullets, evidence }) {
+  const hard = validateClaimIds(bullets, evidence.map((e) => e.id))
+  await logGuard(supabase, ctx, 'hard', hard.ok, hard.ok ? null : hard.reason, bullets, evidence)
+  if (!hard.ok) return { kind: 'hard', objection: hard.reason }
+
+  const digit = digitDiff(bullets, evidence.map((e) => e.text))
+  const digitObjection = digit.ok
+    ? null
+    : `bullet numbers not found in the evidence: ${digit.digits.join(', ')}`
+  await logGuard(supabase, ctx, 'digit', digit.ok, digitObjection, bullets, evidence)
+  if (!digit.ok) return { kind: 'soft', objection: digitObjection }
+
+  const verdict = await judge({ bullets, evidence, apiKey })
+  if (verdict.judgeError === true) {
+    await logGuard(supabase, ctx, 'judge-error', false, 'judge unavailable', bullets, evidence)
+    return { kind: 'judge-error' }
+  }
+  await logGuard(supabase, ctx, 'judge', verdict.pass, verdict.objection ?? null, bullets, evidence)
+  if (!verdict.pass) return { kind: 'soft', objection: verdict.objection }
+  return { kind: 'ok' }
+}
+
+// generate/revise: the guard pipeline (spec C6 steps 1–9). Retry budget is a
+// hard structural cap: initial call + at most ONE hard retry + at most ONE
+// soft retry (max 3 generation calls); any failure on a retry is final.
+async function generate(supabase, apiKey, body, res) {
+  // 1. cv + split present, and the split must match the CURRENT full_text —
+  //    staleness blocks before anything else touches the model.
+  const cv = await loadCv(supabase, body?.cvId)
+  if (!cv || cv.full_text == null) return res.status(404).json({ error: 'cv full_text not found' })
+  const split = cv.sections
+  if (!split || !Array.isArray(split.sections)) {
+    return res.status(404).json({ error: 'cv split not found' })
+  }
+  if ((await sha256Hex(cv.full_text)) !== split.full_text_hash) {
+    return res.status(409).json({ error: 'stale split — re-run split' })
+  }
+
+  // 2. job + its required skills (this job only, canonical, deduped) + section span.
+  //    Select errors are 500s, not empty results — a transient DB failure must
+  //    never silently build a prompt without JD skills (house pattern: file.js).
+  const { data: job, error: jobError } = await supabase
+    .from('job')
+    .select('*')
+    .eq('id', body?.jobId)
+    .maybeSingle()
+  if (jobError) return res.status(500).json({ error: 'lookup failed' })
+  if (!job) return res.status(404).json({ error: 'job not found' })
+  const { data: skillRows, error: skillError } = await supabase
+    .from('skill')
+    .select('canonical')
+    .eq('job_id', body.jobId)
+    .eq('requirement', 'required')
+  if (skillError) return res.status(500).json({ error: 'lookup failed' })
+  const jdSkills = [...new Set((skillRows ?? []).map((r) => r.canonical))]
+  const span = split.sections.find((s) => s.name === body?.sectionName)
+  if (!span) return res.status(404).json({ error: 'section not found' })
+  // orig-claim: minted server-side from the persisted transcript slice.
+  const origClaim = { id: `orig-${span.name}`, text: cv.full_text.slice(span.start, span.end) }
+
+  // 3. Resolve evidence. ALL templates load; claim ids must be globally unique.
+  const { data: templates, error: templateError } = await supabase.from('project_template').select('*')
+  if (templateError) return res.status(500).json({ error: 'lookup failed' })
+  const claimById = new Map()
+  const templateByClaimId = new Map()
+  for (const template of templates ?? []) {
+    for (const claim of template.claims ?? []) {
+      if (claimById.has(claim.id)) {
+        return res.status(500).json({
+          error: `duplicate claim id "${claim.id}" in templates "${templateByClaimId.get(claim.id)}" and "${template.name}"`,
+        })
+      }
+      claimById.set(claim.id, claim)
+      templateByClaimId.set(claim.id, template.name)
+    }
+  }
+  const claimIds = Array.isArray(body?.claimIds) ? body.claimIds : []
+  const selected = []
+  for (const id of claimIds) {
+    const claim = claimById.get(id)
+    if (!claim) return res.status(400).json({ error: `unknown claim id "${id}"` })
+    selected.push(claim)
+  }
+  const pillClaims = Array.isArray(body?.pillClaims) ? body.pillClaims : []
+  for (const pill of pillClaims) {
+    const ok =
+      pill &&
+      typeof pill.id === 'string' &&
+      pill.id.startsWith('pill-') &&
+      typeof pill.text === 'string' &&
+      pill.text.length > 0
+    if (!ok) return res.status(400).json({ error: 'malformed pillClaims' })
+  }
+  // evidence = selected template claims ∪ pill claims ∪ orig-claim, as {id, text}.
+  const evidence = [
+    ...selected.map((c) => ({ id: c.id, text: c.text })),
+    ...pillClaims.map((p) => ({ id: p.id, text: p.text })),
+    origClaim,
+  ]
+
+  // 4. Prompt: cached prefix (full corpus, catalog-framed) is stable across
+  //    retries; per-request material (allowlist, note, priorBullets, guard
+  //    objection) rides the suffix only.
+  const allClaims = [
+    ...(templates ?? []).flatMap((t) => t.claims ?? []),
+    ...pillClaims.map((p) => ({ id: p.id, text: p.text, skills: [] })),
+  ]
+  const prefix = buildPrefix({ fullText: cv.full_text, jdSkills, allClaims })
+  const generateOnce = async (objection) => {
+    const suffix = buildSuffix({
+      sectionName: span.name,
+      origClaim: origClaim.text,
+      selectedClaimIds: claimIds,
+      pillClaimIds: pillClaims.map((p) => p.id),
+      note: body?.note,
+      priorBullets: body?.priorBullets,
+      objection,
+    })
+    try {
+      return await callAnthropic(buildGenerateBody({ prefix, suffix }), apiKey)
+    } catch {
+      return null
+    }
+  }
+
+  // 5–7. Guard loop with the structural retry cap.
+  const ctx = { jobId: body.jobId, cvId: body.cvId, sectionName: span.name }
+  let hardRetryUsed = false
+  let softRetryUsed = false
+  let objection = null
+  for (;;) {
+    const input = await generateOnce(objection)
+    if (input == null) return res.status(502).json({ error: 'generation failed' })
+    const bullets = input.bullets
+    const result = await evaluateGuards({ supabase, apiKey, ctx, bullets, evidence })
+
+    if (result.kind === 'ok') return res.status(200).json({ bullets, verified: true })
+    if (result.kind === 'judge-error') {
+      // Infra failure, not content: degrade open, never retry, never 502.
+      return res.status(200).json({ bullets, verified: false, objection: 'judge unavailable' })
+    }
+    if (result.kind === 'hard') {
+      if (!hardRetryUsed && !softRetryUsed) {
+        hardRetryUsed = true
+        objection = result.objection
+        continue
+      }
+      return res.status(422).json({ error: 'generation failed provenance', reason: result.objection })
+    }
+    // soft failure (digit or judge content verdict)
+    if (!softRetryUsed) {
+      softRetryUsed = true
+      objection = result.objection
+      continue
+    }
+    return res.status(200).json({ bullets, verified: false, objection: result.objection })
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' })
 
@@ -115,7 +305,7 @@ export default async function handler(req, res) {
       return split(supabase, apiKey, body, res)
     case 'generate':
     case 'revise':
-      return res.status(501).json({ error: 'not implemented' }) // T7
+      return generate(supabase, apiKey, body, res)
     default:
       return res.status(400).json({ error: 'unknown action' })
   }
