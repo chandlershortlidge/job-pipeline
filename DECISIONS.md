@@ -15,6 +15,32 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-13 — Tailored-résumé architecture: Provenance Pipeline (proposal B)
+
+Chosen over "lean human-gate" (A) and "layout-faithful template" (C — deferred as
+presentation-only value blocked on a .docx source we don't have; base résumé is a PDF).
+Reasoning that survives: research showed every commercial tool fabricates metrics and
+prompt-only "don't invent" fails — so honesty must be machine-checkable, not procedural.
+Each generated bullet carries `claim_ids` (code-validated), a digit-diff regex flags any
+number not present in the confirmed claims, and a Haiku-tier entailment judge gates each
+section with one auto-retry. Sub-decisions: per-bullet claim granularity; judge failure
+renders with an "unverified" badge rather than blocking (fail-visible beats fail-closed
+for a single-user tool); export uses a clean single-column house template (best ATS parse
+rates), not the user's original layout. Full trade-offs: `proposals.md`; research basis:
+`research.md`.
+
+---
+
+## 2026-07-13 — CV retrieval stays off the public route
+
+`api/file.js` allowlist is screenshot-only **by design** — résumé fetch uses a
+service-role probe, not a signed URL. (Grill round-2 HIGH: plan step 7 still said
+"signed URL fetch returns the PDF," which would tempt a verifier to widen the
+allowlist and reopen the sequential-cv-id enumeration hole D1 closed. Step 7
+rewritten in `source-file-storage-plan.md`.)
+
+---
+
 ## 2026-07-10 — Corpus screenshots backfilled (storage + hashes); legacy dedup hole closed
 
 One-off migration (`scratch/backfill_screenshots.mjs`, dry-run then live, idempotent):

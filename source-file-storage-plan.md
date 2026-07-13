@@ -85,8 +85,11 @@ route, no UI yet) — its UI belongs to the tailored-résumé plan.
 6. **UI: button + lightbox** in the expanded row; `vite build` + headless
    screenshot.
 7. **Deployed verify:** one real drop-in → button appears → image opens; one
-   real résumé upload → signed URL fetch returns the PDF. Throwaway rows,
-   deleted after (established practice).
+   real résumé upload → `cv` row carries `pdf_path`, then a **service-role
+   probe** (Storage download of `sources/cvs/<id>.pdf` with the service-role
+   key, outside the app) returns the PDF. No signed-URL fetch for CVs —
+   `api/file.js` allowlists `screenshot` only (D1); do **not** widen the
+   allowlist to verify. Throwaway rows, deleted after (established practice).
 
 Each step is a commit; stop-and-report if the storage API misbehaves rather
 than patching around it.
