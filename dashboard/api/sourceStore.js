@@ -1,5 +1,6 @@
 // The ONLY code that touches Supabase Storage (bucket "sources") — uploads,
-// signed URLs, and removal for JD screenshots + résumé PDFs (storage-blueprint.md #2).
+// downloads, signed URLs, and removal for JD screenshots + résumé PDFs
+// (storage-blueprint.md #2).
 //
 // What it does NOT do: create Supabase clients (callers pass their service-role
 // client), decide who may read a file (api/file.js owns access), or throw —
@@ -72,6 +73,22 @@ export async function removeByPrefix(supabase, folder, namePrefix) {
   } catch (e) {
     console.error('storage removeByPrefix threw:', folder, namePrefix, e)
     return []
+  }
+}
+
+// → Buffer of the object's bytes, or null (missing object / storage error).
+// Same non-throwing contract as every other export in this module.
+export async function download(supabase, path) {
+  try {
+    const { data, error } = await supabase.storage.from(BUCKET).download(path)
+    if (error || !data) {
+      console.error('storage download failed:', path, error)
+      return null
+    }
+    return Buffer.from(await data.arrayBuffer())
+  } catch (e) {
+    console.error('storage download threw:', path, e)
+    return null
   }
 }
 

@@ -129,3 +129,64 @@ describe('signedUrl', () => {
     expect(await signedUrl(client, 'screenshots/gone.png')).toBe(null)
   })
 })
+
+// --- download (spec C1) -----------------------------------------------------
+// Dynamic import on purpose: a static `import { download }` of a missing export
+// would fail the whole module and take every test above down with it. This way
+// only the new tests fail while the feature is absent.
+const loadDownload = async () => (await import('./sourceStore.js')).download
+
+// Same fake shape as fakeSupabase above, extended with storage .download().
+// The success payload mimics the Blob the supabase-js client returns: an
+// object exposing arrayBuffer().
+function fakeSupabaseDownload({ bytes = Buffer.from('object-bytes'), failDownload = false, throwDownload = false } = {}) {
+  const calls = { downloads: [] }
+  const client = {
+    storage: {
+      from: (bucket) => {
+        calls.bucket = bucket
+        return {
+          download: async (path) => {
+            if (throwDownload) throw new Error('network boom')
+            if (failDownload) return { data: null, error: { message: 'Object not found' } }
+            calls.downloads.push(path)
+            return {
+              data: { arrayBuffer: async () => Uint8Array.from(bytes).buffer },
+              error: null,
+            }
+          },
+        }
+      },
+    },
+  }
+  return { client, calls }
+}
+
+describe('download (Buffer of object bytes | null, non-throwing)', () => {
+  it('is exported from the module', async () => {
+    expect(typeof (await loadDownload())).toBe('function')
+  })
+
+  it('downloads from the sources bucket and returns a Buffer of the exact object bytes', async () => {
+    const download = await loadDownload()
+    const bytes = Buffer.from('png-payload-\u{1F4C4}')
+    const { client, calls } = fakeSupabaseDownload({ bytes })
+    const result = await download(client, 'screenshots/live-123.png')
+    expect(calls.bucket).toBe('sources')
+    expect(calls.downloads).toEqual(['screenshots/live-123.png'])
+    expect(Buffer.isBuffer(result)).toBe(true)
+    expect(result.equals(bytes)).toBe(true)
+  })
+
+  it('returns null on a storage error (missing object) without throwing', async () => {
+    const download = await loadDownload()
+    const { client } = fakeSupabaseDownload({ failDownload: true })
+    await expect(download(client, 'screenshots/gone.png')).resolves.toBe(null)
+  })
+
+  it('returns null when the storage client throws (best-effort, never throws)', async () => {
+    const download = await loadDownload()
+    const { client } = fakeSupabaseDownload({ throwDownload: true })
+    await expect(download(client, 'cvs/17.pdf')).resolves.toBe(null)
+  })
+})
