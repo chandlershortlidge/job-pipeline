@@ -1,3 +1,5 @@
 # Vercel counts every api/*.js as a serverless function (Hobby cap: 12).
 # Tests are vitest-only — exclude them from the deployment upload.
 api/*.test.js
+# api-lib/ costs no function slot but still uploads — keep its tests out of the bundle.
+api-lib/**/*.test.js
