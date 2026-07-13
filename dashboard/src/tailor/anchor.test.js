@@ -88,6 +88,11 @@ describe('anchorSections — heading quote misses', () => {
       gap: { section: 'summary', quote: 'SUMMARY' },
     })
   })
+
+  it('zero sections is never a valid split -> ok:false (schema-valid empty model output must not persist)', () => {
+    expect(anchorSections(RESUME, [])).toEqual({ ok: false, gap: { section: null, quote: null } })
+    expect(anchorSections(RESUME, undefined)).toEqual({ ok: false, gap: { section: null, quote: null } })
+  })
 })
 
 describe('anchorSections — fuzzy fallback (>= 0.85, whitespace-collapsed)', () => {

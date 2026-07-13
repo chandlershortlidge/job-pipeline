@@ -93,7 +93,13 @@ function anchorQuote(text, quote, from = 0) {
 // first line in a neighbor's span and the check fires. The gap object is the
 // split action's 422 payload.
 export function anchorSections(fullText, quotes) {
-  // 0. Empty/whitespace-only quotes fail immediately. Without this guard an
+  // 0. Zero sections is never a valid split: no quotes → no coverage check →
+  //    a schema-valid-but-empty model response would persist a useless split
+  //    with a 200. Fail loudly instead (same contract as every other miss).
+  if (!Array.isArray(quotes) || quotes.length === 0) {
+    return { ok: false, gap: { section: null, quote: null } }
+  }
+  // 0b. Empty/whitespace-only quotes fail immediately. Without this guard an
   //    empty heading_quote "anchors" via indexOf('') at the cursor (zero-width
   //    span), silently swallowing header text instead of failing loudly.
   for (const { name, heading_quote, first_line_quote } of quotes) {
