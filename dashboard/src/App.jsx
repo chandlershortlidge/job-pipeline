@@ -4,6 +4,7 @@ import { supabase } from './supabase'
 import { matchJob } from './match'
 import { filterJobsByCompany } from './searchJobs'
 import { findSimilarJob } from './similar'
+import TailorScreen from './tailor/TailorScreen'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -55,6 +56,7 @@ export default function App() {
   const [selectedCvId, setSelectedCvId] = useState(null)
   const [editingCvId, setEditingCvId] = useState(null)
   const [editingName, setEditingName] = useState('')
+  const [tailorJob, setTailorJob] = useState(null) // job being tailored → full-screen TailorScreen
 
   useEffect(() => {
     async function load() {
@@ -76,6 +78,7 @@ export default function App() {
           summary: j.summary,
           source: j.source,
           created_at: j.created_at,
+          screenshot_path: j.screenshot_path,
           skills: (j.skill || []).map((s) => ({
             canonical: s.canonical,
             raw_text: s.raw_text,
@@ -337,6 +340,11 @@ export default function App() {
         <p className="loading">Loading…</p>
       </div>
     )
+  }
+
+  // Full-screen tailoring flow for one job (spec C8) — back returns to the list.
+  if (tailorJob) {
+    return <TailorScreen job={tailorJob} onBack={() => setTailorJob(null)} />
   }
 
   const { jobs, variants, senCounts, stats, chart, max } = derived
@@ -613,6 +621,7 @@ export default function App() {
                 resumeSet={resumeSet}
                 highlight={highlight}
                 onDelete={deleteJob}
+                onTailor={setTailorJob}
               />
             ))}
           </ul>
@@ -635,6 +644,7 @@ export default function App() {
                 resumeSet={resumeSet}
                 highlight={highlight}
                 onDelete={deleteJob}
+                onTailor={setTailorJob}
               />
                 ))}
               </ul>
@@ -843,7 +853,7 @@ function ViewScreenshot({ jobId }) {
   )
 }
 
-function JobRow({ job, resumeSet, highlight, onDelete }) {
+function JobRow({ job, resumeSet, highlight, onDelete, onTailor }) {
   const [open, setOpen] = useState(false)
   const [flash, setFlash] = useState(false)
   const [confirmingDelete, setConfirmingDelete] = useState(false)
@@ -911,7 +921,12 @@ function JobRow({ job, resumeSet, highlight, onDelete }) {
             </div>
           )}
           <div className="job-actions">
-            {job.screenshot_path && <ViewScreenshot jobId={job.id} />}
+            <span className="job-actions-left">
+              <button className="job-tailor" onClick={() => onTailor?.(job)}>
+                Create a résumé
+              </button>
+              {job.screenshot_path && <ViewScreenshot jobId={job.id} />}
+            </span>
             {confirmingDelete ? (
               <span className="job-del-confirm">
                 Delete this job?

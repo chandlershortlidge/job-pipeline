@@ -852,3 +852,488 @@ footer {
   outline: none;
   min-width: 120px;
 }
+
+/* ---- tailored résumé (spec C8) ---- */
+/* "Create a résumé" + "View screenshot" group left; Delete stays right */
+.job-actions-left {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.job-actions-left .job-shot {
+  margin-right: 0;
+}
+.job-tailor {
+  background: #0d9488;
+  border: 1px solid #0d9488;
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.job-tailor:hover {
+  background: #0f766e;
+}
+
+/* screen frame */
+.tailor {
+  max-width: 1080px;
+}
+.tailor-top {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.tailor-back {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 4px 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #555;
+}
+.tailor-back:hover {
+  border-color: #0d9488;
+  color: #0f766e;
+}
+.tailor-h1 {
+  font-size: 1.3rem;
+  margin: 0;
+}
+.tailor-h1-title {
+  color: #666;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+/* setup-instructions state (no transcribed+split cv yet) */
+.tailor-setup {
+  border: 1px solid #e6e6ef;
+  background: #f5f5fb;
+  border-radius: 10px;
+  padding: 18px 20px;
+  font-size: 0.9rem;
+  color: #444;
+  line-height: 1.5;
+}
+.tailor-setup h2 {
+  margin-top: 0;
+}
+.tailor-setup code {
+  background: #ececf2;
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 0.82rem;
+}
+
+/* two panes: JD screenshot left, flow right */
+.tailor-panes {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) 3fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .tailor-panes {
+    grid-template-columns: 1fr;
+  }
+}
+.tailor-left {
+  position: sticky;
+  top: 16px;
+}
+.tailor-shot {
+  width: 100%;
+  border: 1px solid #e4e4ee;
+  border-radius: 10px;
+  cursor: zoom-in;
+  display: block;
+}
+.tailor-placeholder {
+  border: 1px dashed #d4d4e0;
+  border-radius: 10px;
+  padding: 40px 16px;
+  text-align: center;
+  color: #999;
+  font-size: 0.85rem;
+  background: #fafafd;
+}
+
+/* flow column */
+.tailor-step {
+  border: 1px solid #ececf2;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  background: #fff;
+}
+.tailor-step h2 {
+  margin: 0 0 4px;
+}
+.tailor-none {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+/* export bar — always visible; scores are display-only */
+.tailor-export {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border: 1px solid #d7ede9;
+  background: #f4fbf9;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+}
+.tailor-scores {
+  display: inline-flex;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #555;
+}
+.tailor-score strong {
+  font-variant-numeric: tabular-nums;
+}
+.tailor-score.after strong {
+  color: #0f766e;
+}
+.tailor-download {
+  margin-left: auto;
+  background: #0d9488;
+  border: none;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tailor-download:hover {
+  background: #0f766e;
+}
+.tailor-download:disabled {
+  background: #5eb0a8;
+  cursor: progress;
+}
+.tailor-export-err {
+  color: #dc2626;
+  font-size: 0.85rem;
+  margin: -6px 0 14px;
+}
+
+/* skill-gap pills */
+.pill-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.pill-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px solid #f0f0f5;
+}
+.pill-skill {
+  flex: 1;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.pill-confirm {
+  background: #0d9488;
+  border: 1px solid #0d9488;
+  color: #fff;
+  border-radius: 999px;
+  padding: 3px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pill-confirm:hover {
+  background: #0f766e;
+}
+.pill-reject {
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #666;
+  border-radius: 999px;
+  padding: 3px 14px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.pill-reject:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+/* claim checklist */
+.claim-group-name {
+  font-size: 0.9rem;
+  margin: 12px 0 4px;
+}
+.claim-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.claim-check {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.claim-text {
+  color: #444;
+  line-height: 1.4;
+}
+.claim-chip {
+  font-size: 0.72rem;
+  font-family: ui-monospace, monospace;
+  background: #eceaff;
+  border: 1px solid #c9c2ff;
+  color: #4f46e5;
+  border-radius: 999px;
+  padding: 0 8px;
+  white-space: nowrap;
+}
+.claim-chip.cited {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+}
+.tailor-continue {
+  margin-top: 12px;
+  background: #4f46e5;
+  border: none;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.tailor-continue:hover {
+  background: #4338ca;
+}
+
+/* section cards */
+.section-card {
+  border: 1px solid #ececf2;
+  border-radius: 8px;
+  padding: 10px 13px;
+  margin-bottom: 8px;
+  background: #fff;
+}
+.section-card.current {
+  border-color: #0d9488;
+}
+.sc-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.sc-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-right: auto;
+}
+.sc-status {
+  color: #999;
+  font-size: 0.78rem;
+}
+.sc-status.busy {
+  color: #0f766e;
+}
+.sc-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 10px;
+}
+.sc-badge.approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+.sc-badge.verified {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+/* amber unverified chip (spec C8) */
+.sc-badge.unverified {
+  background: #fef3c7;
+  border: 1px solid #fcd66b;
+  color: #b45309;
+}
+.sc-objection {
+  color: #b45309;
+  font-size: 0.82rem;
+  margin: 8px 0 0;
+}
+.sc-generate {
+  margin-top: 10px;
+  background: #0d9488;
+  border: none;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.sc-generate:hover {
+  background: #0f766e;
+}
+/* red error state + Retry (422 and friends) */
+.sc-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  border-radius: 7px;
+  padding: 8px 12px;
+}
+.sc-error-msg {
+  flex: 1;
+  color: #dc2626;
+  font-size: 0.82rem;
+}
+.sc-retry {
+  background: #dc2626;
+  border: none;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.sc-retry:hover {
+  background: #b91c1c;
+}
+.sc-bullets {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+.sc-bullet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+.sc-bullet:hover {
+  background: #f7f7fc;
+}
+.sc-bullet.selected {
+  background: #eceaff;
+}
+.sc-bullet-text {
+  flex: 1 1 100%;
+}
+.sc-bullet-chips {
+  display: inline-flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.sc-evidence {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-top: 1px dashed #ececf2;
+  font-size: 0.8rem;
+  color: #999;
+}
+.sc-claim {
+  padding: 3px 0;
+  line-height: 1.4;
+}
+.sc-claim.cited {
+  color: #333;
+}
+/* Approve and Request-revision get EQUAL visual weight — no rubber-stamp bias */
+.sc-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.sc-approve,
+.sc-revise-btn {
+  border: none;
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.sc-approve {
+  background: #0d9488;
+  align-self: flex-start;
+}
+.sc-approve:hover {
+  background: #0f766e;
+}
+.sc-revise {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  min-width: 240px;
+}
+.sc-note {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.82rem;
+  resize: vertical;
+}
+.sc-note:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+.sc-revise-btn {
+  background: #4f46e5;
+}
+.sc-revise-btn:hover {
+  background: #4338ca;
+}
+.sc-revise-btn:disabled {
+  background: #b6b1f0;
+  cursor: default;
+}
+.sc-skip {
+  background: none;
+  border: 1px solid #ddd;
+  color: #666;
+  font-size: 0.82rem;
+  padding: 7px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.sc-skip:hover {
+  border-color: #999;
+  color: #333;
+}
