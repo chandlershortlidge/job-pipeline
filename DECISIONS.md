@@ -15,6 +15,31 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-14 — Root cause: normalize.py's determinism bug shipped because sprint AGENTS.md waived tests
+
+Traced *why* `normalize.py`'s nondeterminism (the hash-randomized `clean_variants` tiebreak,
+fixed 07-07) shipped and sat unseen for ~2 weeks. It was not carelessness — it was the
+governing rule at the time. The hackathon `AGENTS.md` (the "sprint variant", commit 2039a3d)
+deliberately dropped the test suite: *"No test suite this sprint; verification is by eyeballing
+output on real inputs."* So normalize.py went to `data`/`jobs.json` on an eyeball check only —
+and eyeballing can't catch a bug that only surfaces across separate process runs (set-iteration
+order is stable within one process, so the CLI output looked consistent every time it was
+checked by hand).
+
+**Why it wouldn't happen now:** the current `AGENTS.md` (graduated to the full build loop on
+07-07/07-08) makes the test non-optional — step 3, "move it into the codebase with a test,"
+plus *"tests need to be fast and give the same result every time."* Under that rule normalize.py
+can't leave `scratch/` without a pytest test, and a golden test run in a fresh process trips the
+tiebreak flake on day one — which is exactly how it *did* eventually get caught, once the tests
+existed. Same class of bug; current rules catch it at authoring time, not two weeks later during
+an unrelated refactor.
+
+**Takeaway:** the sprint-mode "eyeball, no tests" waiver was the right speed trade for one day,
+but it's a determinism blind spot — cross-process nondeterminism is invisible to eyeballing by
+construction. Any future time-boxed variant that re-drops the suite carries the same risk.
+
+---
+
 ## 2026-07-14 — Tailored-résumé v1 live-verified (T10); judge caught real over-attribution
 
 Full pipeline verified against production: transcribe (cv 19) → split (8 sections) →
