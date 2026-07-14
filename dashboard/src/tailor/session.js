@@ -1,7 +1,7 @@
 // Spec C8 — testable core of the tailoring session (pure, no React, no I/O).
 // TailorScreen delegates every decision that matters to these functions so the
 // pill/checklist/assembly/staleness/score logic stays unit-testable.
-import { sha256Hex } from './anchor'
+import { sha256Hex } from './anchor.js'
 
 // Skill-gap pills: required JD canonicals absent from BOTH the cv skill set and
 // every template claim's `skills` stamp (spec C8 "Before the loop").

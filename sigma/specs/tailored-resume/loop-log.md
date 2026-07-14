@@ -94,6 +94,47 @@
 - Lessons ratcheted: llm-evidence-id-binding, eslint-globals-per-runtime.
 - REMAINING — human (review queue below): T0, then T10.
 
+## T10 — notebook-verify, live (2026-07-14) — DONE
+
+Run against production (deploy 3fc5cd3; bundle carries tailor strings; /api/tailor live).
+
+- [x] T0 verified: migration + RLS probes green (anon: read-only templates,
+  denied writes, tailor_log invisible); template row = 14 claims, unique ids,
+  clean shape (human-inserted).
+- [x] transcribe cv 19: 4793 chars, sane; overwrite guard 409 live.
+- [x] split: 8 sections tiling 0→4793. Note: model named the header section
+  "Header" at offset 0, so no `_header` prepend — "Header" is generable in the
+  UI loop (queue item).
+- [x] generate happy (job-1 / Projects / jp-1,5,9 + pill-FastAPI): 200
+  verified:true, all bullets cite orig-Projects; résumé's own numbers (28K,
+  64%, 83%) passed digit-diff correctly.
+- [x] soft-fail: could NOT be forced through the front door — model refused
+  fabricated metrics, refused estimation invite, refused bogus claim-id note
+  (prompt layer held). BUT tailor_log shows both soft guards fired ORGANICALLY:
+  judge FAIL row 4 (first attempt over-attributed jp-claims; retry passed —
+  live retry loop end-to-end) and digit FAIL row 12 (foreign "19"; retry
+  passed). Guard chain hard→digit→judge logged for every call.
+- [x] hard 422: NOT trippable live (model obedient) — unit-proven (2 tests),
+  recorded as such, not claimed as live-verified.
+- [x] prompt cache: two identical calls — call 1 cache_write 2908, call 2
+  cache_read 2908 (prefix > 2048-token minimum; D5 holds live).
+- [x] docx: built from real session data (approved Projects bullets + verbatim
+  carryover ×7), 10515 bytes, candidateName "Chandler Shortlidge", marker
+  verified inside word/document.xml → `scratch/resume-job-1-t10.docx`.
+- [x] rows: no throwaway rows created (transcribe/split filled cv 19's own
+  columns — intended production data); tailor_log rows retained as the
+  calibration trail by design.
+- Fix landed during run: session.js `./anchor` → `./anchor.js` (extensionless
+  import broke raw-node ESM; Vite/vitest masked it).
+- MANUAL residue (human): open scratch/resume-job-1-t10.docx in Word; eyeball
+  the unverified badge + 422 error state in the live UI (server sides proven;
+  visual render code-traced only).
+
+**Judge insight worth acting on:** the judge read third-person template claims
+("Built X…") as unattributed project references, not the candidate's own work —
+that's what caused the organic retry. Reword template claims first-person or
+prefix with attribution, or Projects bullets will keep leaning on orig text only.
+
 ## Review queue (final, advisor)
 
 1. **T0 (blocks everything live):** run spec.md SQL migration (incl. RLS) in

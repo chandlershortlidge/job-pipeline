@@ -20,7 +20,7 @@ T0 is manual/human, can happen any time before T10.
 
 ---
 
-- [ ] **T0 — Manual: SQL migration + first project template** · *human, Supabase editor*
+- [x] **T0 — Manual: SQL migration + first project template** · *human, Supabase editor*
   - Context: `spec.md` "SQL migration" block (verbatim, incl. the RLS
     statements — do not skip); companion plan owns template synthesis.
   - Acceptance: `cv.full_text` + `cv.sections` columns exist; `project_template`
@@ -136,7 +136,7 @@ T0 is manual/human, can happen any time before T10.
     `vite build` + headless screenshot (house practice).
   - Deps: T7, T8.
 
-- [ ] **T10 — Notebook-verify end-to-end + promote** · *domain: ai-agent-engineering*
+- [x] **T10 — Notebook-verify end-to-end + promote** · *domain: ai-agent-engineering*
   - Context: spec "Verification" end-to-end protocol, verbatim: real job +
     real template; transcribe → console-correct → split → pill → checklist →
     generate with one forced soft-fail (badge) + one forced hard-fail (422) →

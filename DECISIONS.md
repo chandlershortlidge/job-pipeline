@@ -15,6 +15,25 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-14 — Tailored-résumé v1 live-verified (T10); judge caught real over-attribution
+
+Full pipeline verified against production: transcribe (cv 19) → split (8 sections) →
+generate (job-1, verified:true) → organic guard fires → docx. Two things worth remembering:
+
+- **The guards fired for real, unprompted.** The judge failed the FIRST live generation
+  for over-attribution (model claimed template projects as first-person work); one retry
+  with the objection fixed it. Digit-diff separately caught a foreign "19". Deliberate
+  attacks (fabricated metrics, bogus claim ids) never got past the prompt layer, so the
+  hard-422 path remains unit-proven only — recorded honestly in the loop log.
+- **Template claims should be written first-person.** The judge reads "Built X using Y"
+  third-person claims as unattributed references, not the candidate's own work — reword
+  `project_template` claims (or prefix attribution) so Projects bullets can actually use
+  them instead of leaning solely on the résumé's original text.
+
+Prompt cache verified live (2908-token prefix, write-then-read). Artifact:
+`scratch/resume-job-1-t10.docx` — open in Word for the final manual check.
+
+
 ## 2026-07-13 — Tailored-résumé architecture: Provenance Pipeline (proposal B)
 
 Chosen over "lean human-gate" (A) and "layout-faithful template" (C — deferred as
