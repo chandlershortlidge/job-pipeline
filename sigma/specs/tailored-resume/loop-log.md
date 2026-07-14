@@ -53,6 +53,61 @@
   "5"; empty bullet text passes validateClaimIds; suffix "SELECTED CLAIM IDS"
   label lists template ids only (allowlist line is authoritative).
 
-### Wave 2 — T5 (judge) → Wave 3 — T6 → Wave 4 — T7 → Wave 5 — T9
+### Waves 2–3 — T5 + T6 (concurrent, disjoint files) — DONE (1 attempt)
 
-- [ ] T5 RED/GREEN/CHECK
+- [x] RED: 11+15 tests (judge, dispatcher). GREEN: both implementers, 150/0.
+- [x] CHECK: code checker PASS; ai-agent-engineering logic evaluator PASS
+  (ground-truth string chain verified verbatim end-to-end; concurrent
+  transcribe/split race self-healing via hash binding). Checker-prescribed fix
+  applied post-verdict: zero-section split now fails loudly (anchor.js guard +
+  test). Process fix adopted: RED suites committed before GREEN from T7 on.
+- Committed: b6438b7 (T5), baa0c72 (T6).
+
+### Wave 4 — T7 guard pipeline (core) — DONE (1 attempt)
+
+- [x] RED committed first (aaa2104, 17 tests failing on 501). GREEN: 32/32,
+  full 168/0. Implementer flagged spec-vs-brief tension (two-flag retry budget
+  per spec, 3-call path untested) — resolved in spec's favor.
+- [x] CHECK: code checker PASS (retry ledger hand-traced + probe-harness
+  verified on all 5 paths, incl. the untested spec-granted 3-call path).
+  Logic evaluator PASS (adversarial fabricated-metric path traced through real
+  guards; evidence universes byte-identical across digit guard, judge, and
+  prompt allowlist). MEDIUM fix applied post-verdict: DB select errors now
+  500 'lookup failed', never silently-empty jdSkills/templates (e77bbe0).
+- Committed: e77bbe0.
+
+### Wave 5 — T9 UI — DONE (1 attempt)
+
+- [x] RED committed (a88b9f6-adjacent, 23 session-logic tests). GREEN: 191/0,
+  docx code-splits (350 kB chunk out of main). CHECK PASS: full spec-C8 trace;
+  visual smoke via house headless-Chrome practice (root renders, no console
+  errors, tailor strings in shipped bundle); BDD sweep — each scenario marked
+  unit / code-trace / deferred-to-T10 explicitly. Bonus: real pre-existing bug
+  found+fixed (screenshot_path stripped in App.jsx supabase mapping — the
+  storage-v1 "View screenshot" button never worked for supabase-loaded jobs).
+- Committed: 1254ac8.
+
+## Loop end state (2026-07-14)
+
+- Tasks done: T1–T9 (all code). Suite 191/0; lint = 2 known pre-existing
+  errors; build green. Function slots 9/12.
+- Lessons ratcheted: llm-evidence-id-binding, eslint-globals-per-runtime.
+- REMAINING — human (review queue below): T0, then T10.
+
+## Review queue (final, advisor)
+
+1. **T0 (blocks everything live):** run spec.md SQL migration (incl. RLS) in
+   Supabase editor + author ≥1 real project_template row (atomic claims with
+   globally-unique ids + canonical skills arrays).
+2. **T10 notebook-verify:** human-supervised live run per spec Verification —
+   the loop deliberately does not spend live API/deploy on its own.
+3. Pre-existing lint (untouched): api/extract.js:236 no-unused-vars
+   `screenshot_hash` (careful: deliberate response-strip pattern);
+   src/App.jsx:867 set-state-in-effect.
+4. LOW UX/efficiency residue: SectionCard Retry after failed revise drops the
+   note (calls generate); TailorScreen cv select pulls all transcripts
+   (add .not-null/.limit); candidateName degrades to '' when split has no
+   _header; pill TEXT trusted verbatim as evidence (server validates shape
+   only — a crafted pill text could legitimize digits; UI mints the text
+   today, hardening = server-side re-mint from id).
+5. Accepted LOW residue from waves 1–4 logged in their sections above.

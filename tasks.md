@@ -71,7 +71,7 @@ T0 is manual/human, can happen any time before T10.
     suffix carries note/priorBullets/objection after the breakpoint.
   - Deps: none. Parallel: group A.
 
-- [ ] **T5 — `api-lib/tailor/judge.js`** · *domain: llm-engineering*
+- [x] **T5 — `api-lib/tailor/judge.js`** · *domain: llm-engineering*
   - Context: spec C3; imports MODEL_JUDGE from T4; forced tool `verdict`,
     temperature 0, max_tokens 512; never throws — infra failure →
     `{pass:false, objection:'judge unavailable', judgeError:true}`.
@@ -80,7 +80,7 @@ T0 is manual/human, can happen any time before T10.
     malformed body → judgeError shape.
   - Deps: T4.
 
-- [ ] **T6 — `api/tailor.js`: dispatcher + transcribe + split** · *domain: ai-agent-engineering*
+- [x] **T6 — `api/tailor.js`: dispatcher + transcribe + split** · *domain: ai-agent-engineering*
   - Context: new file (slot 9/12 — the ONLY new `api/` file) +
     `api/tailor.test.js`; spec C6 preamble + transcribe/split blocks; env
     guard, 405/400 handling; uses T1 download, T2 anchor, T4 bodies; supabase
@@ -93,7 +93,7 @@ T0 is manual/human, can happen any time before T10.
     assert no key/URL material).
   - Deps: T1, T2, T4.
 
-- [ ] **T7 — `api/tailor.js`: generate + revise guard pipeline** · *domain: ai-agent-engineering*
+- [x] **T7 — `api/tailor.js`: generate + revise guard pipeline** · *domain: ai-agent-engineering*
   - Context: spec C6 steps 1–9 EXACTLY (staleness 409; jdSkills query; global
     claim-id uniqueness 500; evidence resolution incl. orig-claim minting;
     hard→digit→judge order with digit short-circuit; retry budget max 3
@@ -122,7 +122,7 @@ T0 is manual/human, can happen any time before T10.
     green; `npm run lint` green.
   - Deps: none. Parallel: group A.
 
-- [ ] **T9 — UI: trigger + TailorScreen + pills + checklist + loop + export + score** · *domain: none (web frontend)*
+- [x] **T9 — UI: trigger + TailorScreen + pills + checklist + loop + export + score** · *domain: none (web frontend)*
   - Context: spec C8 (whole section); new `src/tailor/TailorScreen.jsx` +
     `SectionCard.jsx`; modify `App.jsx` (expanded-row "Create a résumé"
     trigger + mount) + `App.css`; reads `project_template` via existing anon
