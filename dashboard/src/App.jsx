@@ -370,7 +370,7 @@ export default function App() {
   return (
     <div className="app">
       <header>
-        <h1>See what AI employers want</h1>
+        <h1>AI Job Skills Dashboard: See What AI Employers Want</h1>
         <p className="sub">
           What is the AI job market prioritizing? Click any skill to see the roles that want it.
         </p>
