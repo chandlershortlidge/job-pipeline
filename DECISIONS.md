@@ -70,8 +70,9 @@ number not present in the confirmed claims, and a Haiku-tier entailment judge ga
 section with one auto-retry. Sub-decisions: per-bullet claim granularity; judge failure
 renders with an "unverified" badge rather than blocking (fail-visible beats fail-closed
 for a single-user tool); export uses a clean single-column house template (best ATS parse
-rates), not the user's original layout. Full trade-offs: `proposals.md`; research basis:
-`research.md`.
+rates), not the user's original layout. Full trade-offs:
+`sigma/specs/tailored-resume/proposals.md`; research basis:
+`sigma/specs/tailored-resume/research.md`.
 
 ---
 
