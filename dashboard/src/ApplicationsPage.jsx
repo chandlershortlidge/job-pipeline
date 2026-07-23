@@ -91,7 +91,6 @@ export default function ApplicationsPage({ onBack }) {
             <th>Role</th>
             <th>Category</th>
             <th>Received</th>
-            <th>Status</th>
             <th>Linked job</th>
           </tr>
         </thead>
@@ -102,12 +101,6 @@ export default function ApplicationsPage({ onBack }) {
               <td>{r.role_raw || '—'}</td>
               <td>{CATEGORY_LABEL[r.category] || r.category || '—'}</td>
               <td>{formatDate(r.received_at)}</td>
-              <td>
-                {r.action_required && <span className="badge action">Action needed</span>}
-                {r.extraction_confidence === 'low' && (
-                  <span className="badge low-conf">Low confidence</span>
-                )}
-              </td>
               <td>{r.job ? `${r.job.company} — ${r.job.title}` : '—'}</td>
             </tr>
           ))}
