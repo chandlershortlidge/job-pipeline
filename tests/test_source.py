@@ -104,8 +104,10 @@ def test_fetch_queries_only_the_configured_label():
         messages={"m1": _msg("m1", plain="hello")},
     )
     GmailSource(service=_FakeService(fm)).fetch()
+    # The source passes config.GMAIL_QUERY verbatim to Gmail — assert the constant
+    # is what's used (the keyword-scan net; not a hardcoded label).
     assert fm.list_queries == [config.GMAIL_QUERY]
-    assert config.GMAIL_QUERY == "label:job-search"
+    assert "interview" in config.GMAIL_QUERY and "application" in config.GMAIL_QUERY
 
 
 # --- HTML-only email still yields a body ----------------------------------

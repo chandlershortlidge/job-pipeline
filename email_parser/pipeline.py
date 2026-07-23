@@ -2,7 +2,13 @@
 
 `run(source, supabase, jobs, *, api_key, client=None) -> RunReport`: fetch emails,
 skip ones already stored, then per email classify -> extract -> match -> insert an
-`application` row. Returns a tally (fetched/skipped/inserted/linked/unlinked/errors).
+`application` row. Returns a tally (fetched/skipped/dropped/inserted/linked/
+unlinked/errors).
+
+The Gmail fetch is a broad keyword net (config.GMAIL_QUERY) that over-fetches on
+purpose; the classifier is the precision filter. An email classified `other` is
+the "not a job email" verdict — it is DROPPED (counted in `dropped`, never stored),
+so the keyword net's false positives don't become noise rows.
 
 Two invariants it must not get wrong:
   - **Idempotency** is belt-and-suspenders: a pre-filter skips gmail_message_ids
@@ -25,7 +31,7 @@ from postgrest.exceptions import APIError
 from email_parser.classify import classify
 from email_parser.extract_fields import extract
 from email_parser.matcher import match
-from email_parser.models import RunReport
+from email_parser.models import Category, RunReport
 from email_parser.source import EmailSource
 
 _UNIQUE_VIOLATION = "23505"  # Postgres unique_violation SQLSTATE
@@ -54,6 +60,12 @@ def run(source: EmailSource, supabase, jobs, *, api_key, client=None) -> RunRepo
             continue
         try:
             category = classify(email, api_key=api_key, client=client)
+            if category is Category.other:
+                # Relevance filter: the keyword-scan net over-fetches; `other` is the
+                # classifier's "not a job email" verdict — drop it, never store noise.
+                report.dropped += 1
+                existing.add(email.gmail_message_id)
+                continue
             fields = extract(email, category, api_key=api_key, client=client)
             job_id = match(fields, jobs)
             supabase.table("application").insert(

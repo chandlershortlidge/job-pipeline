@@ -58,18 +58,22 @@ class _LLMResponse:
 class _FakeLLM:
     """One anthropic-like client; branches on the forced tool name."""
 
+    def __init__(self, category="recruiter_outreach"):
+        self._category = category
+        self.messages = self._Messages(category)
+
     class _Messages:
+        def __init__(self, category):
+            self._category = category
+
         def create(self, **kw):
             name = kw["tool_choice"]["name"]
             if name == "classify":
-                return _LLMResponse([_LLMBlock("classify", {"category": "recruiter_outreach"})])
+                return _LLMResponse([_LLMBlock("classify", {"category": self._category})])
             # extract: echo the company verbatim from the prompt body (first token)
             body = kw["messages"][0]["content"].split("Body:\n", 1)[-1]
             company = body.split()[0] if body.split() else None
             return _LLMResponse([_LLMBlock("extract", {"company_raw": company, "role_raw": "Backend Engineer"})])
-
-    def __init__(self):
-        self.messages = self._Messages()
 
 
 class _FakeQuery:
@@ -170,6 +174,17 @@ def test_expired_token_aborts_before_any_write():
     with pytest.raises(GmailAuthError):
         run(_BoomSource(), supa, JOBS, api_key="k", client=_FakeLLM())
     assert supa.application_inserts() == []  # nothing written
+
+
+def test_other_is_dropped_not_stored():
+    # Keyword-scan false positive: classifier says `other` -> drop, never insert.
+    app = _FakeTable("application")
+    supa = _FakeSupabase(app)
+    report = run(_ListSource([_email("m1")]), supa, JOBS, api_key="k", client=_FakeLLM(category="other"))
+    assert report.fetched == 1
+    assert report.dropped == 1
+    assert report.inserted == 0
+    assert supa.application_inserts() == []  # nothing written for an `other` email
 
 
 def test_report_counts_linked_vs_unlinked():
