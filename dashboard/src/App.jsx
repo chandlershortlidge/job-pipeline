@@ -5,6 +5,7 @@ import { matchJob } from './match'
 import { filterJobsByCompany } from './searchJobs'
 import { findSimilarJob } from './similar'
 import TailorScreen from './tailor/TailorScreen'
+import ApplicationsPage from './ApplicationsPage'
 
 // Selecting a level re-scopes the chart to that level's jobs and recolors the bars.
 // "All" (no level) keeps the default global indigo.
@@ -57,6 +58,7 @@ export default function App() {
   const [editingCvId, setEditingCvId] = useState(null)
   const [editingName, setEditingName] = useState('')
   const [tailorJob, setTailorJob] = useState(null) // job being tailored → full-screen TailorScreen
+  const [view, setView] = useState('jobs') // 'jobs' | 'applications' — additive nav toggle (spec §9)
 
   useEffect(() => {
     async function load() {
@@ -347,6 +349,11 @@ export default function App() {
     return <TailorScreen job={tailorJob} onBack={() => setTailorJob(null)} />
   }
 
+  // Applications view (email-parser output) — additive, routerless toggle (spec §9).
+  if (view === 'applications') {
+    return <ApplicationsPage onBack={() => setView('jobs')} />
+  }
+
   const { jobs, variants, senCounts, stats, chart, max } = derived
   const activeColor = selectedSeniority
     ? SENIORITY_LEVELS.find((s) => s.level === selectedSeniority).color
@@ -369,6 +376,14 @@ export default function App() {
 
   return (
     <div className="app">
+      <nav className="view-nav">
+        <button type="button" className="active" aria-current="page">
+          Jobs
+        </button>
+        <button type="button" onClick={() => setView('applications')}>
+          Applications
+        </button>
+      </nav>
       <header>
         <h1>AI Job Skills Dashboard: See What AI Employers Want</h1>
         <p className="sub">

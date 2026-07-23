@@ -224,6 +224,11 @@ scratch/screenshots/*
 # Local resumes (personal CVs — never commit to the public repo)
 scratch/resumes/
 
+# Gmail OAuth secrets (email_parser) — never commit
+email_parser/.gmail_token.json
+email_parser/.gmail_credentials.json
+*.gmail_token.json
+
 # Node deps (Daytona de-risk script, etc.) — never commit
 node_modules/
 .
