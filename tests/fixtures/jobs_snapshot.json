@@ -1,0 +1,7 @@
+[
+  { "id": "job-1", "company": "Acme", "title": "Senior Backend Engineer" },
+  { "id": "job-2", "company": "Acme", "title": "Data Scientist" },
+  { "id": "job-3", "company": "Globex", "title": "ML Engineer" },
+  { "id": "job-4", "company": null, "title": "Recruiter (agency)" },
+  { "id": "job-5", "company": "Initech", "title": null }
+]
