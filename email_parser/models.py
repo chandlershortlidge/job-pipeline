@@ -109,6 +109,7 @@ class RunReport(BaseModel):
 
     fetched: int = 0
     skipped: int = 0
+    dropped: int = 0  # classified `other` by the relevance filter — fetched but not stored
     inserted: int = 0
     linked: int = 0
     unlinked: int = 0

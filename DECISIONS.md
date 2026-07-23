@@ -15,6 +15,41 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-23 — Email fetch: keyword-scan the whole inbox, not a curated label
+
+Reversed the spec's original curated-fetch decision. The spec chose
+`GMAIL_QUERY = "label:job-search"` — only manually-labelled mail enters the
+pipeline — for precision. In use that's wrong: the point is to *discover* job
+emails automatically, and hand-labelling every one defeats it.
+
+New design: **broad keyword net over the whole inbox + classifier as the filter.**
+- `config.GMAIL_QUERY` is now a high-recall Gmail keyword query (interview,
+  application, candidate, role, position, hiring, offer, + ATS platforms like
+  greenhouse/lever/ashby/workday). No label, no time bound (add `newer_than:Nd`
+  to bound it).
+- Two stages, deliberately different: **Gmail = literal keyword match, no
+  judgement** (its only job is to over-fetch candidates); **Haiku classifier =
+  semantic judgement** (decides real category vs `other`). Paraphrase variance
+  ("move forward with the process" vs "move you forward in the process") is
+  resolved by the LLM, not by search terms — so outcome phrases are NOT search
+  terms.
+- The pipeline **drops `other`**: an email the classifier calls not-a-job is
+  counted in `RunReport.dropped` and never stored, so the net's false positives
+  don't become noise rows. `recruiter_outreach` keywords dropped (not happening
+  for this user; would be LinkedIn anyway) — the category stays in the classifier.
+
+Tradeoff accepted: a broad net over a full inbox fetches extras → more LLM calls
+(~2/email). Precision is free (classifier filters), you pay to judge the noise.
+If a first run fetches a huge pile, tighten toward the distinctive terms
+(interview, candidate, ATS domains) or add `newer_than`.
+
+Consequence: `GmailSource` needs a real token, and first-run consent wasn't wired
+(it only *loaded* a token). Added `scripts/gmail_auth.py` (one-time InstalledApp
+consent) + `scripts/run_parser.py` (local hand-triggered run). Still a laptop job;
+a server-side `/api/refresh` button is a later phase.
+
+---
+
 ## 2026-07-23 — Matcher: duplicate applications to the same role go unlinked
 
 Decision: accept that re-applying to the same role at the same company produces

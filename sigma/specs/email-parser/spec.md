@@ -219,7 +219,10 @@ GmailSource:
   credentials file: email_parser/.gmail_credentials.json   (OAuth client secret)
   token cache:      email_parser/.gmail_token.json          (refreshable token)
   both gitignored — secrets, same rule as .env. Never commit.
-  fetch query (config.GMAIL_QUERY): "label:job-search"  -- curated; NOT a time window
+  fetch query (config.GMAIL_QUERY): SUPERSEDED 2026-07-23 (DECISIONS.md) — now a
+    broad keyword-scan net over the whole inbox, not "label:job-search". Classifier
+    is the precision filter; pipeline drops `other`. GmailSource is unchanged (it
+    passes config.GMAIL_QUERY verbatim).
   fetch: users.messages.list(q=GMAIL_QUERY) -> PAGINATE through nextPageToken until
          exhausted (list returns <=100 ids/page; a first run over an established
          label commonly exceeds one page — never truncate to page 1). For each id,
@@ -272,7 +275,9 @@ run(source: EmailSource, supabase, jobs, *, api_key) -> RunReport:
        category = classify(email, api_key=...)
        fields   = extract(email, category, api_key=...)
        job_id   = match(fields, jobs)
-       insert one application row (category, fields, job_id).
+       if category == other: drop (count in RunReport.dropped, do NOT store) —
+         SUPERSEDED 2026-07-23 (DECISIONS.md): relevance filter for the keyword net.
+       else insert one application row (category, fields, job_id).
   3. return RunReport{fetched, skipped, inserted, linked, unlinked, errors}.
 ```
 
