@@ -15,6 +15,32 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-23 — Matcher: duplicate applications to the same role go unlinked
+
+Decision: accept that re-applying to the same role at the same company produces
+two near-identical job records that the matcher cannot distinguish. Both survive
+the role-token tiebreak, so the result is ambiguous and `match()` returns None.
+The application email links to nothing.
+
+Why accept it now: at current corpus size (~20 jobs) re-applications are rare,
+and the failure is silent-but-safe — an unlinked record, not a wrong link. The
+matcher's conservative bias (never guess when ambiguous) is working as intended.
+
+Why it will need revisiting: expected to bite at ~60–100 jobs, when re-applying
+to previously-seen companies with a stronger résumé becomes routine. The
+frequency scales with corpus size; the failure mode does not change.
+
+Likely fix when it does: recency tiebreak — prefer the candidate whose record is
+closest in time to the email's received date. Deferred, not designed.
+
+Related: company matching is exact string equality on the normalized name (no
+canonicalization, per the T2 normalize decision). Verified against the current
+jobs snapshot: zero records fail to produce candidates, so canonicalization is
+not needed today. Revisit if a source writes company names differently —
+Gmail sender names or a bulk import are the likely triggers.
+
+---
+
 ## 2026-07-14 — Root cause: normalize.py's determinism bug shipped because sprint AGENTS.md waived tests
 
 Traced *why* `normalize.py`'s nondeterminism (the hash-randomized `clean_variants` tiebreak,
