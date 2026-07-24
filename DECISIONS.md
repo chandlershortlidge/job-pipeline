@@ -15,6 +15,54 @@ undoing a decision without knowing the reason behind it.
 
 ---
 
+## 2026-07-24 — ⏸ Email parser: live on real inbox; noise-tuning PAUSED (handoff)
+
+Where it stands, paused mid-tuning. Pick up here.
+
+**Working end to end.** Local hand-triggered parser runs against the real Gmail
+inbox and writes `application` rows the prod dashboard reads. Latest run
+(April-onward, `after:2026/04/01`): fetched 996, dropped 955 as `other`, inserted
+**41** (linked 9). Those 41 rows are live on the Applications page now.
+
+**How to run it** (laptop): `uv run scripts/gmail_auth.py` once (OAuth token,
+Testing-mode → expires ~7 days), then a scan. `scripts/run_parser.py` defaults to
+the WHOLE-INBOX query (~11k emails — footgun, see below). The April-onward
+back-fills were run via a bounded one-off: query `({config.GMAIL_QUERY}) after:2026/04/01`.
+
+**The open problem — kept-set noise.** A few senders dominate the false positives:
+**WorkEnablr** (internship invites, ~6 rows) and **MentorCruise** (mentor mail).
+They're genuinely recruiter/interview-shaped, so the classifier reads them
+correctly — they're just not real applications.
+
+**Prompt experiment FAILED (do not keep).** Tightened `email_parser/classify.py`'s
+`other` definition + system prompt to be stricter. It made things WORSE:
+inserted 34→41, `recruiter_outreach` 5→11 (the "reaching out about a role"
+framing broadened recruiter). **That change is UNCOMMITTED in the main checkout's
+working tree** (`git diff` on classify.py). Recommend reverting it —
+`git checkout -- email_parser/classify.py` — before the next attempt.
+
+**Right levers for next session (not the system prompt):**
+1. **Sender-exclusion at the Gmail fetch** — add to the query:
+   `-from:workenablr.com -from:mentorcruise.com` (confirm exact domains). Kills
+   sender-driven noise before the LLM ever sees it. This is where it belongs.
+2. **Optionally drop `recruiter_outreach` as a stored category** — user says it
+   isn't happening for them (would be LinkedIn); treat it like `other` (drop).
+
+**Re-processing gotcha:** the pipeline is idempotent (pre-filters stored
+`gmail_message_id`s), so a re-run SKIPS everything. To re-evaluate the same inbox
+with new rules you must DELETE the `application` rows first
+(`.delete().neq('gmail_message_id','')` via the service-role key), then re-scan.
+
+**Also still owed:** bound `run_parser.py`'s default query so it can't scan the
+whole 11k inbox by accident — default it to `after:2026/04/01` (the job-hunt
+start). Fold into the same tuning PR.
+
+**Phase 2 (later):** a dashboard "Refresh inbox" button = move the parser to a
+Vercel serverless function + move Gmail auth server-side (web OAuth refresh token
+in env; publish the consent screen to avoid the 7-day expiry).
+
+---
+
 ## 2026-07-23 — Email fetch: keyword-scan the whole inbox, not a curated label
 
 Reversed the spec's original curated-fetch decision. The spec chose
